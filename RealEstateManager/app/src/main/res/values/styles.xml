@@ -8,4 +8,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- TOOLBAR THEME -->
+    <style name="ToolBarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+    </style>
+    <!-- TOOLBAR TITLE THEME -->
+    <style name="ToolBarTheme.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/toolbar_text_size</item>
+    </style>
+
+    <!-- FAB THEME -->
+    <style name="FloatingButtonREM" parent="Widget.Design.FloatingActionButton">
+        <item name="maxImageSize">40dip</item>
+        <item name="android:layout_marginEnd">30dip</item>
+        <item name="android:layout_marginBottom">50dip</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 </resources>

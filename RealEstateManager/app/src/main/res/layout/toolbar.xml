@@ -8,5 +8,6 @@
     app:titleTextColor="@color/colorTextPrimary"
     android:background="?attr/colorPrimary"
     android:theme="@style/ToolBarTheme"
-    app:titleTextAppearance="@style/ToolBarTheme.TitleText">
+    app:titleTextAppearance="@style/ToolBarTheme.TitleText"
+    android:elevation="10dp">
 </androidx.appcompat.widget.Toolbar>

@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager
 
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -69,10 +70,31 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
             tabLayout.getTabAt(1)?.setIcon(listDrawableIconTab[1])
         }
 
+        fun setupTabLayoutListener(){
+            tabLayout.addOnTabSelectedListener(object :TabLayout.ViewPagerOnTabSelectedListener(viewPager){
+                override fun onTabReselected(tab: TabLayout.Tab?) {
+
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {
+                    val tabIconColor = ContextCompat.getColor(applicationContext, R.color.colorTextPrimaryAlpha)
+                    tab?.icon?.setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN)
+                }
+
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    val tabIconColor = ContextCompat.getColor(applicationContext, R.color.colorTextPrimary)
+                    tab?.icon?.setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN)
+                }
+            })
+            viewPager.currentItem = 1
+            viewPager.currentItem = 0
+        }
+
         viewPager.adapter = PageAdapterMainActivity(supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.tabMode = TabLayout.MODE_FIXED
         setupIconTabLayout()
+        setupTabLayoutListener()
     }
 
     private fun configureRapidFloatingActionButton() {

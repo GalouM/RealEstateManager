@@ -10,9 +10,11 @@
 
     <color name="colorTextPrimary">#f5f5f5</color>
     <color name="colorTextPrimaryAlpha">#bdbdbd</color>
-    <color name="colorTextAccent">#f8bbd0</color>
+    <color name="colorTextAccent">#fce4ec</color>
     <color name="colorTextAccentAlpha">#ff80ab</color>
     <color name="colorTextOnWhite">#757575</color>
     <color name="colorTextUnactive">#bdbdbd</color>
     <color name="colorTextRed">#ff3d00</color>
+
+    <color name="colorWhite">#fafafa</color>
 </resources>

@@ -1,14 +1,11 @@
-package com.openclassrooms.realestatemanager
+package com.openclassrooms.realestatemanager.mainActivity
 
-import android.graphics.Color
+import android.content.Intent
 import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TableLayout
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -16,6 +13,9 @@ import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.tabs.TabLayout
+import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
+import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
     @BindView(R.id.activity_main_rfal) lateinit var rfaLayout: RapidFloatingActionLayout
     @BindView(R.id.activity_main_rfab) lateinit var rfaButton: RapidFloatingActionButton
     private lateinit var rfabHelper: RapidFloatingActionHelper
+
+    private var currency = "euros"
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
@@ -53,6 +55,18 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.menu_main_activity_currency -> {
+                when(currency){
+                    "euros" -> {
+                        item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
+                        currency = "dollars"
+                        return true
+                    }
+                    "dollars" -> {
+                        item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
+                        currency = "euros"
+                        return true
+                    }
+                }
                 item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
                 return true
             }
@@ -102,7 +116,7 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
         rfaContent.setOnRapidFloatingActionContentLabelListListener(this)
         val items = mutableListOf<RFACLabelItem<Int>>()
         items.add(RFACLabelItem<Int>()
-                .setLabel("Add Property")
+                .setLabel(getString(R.string.add_property_menu))
                 .setResId(R.drawable.home_icon)
                 .setIconNormalColor(ContextCompat.getColor(applicationContext, R.color.colorTextPrimary))
                 .setIconPressedColor(ContextCompat.getColor(applicationContext, R.color.colorWhite))
@@ -110,7 +124,7 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
         )
         items.add(RFACLabelItem<Int>()
 
-                .setLabel("Add agent")
+                .setLabel(getString(R.string.add_agent_menu))
                 .setResId(R.drawable.person_icon)
                 .setIconNormalColor(ContextCompat.getColor(applicationContext, R.color.colorTextPrimary))
                 .setIconPressedColor(ContextCompat.getColor(applicationContext, R.color.colorWhite))
@@ -130,13 +144,23 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
     }
 
     override fun onRFACItemIconClick(position: Int, item: RFACLabelItem<RFACLabelItem<Int>>?) {
-        Toast.makeText(applicationContext, "clicked label: " + position, Toast.LENGTH_SHORT).show();
-        rfabHelper.toggleContent();
+        when(position){
+            0 -> {
+                val intent = Intent(this, AddPropertyActivity::class.java)
+                startActivity(intent)
+            }
+
+            1 -> {
+                val intent = Intent(this, AddAgentActivity::class.java)
+                startActivity(intent)
+            }
+        }
+        rfabHelper.toggleContent()
     }
 
     override fun onRFACItemLabelClick(position: Int, item: RFACLabelItem<RFACLabelItem<Int>>?) {
-        Toast.makeText(applicationContext, "clicked label: " + position, Toast.LENGTH_SHORT).show();
-        rfabHelper.toggleContent();
+        Toast.makeText(applicationContext, "clicked label: " + position, Toast.LENGTH_SHORT).show()
+        rfabHelper.toggleContent()
     }
 }
 

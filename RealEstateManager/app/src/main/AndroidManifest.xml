@@ -12,7 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".addAgent.AddAgentActivity"
+            android:label="@string/add_agent"
+            android:parentActivityName=".mainActivity.MainActivity"/>
+        <activity
+            android:name=".addProperty.AddPropertyActivity"
+            android:label="@string/add_property_title"
+            android:parentActivityName=".mainActivity.MainActivity" />
+        <activity android:name=".mainActivity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

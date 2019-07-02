@@ -3,6 +3,48 @@
     <string name="search">Search</string>
     <string name="currency">Currency</string>
 
+    <string name="add_property_menu">Add Property</string>
+    <string name="add_agent_menu">Add Agent</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_property_title">Add Property</string>
+    <string name="validate_menu">Validate</string>
+    <string name="type_dropdown_menu">Type</string>
+    <string name="price_dollar">Price ($)</string>
+    <string name="surface_m2">Surface (m2)</string>
+    <string name="rooms">Rooms</string>
+    <string name="bedrooms">Bedrooms</string>
+    <string name="bathrooms">Bathrooms</string>
+    <string name="near_by">Near by:</string>
+    <string name="school">School</string>
+    <string name="playgroud">Playgroud</string>
+    <string name="shop">Shop</string>
+    <string name="buses">Buses</string>
+    <string name="subway">Subway</string>
+    <string name="park">Park</string>
+    <string name="description">Description</string>
+    <string name="address">Address</string>
+    <string name="on_market_since">On Market since</string>
+    <string name="neighbourhood">Neighbourhood</string>
+    <string name="sold">Sold</string>
+    <string name="sold_on">Sold on</string>
+    <string name="manage_by">Manage by</string>
+    <string name="add_agent">Add Agent</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="email">Email</string>
+    <string name="last_name">Last name</string>
+    <string name="first_name">First name</string>
+
+
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>

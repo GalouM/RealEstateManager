@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_marginEnd="@dimen/margin_small"
+    android:layout_marginStart="@dimen/margin_small"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".addProperty.AddPropertyView">
+
+    <com.google.android.material.textfield.TextInputLayout
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/add_property_view_type_inputlayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/type_dropdown_menu"
+        android:layout_marginBottom="@dimen/margin_small">
+
+        <AutoCompleteTextView
+            android:id="@+id/add_property_view_dropdown_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.gridlayout.widget.GridLayout
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_type_inputlayout"
+        android:id="@+id/add_property_view_price_surface_gridlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:columnCount="2"
+        android:layout_marginBottom="@dimen/margin_small">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/price_dollar"
+            app:layout_column="0"
+            app:layout_row="0"
+            app:layout_columnWeight="1"
+            android:layout_marginEnd="@dimen/margin_small">
+
+            <EditText
+                android:id="@+id/add_property_view_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:background="@android:color/transparent"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/surface_m2"
+            app:layout_column="1"
+            app:layout_row="0"
+            app:layout_columnWeight="1">
+
+            <EditText
+                android:id="@+id/add_property_view_surface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:background="@android:color/transparent"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </androidx.gridlayout.widget.GridLayout>
+
+    <androidx.gridlayout.widget.GridLayout
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_price_surface_gridlayout"
+        android:id="@+id/add_property_view_rooms_gridlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:columnCount="3"
+        android:layout_marginBottom="@dimen/margin_small">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/rooms"
+            app:layout_column="0"
+            app:layout_row="0"
+            app:layout_columnWeight="1"
+            android:layout_marginEnd="@dimen/margin_small">
+
+            <EditText
+                android:id="@+id/add_property_view_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"
+                android:background="@android:color/transparent"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/bedrooms"
+            app:layout_column="1"
+            app:layout_row="0"
+            app:layout_columnWeight="1">
+
+            <EditText
+                android:id="@+id/add_property_view_bedroom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"
+                android:background="@android:color/transparent"
+                android:layout_marginEnd="@dimen/margin_small"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/bathrooms"
+            app:layout_column="2"
+            app:layout_row="0"
+            app:layout_columnWeight="1">
+
+            <EditText
+                android:id="@+id/add_property_view_bathroom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"
+                android:background="@android:color/transparent"
+                android:layout_marginEnd="@dimen/margin_small"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </androidx.gridlayout.widget.GridLayout>
+
+
+
+    <TextView
+        android:id="@+id/add_property_view_nearby_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_rooms_gridlayout"
+        android:text="@string/near_by"
+        android:layout_marginTop="@dimen/margin_small"/>
+
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/add_property_view_nearby_gridlayout_nearby"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_nearby_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:columnCount="3"
+        android:layout_marginBottom="@dimen/margin_small">
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_columnWeight="1"
+            android:text="@string/school"
+            app:layout_row="0"
+            app:layout_column="0"/>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_columnWeight="1"
+            android:text="@string/playgroud"
+            app:layout_row="0"
+            app:layout_column="1"/>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_columnWeight="1"
+            android:text="@string/shop"
+            app:layout_row="0"
+            app:layout_column="2"/>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_columnWeight="1"
+            android:text="@string/buses"
+            app:layout_row="1"
+            app:layout_column="0"/>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_columnWeight="1"
+            android:text="@string/subway"
+            app:layout_row="1"
+            app:layout_column="1"/>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_columnWeight="1"
+            android:text="@string/park"
+            app:layout_row="1"
+            app:layout_column="2"/>
+    </androidx.gridlayout.widget.GridLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_property_view_description_inputlayout"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_nearby_gridlayout_nearby"
+        android:layout_width="match_parent"
+        android:layout_height="100dip"
+        android:hint="@string/description"
+        android:layout_marginBottom="@dimen/margin_small">
+
+        <EditText
+            android:id="@+id/add_property_view_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_property_view_address_inputlayout"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_description_inputlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/address"
+        android:layout_marginBottom="@dimen/margin_small">
+
+        <EditText
+            android:id="@+id/add_property_view_address"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_property_view_neighbourhood_inputlayout"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_address_inputlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/neighbourhood"
+        android:layout_marginBottom="@dimen/margin_small">
+
+        <EditText
+            android:id="@+id/add_property_view_neighbourhood"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_property_view_since_inputlayout"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_neighbourhood_inputlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/on_market_since"
+        android:layout_marginBottom="@dimen/margin_small">
+        <EditText
+            android:id="@+id/add_property_view_since"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="date"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/add_property_view_sold_layout"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_since_inputlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small">
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/sold"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_property_view_soldon_inputlayout"
+            app:layout_constraintTop_toBottomOf="@id/add_property_view_neighbourhood_inputlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sold_on">
+
+            <EditText
+                android:id="@+id/add_property_view_sold_on"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="date"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_property_view_dropdown_agent_inputlayout"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_sold_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/manage_by"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small">
+
+        <AutoCompleteTextView
+            android:id="@+id/add_property_view_dropdown_agent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

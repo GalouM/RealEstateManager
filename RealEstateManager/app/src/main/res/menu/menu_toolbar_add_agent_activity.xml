@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/menu_add_agent_activity_check"
+        android:icon="@drawable/check_icon"
+        app:showAsAction="always"
+        android:title="@string/validate_menu"/>
+
+</menu>

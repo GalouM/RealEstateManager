@@ -8,4 +8,6 @@
     <dimen name="margin_big">50dp</dimen>
     <dimen name="shadow_dx">0dp</dimen>
     <dimen name="shadow_dy">5dp</dimen>
+    <dimen name="medium_padding">16dp</dimen>
+    <dimen name="margin_small">15dp</dimen>
 </resources>

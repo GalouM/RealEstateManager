@@ -7,4 +7,4 @@ import androidx.room.PrimaryKey
  * Created by galou on 2019-07-03
  */
 @Entity
-class Address (@PrimaryKey val id: Int, var address: String, var longitude: Double, var latitude: Double, var neighbourhood: String)
+data class Address (@PrimaryKey val id: Int, var address: String, var longitude: Double, var latitude: Double, var neighbourhood: String)

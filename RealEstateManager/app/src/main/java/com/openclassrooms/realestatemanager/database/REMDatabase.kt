@@ -1,9 +1,12 @@
 package com.openclassrooms.realestatemanager.database
 
+import android.content.ContentValues
 import android.content.Context
 import androidx.room.Database
+import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.openclassrooms.realestatemanager.database.dao.*
 import com.openclassrooms.realestatemanager.models.*
 
@@ -32,8 +35,8 @@ public abstract class REMDatabase : RoomDatabase(){
                 val instance = Room.databaseBuilder(
                         context.applicationContext,
                         REMDatabase::class.java,
-                        "REM_database.db"
-                ).build()
+                        "REM_database.db")
+                        .build()
                 INSTANCE = instance
                 return instance
             }

@@ -11,4 +11,4 @@ import com.openclassrooms.realestatemanager.TypeAmenity
 @Entity(foreignKeys = [ForeignKey(entity = Property::class,
         parentColumns = ["id"],
         childColumns = ["property"])])
-class Amenity (@PrimaryKey val id: Int, val property: Int, val type: TypeAmenity)
+data class Amenity (@PrimaryKey val id: Int, val property: Int, val type: TypeAmenity)

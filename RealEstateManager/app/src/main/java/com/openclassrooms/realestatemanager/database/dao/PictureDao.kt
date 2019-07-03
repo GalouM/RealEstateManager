@@ -13,12 +13,12 @@ import com.openclassrooms.realestatemanager.models.Picture
 
 @Dao
 interface PictureDao {
-    @Query("SELECT * FROM Amenity WHERE property = :propertyId")
+    @Query("SELECT * FROM Picture WHERE property = :propertyId")
     fun getPictures(propertyId: Int): LiveData<List<Picture>>
 
     @Insert
     suspend fun insertPicture(picture: Picture): Int
 
-    @Query("DELETE FROM Amenity WHERE id = :pictureId")
-    fun deletePicture(pictureId: Int): Int
+    @Query("DELETE FROM Picture WHERE url = :urlPicture")
+    fun deletePicture(urlPicture: Int): Int
 }

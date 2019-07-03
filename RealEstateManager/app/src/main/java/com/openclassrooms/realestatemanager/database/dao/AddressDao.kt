@@ -18,7 +18,7 @@ interface AddressDao {
     @Update
     suspend fun updateAddress(address: Address): Int
 
-    @Query("DELETE * FROM Address WHERE id = :addressId")
+    @Query("DELETE FROM Address WHERE id = :addressId")
     fun deleteAddress(addressId: Int): Int
 
 }

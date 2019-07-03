@@ -10,4 +10,4 @@ import androidx.room.PrimaryKey
 @Entity(foreignKeys = [ForeignKey(entity = Property::class,
         parentColumns = ["id"],
         childColumns = ["property"])])
-class Picture(@PrimaryKey val url: Int, val property: Int, val description: String?)
+data class Picture(@PrimaryKey val url: String, val property: Int, val description: String?)

@@ -14,7 +14,7 @@ import com.openclassrooms.realestatemanager.TypeProperty
     ForeignKey(entity = Agent::class,
             parentColumns = ["id"],
             childColumns = ["agent"])])
-data class Property (@PrimaryKey val id: Int, var type: TypeProperty,
+data class Property (@PrimaryKey(autoGenerate = true) val id: Int, var type: TypeProperty,
                 var price: Double, var surface: Double,
                 var rooms: Int, var bedrooms: Int?,
                 var bathrooms: Int?, var description: String?,

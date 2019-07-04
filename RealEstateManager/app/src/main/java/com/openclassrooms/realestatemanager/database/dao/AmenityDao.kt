@@ -14,11 +14,11 @@ import com.openclassrooms.realestatemanager.models.Amenity
 @Dao
 interface AmenityDao {
     @Query("SELECT * FROM Amenity WHERE property = :propertyId")
-    fun getAmneties(propertyId: Int): LiveData<List<Amenity>>
+    fun getAmenities(propertyId: Int): LiveData<List<Amenity>>
 
     @Insert
-    suspend fun insertAmenity(amenity: Amenity): Int
+    suspend fun insertAmenity(amenity: Amenity)
 
     @Query("DELETE FROM Amenity WHERE id = :amenityId")
-    fun deleteAmenity(amenityId: Int): Int
+    suspend fun deleteAmenity(amenityId: Int)
 }

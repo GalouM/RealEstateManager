@@ -47,7 +47,7 @@ dependencies {
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
 
     //ROBOLECTRIC
-    testImplementation 'org.robolectric:robolectric:4.0'
+    testImplementation "org.robolectric:robolectric:$rootProject.robolectricVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //BUTTERKNIFE
@@ -59,7 +59,8 @@ dependencies {
     implementation 'com.github.wangjiegulu:rfab:2.0.0'
 
     //ROOM
-    implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
+    implementation "androidx.room:room-runtime:$rootProject.roomVersion"
+    implementation "androidx.room:room-ktx:$rootProject.roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
     kapt "androidx.room:room-compiler:$rootProject.roomVersion"
     androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"

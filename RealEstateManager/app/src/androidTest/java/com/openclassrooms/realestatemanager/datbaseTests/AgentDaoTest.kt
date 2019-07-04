@@ -1,14 +1,15 @@
-package com.openclassrooms.realestatemanager
+package com.openclassrooms.realestatemanager.datbaseTests
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
-import androidx.test.internal.runner.junit4.AndroidJUnit4Builder
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
 import com.openclassrooms.realestatemanager.database.REMDatabase
 import com.openclassrooms.realestatemanager.database.dao.AgentDao
 import com.openclassrooms.realestatemanager.models.Agent
+import com.openclassrooms.realestatemanager.waitForValue
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -22,7 +23,6 @@ import java.lang.Exception
  */
 
 @RunWith(AndroidJUnit4::class)
-
 class AgentDaoTest {
 
     @get:Rule
@@ -30,6 +30,7 @@ class AgentDaoTest {
 
     private lateinit var agentDao: AgentDao
     private lateinit var db: REMDatabase
+    private val agent1 = Agent(1, "Galou", "Minisini", "galou@rem.com", "+999-803-999", "http://mypictute")
 
     @Before
     fun createDatabase(){
@@ -50,10 +51,21 @@ class AgentDaoTest {
 
     @Test
     @Throws(Exception::class)
-    suspend fun insertAndGetAgent() {
-        val agent = Agent(1, "Galou", "Minisini", "galou@rem.com", "+999-803-999", "http://mypictute")
-        agentDao.createAgent(agent)
-        val agentFromDB = LiveDataTestUtil.getValue(agentDao.getAgent(agent.id))
-        assertEquals(agentFromDB[0].id, agent.id)
+    fun createAndGetAgent() = runBlocking {
+        agentDao.createAgent(agent1)
+        val agentFromDB = agentDao.getAgent(agent1.id).waitForValue()
+        assertEquals(agentFromDB[0].id, agent1.id)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getAllAgents() = runBlocking{
+        val agent2 = Agent(2, "New", "Agent", "agent2u@rem.com", "+999-999-999", "http://mypictute1")
+        agentDao.createAgent(agent1)
+        agentDao.createAgent(agent2)
+        val allAgents = agentDao.getAllAgents().waitForValue()
+        assertEquals(agent1.id, allAgents[0].id)
+        assertEquals(agent2.id, allAgents[1].id)
+
     }
 }

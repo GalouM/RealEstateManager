@@ -14,11 +14,11 @@ interface PropertyDao {
     fun getAllProperties(): LiveData<List<Property>>
 
     @Query("SELECT * FROM Property WHERE id = :propertyId")
-    fun getProperty(propertyId: Int): LiveData<List<Property>>
+    fun getProperty(propertyId: Int): LiveData<MutableList<Property>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createProperty(agent: Property)
 
     @Update
-    suspend fun updateProperty(property: Property): Int
+    suspend fun updateProperty(property: Property)
 }

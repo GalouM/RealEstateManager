@@ -1,9 +1,7 @@
 package com.openclassrooms.realestatemanager.database.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.openclassrooms.realestatemanager.models.Address
 
 /**
@@ -15,10 +13,11 @@ interface AddressDao {
     @Query("SELECT * FROM Address WHERE id = :addressId")
     fun getAddress(addressId: Int): LiveData<List<Address>>
 
-    @Update
-    suspend fun updateAddress(address: Address): Int
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun createAddress(address: Address)
 
-    @Query("DELETE FROM Address WHERE id = :addressId")
-    fun deleteAddress(addressId: Int): Int
+    @Update
+    suspend fun updateAddress(address: Address)
+
 
 }

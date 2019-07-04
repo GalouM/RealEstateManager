@@ -17,8 +17,8 @@ interface PictureDao {
     fun getPictures(propertyId: Int): LiveData<List<Picture>>
 
     @Insert
-    suspend fun insertPicture(picture: Picture): Int
+    suspend fun insertPicture(picture: Picture)
 
     @Query("DELETE FROM Picture WHERE url = :urlPicture")
-    fun deletePicture(urlPicture: Int): Int
+    suspend fun deletePicture(urlPicture: String)
 }

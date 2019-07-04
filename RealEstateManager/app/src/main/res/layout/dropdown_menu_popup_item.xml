@@ -5,4 +5,5 @@
     android:padding="@dimen/medium_padding"
     android:ellipsize="end"
     android:maxLines="1"
-    android:textAppearance="?attr/textAppearanceSubtitle1"/>
+    android:textAppearance="?attr/textAppearanceSubtitle1"
+    android:textAllCaps="false"/>

@@ -1,8 +1,8 @@
-package com.openclassrooms.realestatemanager.database.dao
+package com.openclassrooms.realestatemanager.data.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.openclassrooms.realestatemanager.models.Address
+import com.openclassrooms.realestatemanager.data.entity.Address
 
 /**
  * Created by galou on 2019-07-03

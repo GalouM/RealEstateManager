@@ -1,11 +1,9 @@
-package com.openclassrooms.realestatemanager.database
+package com.openclassrooms.realestatemanager.data.database
 
-import android.content.ContentValues
 import android.content.Context
 import androidx.room.*
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.openclassrooms.realestatemanager.database.dao.*
-import com.openclassrooms.realestatemanager.models.*
+import com.openclassrooms.realestatemanager.data.entity.*
+import com.openclassrooms.realestatemanager.data.database.dao.*
 
 /**
  * Created by galou on 2019-07-03
@@ -24,8 +22,9 @@ public abstract class REMDatabase : RoomDatabase(){
     companion object{
         @Volatile
         private var INSTANCE: REMDatabase? = null
-        fun getDatabase(context: Context): REMDatabase{
-            return INSTANCE?: synchronized(this){
+        fun getDatabase(context: Context): REMDatabase {
+            return INSTANCE
+                    ?: synchronized(this){
                 val instance = Room.databaseBuilder(
                         context.applicationContext,
                         REMDatabase::class.java,

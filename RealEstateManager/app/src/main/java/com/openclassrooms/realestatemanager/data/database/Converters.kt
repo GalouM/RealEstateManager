@@ -1,8 +1,8 @@
-package com.openclassrooms.realestatemanager.database
+package com.openclassrooms.realestatemanager.data.database
 
 import androidx.room.TypeConverter
-import com.openclassrooms.realestatemanager.TypeAmenity
-import com.openclassrooms.realestatemanager.TypeProperty
+import com.openclassrooms.realestatemanager.utils.TypeAmenity
+import com.openclassrooms.realestatemanager.utils.TypeProperty
 
 /**
  * Created by galou on 2019-07-04
@@ -16,7 +16,7 @@ class Converters {
 
         @TypeConverter
         @JvmStatic
-        fun toTypeProperty(type: String): TypeProperty{
+        fun toTypeProperty(type: String): TypeProperty {
             TypeProperty.values().forEach {
                 if(type == it.typeName) return it
             }
@@ -30,7 +30,7 @@ class Converters {
 
         @TypeConverter
         @JvmStatic
-        fun toTypeAmenity(type: String): TypeAmenity{
+        fun toTypeAmenity(type: String): TypeAmenity {
             TypeAmenity.values().forEach {
                 if(type == it.typeName) return it
             }

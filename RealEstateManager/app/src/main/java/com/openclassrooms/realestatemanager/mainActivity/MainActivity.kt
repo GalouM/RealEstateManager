@@ -1,30 +1,39 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
+import butterknife.internal.ListenerClass
 import com.google.android.material.tabs.TabLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
+import com.openclassrooms.realestatemanager.mviBase.MviView
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList
 import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
+import dagger.android.DispatchingAndroidInjector
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>> {
+class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>,
+MviView<MainActivityIntent, MainActivityViewState> {
 
     @BindView(R.id.main_activity_toolbar) lateinit var toolbar: Toolbar
     @BindView(R.id.main_activity_tablayout_viewpager) lateinit var viewPager: ViewPager
@@ -32,6 +41,14 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
     @BindView(R.id.activity_main_rfal) lateinit var rfaLayout: RapidFloatingActionLayout
     @BindView(R.id.activity_main_rfab) lateinit var rfaButton: RapidFloatingActionButton
     private lateinit var rfabHelper: RapidFloatingActionHelper
+
+    private val openAddPropertyIntentPublisher = PublishSubject.create<MainActivityIntent.OpenAddPropertyActivityIntent>()
+
+
+
+    lateinit var viewModel: MainActivityViewModel by lazy(ListenerClass.NONE){
+        ViewModelProviders.of(this)
+    }
 
     private var currency = "euros"
 
@@ -43,9 +60,15 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
         ButterKnife.bind(this)
 
         configureToolbar()
-        configureViewPagerAndToolbar()
+        configureViewPagerAndTablayout()
         configureRapidFloatingActionButton()
     }
+
+    //--------------------
+    // CONFIGURE UI
+    //--------------------
+
+    //------Toolbar---------
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar_main_activity, menu)
@@ -78,7 +101,9 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
         setSupportActionBar(toolbar)
     }
 
-    private fun configureViewPagerAndToolbar(){
+    //------View Pager and tablayout---------
+
+    private fun configureViewPagerAndTablayout(){
         fun setupIconTabLayout(){
             tabLayout.getTabAt(0)?.setIcon(listDrawableIconTab[0])
             tabLayout.getTabAt(1)?.setIcon(listDrawableIconTab[1])
@@ -110,6 +135,8 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
         setupIconTabLayout()
         setupTabLayoutListener()
     }
+
+    //------Floating button---------
 
     private fun configureRapidFloatingActionButton() {
         val rfaContent = RapidFloatingActionContentLabelList(applicationContext)
@@ -143,24 +170,61 @@ class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.On
         ).build()
     }
 
+    //------FAB click listener---------
+
     override fun onRFACItemIconClick(position: Int, item: RFACLabelItem<RFACLabelItem<Int>>?) {
         when(position){
-            0 -> {
-                val intent = Intent(this, AddPropertyActivity::class.java)
-                startActivity(intent)
-            }
+            0 -> openAddPropertyIntentPublisher.onNext(MainActivityIntent.OpenAddPropertyActivityIntent)
 
-            1 -> {
-                val intent = Intent(this, AddAgentActivity::class.java)
-                startActivity(intent)
-            }
+            1 -> showAddAgentActivity()
         }
         rfabHelper.toggleContent()
     }
 
     override fun onRFACItemLabelClick(position: Int, item: RFACLabelItem<RFACLabelItem<Int>>?) {
-        Toast.makeText(applicationContext, "clicked label: " + position, Toast.LENGTH_SHORT).show()
-        rfabHelper.toggleContent()
+        onRFACItemIconClick(position, item)
+    }
+
+    override fun intents(): Observable<MainActivityIntent> {
+        return Observable.merge(initialIntent(),
+                openAddPropertyIntent())
+    }
+
+    //--------------------
+    // SATE AND INTENT
+    //--------------------
+
+    override fun render(state: MainActivityViewState) {
+        when{
+            state.isOpenAddProperty -> renderShowAddPropertyActivity()
+            state.isError -> state.errorSource?.let { renderErrorOpeningActivity(it) }
+        }
+    }
+
+    private fun initialIntent(): Observable<MainActivityIntent.InitialIntent>{
+        return Observable.just(MainActivityIntent.InitialIntent)
+    }
+
+    private fun openAddPropertyIntent(): Observable<MainActivityIntent.OpenAddPropertyActivityIntent>{
+        return openAddPropertyIntentPublisher
+    }
+
+    private fun renderShowAddPropertyActivity(){
+        val intent = Intent(this, AddPropertyActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun showAddAgentActivity(){
+        val intent = Intent(this, AddAgentActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun renderErrorOpeningActivity(errorSource: ErrorSource){
+        when(errorSource){
+            ErrorSource.NO_AGENT_IN_DB -> Log.e("message", "no agent in db")
+            else -> Log.e("message", "unknow error")
+        }
+
     }
 }
 

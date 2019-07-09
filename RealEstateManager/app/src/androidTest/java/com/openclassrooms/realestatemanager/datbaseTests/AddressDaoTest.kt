@@ -4,9 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
-import com.openclassrooms.realestatemanager.database.REMDatabase
-import com.openclassrooms.realestatemanager.database.dao.AddressDao
-import com.openclassrooms.realestatemanager.models.Address
+import com.openclassrooms.realestatemanager.data.database.REMDatabase
+import com.openclassrooms.realestatemanager.data.database.dao.AddressDao
+import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.waitForValue
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking

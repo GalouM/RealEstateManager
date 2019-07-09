@@ -11,7 +11,7 @@ import android.widget.AutoCompleteTextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.TypeProperty
+import com.openclassrooms.realestatemanager.utils.TypeProperty
 
 /**
  * A simple [Fragment] subclass.

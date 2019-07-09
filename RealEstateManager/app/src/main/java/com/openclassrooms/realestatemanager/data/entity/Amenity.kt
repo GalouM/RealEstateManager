@@ -1,8 +1,9 @@
-package com.openclassrooms.realestatemanager.models
+package com.openclassrooms.realestatemanager.data.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.openclassrooms.realestatemanager.utils.TypeAmenity
 
 /**
  * Created by galou on 2019-07-03
@@ -10,4 +11,4 @@ import androidx.room.PrimaryKey
 @Entity(foreignKeys = [ForeignKey(entity = Property::class,
         parentColumns = ["id"],
         childColumns = ["property"])])
-data class Picture(@PrimaryKey val url: String, val property: Int, val description: String?)
+data class Amenity (@PrimaryKey(autoGenerate = true) val id: Int, val property: Int, val type: TypeAmenity)

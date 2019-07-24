@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
 import androidx.appcompat.app.AppCompatActivity
@@ -10,15 +9,18 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
-import butterknife.internal.ListenerClass
 import com.google.android.material.tabs.TabLayout
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.injection.ViewModelFactory
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
+import com.openclassrooms.realestatemanager.data.AgentRepository
+import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.MviView
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
@@ -26,14 +28,15 @@ import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList
 import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
-import dagger.android.DispatchingAndroidInjector
-import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(), RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>,
-MviView<MainActivityIntent, MainActivityViewState> {
+class MainActivity : AppCompatActivity(),
+        RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>,
+        MviView<MainActivityIntent, MainActivityViewState> {
+
+    private lateinit var viewModel: MainActivityViewModel
 
     @BindView(R.id.main_activity_toolbar) lateinit var toolbar: Toolbar
     @BindView(R.id.main_activity_tablayout_viewpager) lateinit var viewPager: ViewPager
@@ -44,12 +47,6 @@ MviView<MainActivityIntent, MainActivityViewState> {
 
     private val openAddPropertyIntentPublisher = PublishSubject.create<MainActivityIntent.OpenAddPropertyActivityIntent>()
 
-
-
-    lateinit var viewModel: MainActivityViewModel by lazy(ListenerClass.NONE){
-        ViewModelProviders.of(this)
-    }
-
     private var currency = "euros"
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
@@ -58,6 +55,8 @@ MviView<MainActivityIntent, MainActivityViewState> {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
+
+        configureViewModel()
 
         configureToolbar()
         configureViewPagerAndTablayout()
@@ -174,7 +173,9 @@ MviView<MainActivityIntent, MainActivityViewState> {
 
     override fun onRFACItemIconClick(position: Int, item: RFACLabelItem<RFACLabelItem<Int>>?) {
         when(position){
-            0 -> openAddPropertyIntentPublisher.onNext(MainActivityIntent.OpenAddPropertyActivityIntent)
+            0 -> {
+                Log.e("tag", "intent emited")
+                viewModel.actionFromIntent(MainActivityIntent.OpenAddPropertyActivityIntent)}
 
             1 -> showAddAgentActivity()
         }
@@ -185,28 +186,33 @@ MviView<MainActivityIntent, MainActivityViewState> {
         onRFACItemIconClick(position, item)
     }
 
-    override fun intents(): Observable<MainActivityIntent> {
-        return Observable.merge(initialIntent(),
-                openAddPropertyIntent())
+    private fun configureViewModel(){
+        val viewModelFactory = Injection.providesViewModelFactory(this)
+        viewModel = ViewModelProviders.of(
+                this,
+                viewModelFactory
+        ).get(MainActivityViewModel::class.java)
+
+        viewModel.viewState.observe(this, Observer { render(it) })
     }
 
     //--------------------
     // SATE AND INTENT
     //--------------------
 
+    override fun intents(){
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun render(state: MainActivityViewState) {
-        when{
-            state.isOpenAddProperty -> renderShowAddPropertyActivity()
-            state.isError -> state.errorSource?.let { renderErrorOpeningActivity(it) }
+        if(state.isOpenAddProperty){
+            renderShowAddPropertyActivity()
+            Log.e("tag", state.toString())
+        } else{
+            state.errorSource?.let { renderErrorOpeningActivity(it) }
+            Log.e("tag", "should be here")
         }
-    }
 
-    private fun initialIntent(): Observable<MainActivityIntent.InitialIntent>{
-        return Observable.just(MainActivityIntent.InitialIntent)
-    }
-
-    private fun openAddPropertyIntent(): Observable<MainActivityIntent.OpenAddPropertyActivityIntent>{
-        return openAddPropertyIntentPublisher
     }
 
     private fun renderShowAddPropertyActivity(){

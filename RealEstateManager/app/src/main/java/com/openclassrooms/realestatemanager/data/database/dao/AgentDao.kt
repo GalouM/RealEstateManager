@@ -15,10 +15,10 @@ import io.reactivex.Observable
 @Dao
 interface AgentDao {
     @Query("SELECT * FROM Agent")
-    fun getAllAgents(): Observable<List<Agent>>
+    fun getAllAgents(): LiveData<List<Agent>>
 
     @Query("SELECT * FROM Agent WHERE id = :agentId")
-    fun getAgent(agentId: Int): Observable<List<Agent>>
+    fun getAgent(agentId: Int): LiveData<List<Agent>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createAgent(agent: Agent)

@@ -8,6 +8,5 @@ import io.reactivex.Observable
  */
 
 interface MainActivityIntent : MviIntent {
-    object InitialIntent : MainActivityIntent
     object OpenAddPropertyActivityIntent : MainActivityIntent
 }

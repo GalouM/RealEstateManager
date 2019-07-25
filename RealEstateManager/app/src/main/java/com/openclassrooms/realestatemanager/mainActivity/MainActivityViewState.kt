@@ -7,6 +7,7 @@ import com.openclassrooms.realestatemanager.mviBase.MviViewState
  */
 
 data class MainActivityViewState(
-        val isOpenAddProperty:Boolean = true,
-        val errorSource: ErrorSource? = null
+        val isOpenAddProperty:Boolean = false,
+        val errorSource: ErrorSource? = null,
+        val isLoading: Boolean = false
 ) : MviViewState

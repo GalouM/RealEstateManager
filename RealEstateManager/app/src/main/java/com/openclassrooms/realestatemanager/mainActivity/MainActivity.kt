@@ -174,7 +174,6 @@ class MainActivity : AppCompatActivity(),
     override fun onRFACItemIconClick(position: Int, item: RFACLabelItem<RFACLabelItem<Int>>?) {
         when(position){
             0 -> {
-                Log.e("tag", "intent emited")
                 viewModel.actionFromIntent(MainActivityIntent.OpenAddPropertyActivityIntent)}
 
             1 -> showAddAgentActivity()
@@ -205,12 +204,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun render(state: MainActivityViewState) {
+        Log.e("tag", state.toString())
         if(state.isOpenAddProperty){
             renderShowAddPropertyActivity()
-            Log.e("tag", state.toString())
         } else{
             state.errorSource?.let { renderErrorOpeningActivity(it) }
-            Log.e("tag", "should be here")
         }
 
     }

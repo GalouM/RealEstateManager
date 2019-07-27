@@ -2,7 +2,9 @@ package com.openclassrooms.realestatemanager.addAgent
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -44,5 +46,15 @@ class AddAgentActivity : AppCompatActivity() {
                     .add(R.id.add_agent_activity_frame_layout, addAgentView!!)
                     .commit()
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.menu_add_agent_activity_check -> {
+                Log.e("tag", "click toolbar detected Activity")
+                addAgentView!!.clickListenerToolbar()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

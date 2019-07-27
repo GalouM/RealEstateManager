@@ -31,7 +31,7 @@
         android:src="@drawable/icon_photo"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_agent_view_firstname"
+        android:id="@+id/add_agent_view_firstname_layout"
         android:layout_marginStart="@dimen/margin_small"
         android:layout_marginEnd="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/first_name">
         <EditText
+            android:id="@+id/add_agent_view_firstname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="text"
@@ -48,15 +49,16 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_agent_view_lastname"
+        android:id="@+id/add_agent_view_lastname_layout"
         android:layout_marginStart="@dimen/margin_small"
         android:layout_marginEnd="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
-        app:layout_constraintTop_toBottomOf="@id/add_agent_view_firstname"
+        app:layout_constraintTop_toBottomOf="@id/add_agent_view_firstname_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/last_name">
         <EditText
+            android:id="@+id/add_agent_view_lastname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="text"
@@ -65,15 +67,16 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_agent_view_email"
+        android:id="@+id/add_agent_view_email_layout"
         android:layout_marginStart="@dimen/margin_small"
         android:layout_marginEnd="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
-        app:layout_constraintTop_toBottomOf="@id/add_agent_view_lastname"
+        app:layout_constraintTop_toBottomOf="@id/add_agent_view_lastname_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/email">
         <EditText
+            android:id="@+id/add_agent_view_email"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textEmailAddress"
@@ -82,15 +85,16 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_agent_view_phonenb"
+        android:id="@+id/add_agent_view_phonenb_layout"
         android:layout_marginStart="@dimen/margin_small"
         android:layout_marginEnd="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
-        app:layout_constraintTop_toBottomOf="@id/add_agent_view_email"
+        app:layout_constraintTop_toBottomOf="@id/add_agent_view_email_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/phone_number">
         <EditText
+            android:id="@+id/add_agent_view_phonenb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="phone"

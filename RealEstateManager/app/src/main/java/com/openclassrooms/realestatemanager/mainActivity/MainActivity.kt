@@ -16,12 +16,9 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.tabs.TabLayout
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.injection.ViewModelFactory
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
-import com.openclassrooms.realestatemanager.data.AgentRepository
 import com.openclassrooms.realestatemanager.injection.Injection
-import com.openclassrooms.realestatemanager.mviBase.MviView
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
@@ -29,12 +26,10 @@ import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList
 import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
 import io.reactivex.subjects.PublishSubject
-import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(),
-        RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>,
-        MviView<MainActivityIntent, MainActivityViewState> {
+        RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>{
 
     private lateinit var viewModel: MainActivityViewModel
 
@@ -44,8 +39,6 @@ class MainActivity : AppCompatActivity(),
     @BindView(R.id.activity_main_rfal) lateinit var rfaLayout: RapidFloatingActionLayout
     @BindView(R.id.activity_main_rfab) lateinit var rfaButton: RapidFloatingActionButton
     private lateinit var rfabHelper: RapidFloatingActionHelper
-
-    private val openAddPropertyIntentPublisher = PublishSubject.create<MainActivityIntent.OpenAddPropertyActivityIntent>()
 
     private var currency = "euros"
 
@@ -185,6 +178,10 @@ class MainActivity : AppCompatActivity(),
         onRFACItemIconClick(position, item)
     }
 
+    //--------------------
+    // VIEW MODEL CONNECTION
+    //--------------------
+
     private fun configureViewModel(){
         val viewModelFactory = Injection.providesViewModelFactory(this)
         viewModel = ViewModelProviders.of(
@@ -199,16 +196,13 @@ class MainActivity : AppCompatActivity(),
     // SATE AND INTENT
     //--------------------
 
-    override fun intents(){
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun render(state: MainActivityViewState) {
-        Log.e("tag", state.toString())
-        if(state.isOpenAddProperty){
+    private fun render(viewState: MainActivityViewState?) {
+        if (viewState == null) return
+        Log.e("tag", viewState.toString())
+        if(viewState.isOpenAddProperty){
             renderShowAddPropertyActivity()
         } else{
-            state.errorSource?.let { renderErrorOpeningActivity(it) }
+            viewState.errorSource?.let { renderErrorOpeningActivity(it) }
         }
 
     }

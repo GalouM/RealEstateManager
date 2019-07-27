@@ -30,7 +30,7 @@ class AgentDaoTest {
 
     private lateinit var agentDao: AgentDao
     private lateinit var db: REMDatabase
-    private val agent1 = Agent(1, "Galou", "Minisini", "galou@rem.com", "+999-803-999", "http://mypictute")
+    private val agent1 = Agent("Galou", "Minisini", "galou@rem.com", "+999-803-999", "http://mypictute")
 
     @Before
     fun createDatabase(){
@@ -60,7 +60,7 @@ class AgentDaoTest {
     @Test
     @Throws(Exception::class)
     fun getAllAgents() = runBlocking{
-        val agent2 = Agent(2, "New", "Agent", "agent2u@rem.com", "+999-999-999", "http://mypictute1")
+        val agent2 = Agent("New", "Agent", "agent2u@rem.com", "+999-999-999", "http://mypictute1")
         agentDao.createAgent(agent1)
         agentDao.createAgent(agent2)
         val allAgents = agentDao.getAllAgents().waitForValue()

@@ -17,7 +17,7 @@ interface PropertyDao {
     fun getProperty(propertyId: Int): LiveData<List<Property>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createProperty(agent: Property)
+    suspend fun createProperty(agent: Property): Long
 
     @Update
     suspend fun updateProperty(property: Property)

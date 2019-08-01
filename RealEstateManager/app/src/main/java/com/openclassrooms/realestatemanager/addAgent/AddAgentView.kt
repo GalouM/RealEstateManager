@@ -3,18 +3,19 @@ package com.openclassrooms.realestatemanager.addAgent
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
-
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.injection.Injection
 
@@ -31,6 +32,10 @@ class AddAgentView : Fragment() {
     @BindView(R.id.add_agent_view_lastname) lateinit var lastName: EditText
     @BindView(R.id.add_agent_view_email) lateinit var email: EditText
     @BindView(R.id.add_agent_view_phonenb) lateinit var phoneNumber: EditText
+    @BindView(R.id.add_agent_view_firstname_layout) lateinit var firstNameLayout: TextInputLayout
+    @BindView(R.id.add_agent_view_lastname_layout) lateinit var lastNameLayout: TextInputLayout
+    @BindView(R.id.add_agent_view_phonenb_layout) lateinit var phoneNumberLayout: TextInputLayout
+    @BindView(R.id.add_agent_view_email_layout) lateinit var emailLayout: TextInputLayout
 
     private lateinit var viewModel: AddAgentViewModel
 
@@ -64,6 +69,7 @@ class AddAgentView : Fragment() {
 
     fun clickListenerToolbar(){
         Log.e("tag", "click toolbar detected Frag")
+        disableAllErrors()
         viewModel.actionFromIntent(AddAgentIntent.AddAgentToDBIntent(
                 null,
                 firstName.text.toString(),
@@ -91,7 +97,27 @@ class AddAgentView : Fragment() {
             activity!!.finish()
         }
         if(viewState.errors != null){
+            displayErrors(viewState.errors)
             Log.e("erros", viewState.errors.toString())
         }
+    }
+
+    private fun displayErrors(errors: List<ErrorSourceAddAgent>){
+        errors.forEach{
+            when(it){
+                ErrorSourceAddAgent.FIRST_NAME_INCORRECT -> firstNameLayout.error = "Incorrect First Name"
+                ErrorSourceAddAgent.LAST_NAME_INCORRECT -> lastNameLayout.error = "Incorrect Last Name"
+                ErrorSourceAddAgent.EMAIL_INCORRECT -> emailLayout.error = "Incorrect Email"
+                ErrorSourceAddAgent.PHONE_INCORRECT -> phoneNumberLayout.error = "Incorrect Phone Number"
+                ErrorSourceAddAgent.UNKNOW_ERROR -> Log.e("tag", "unknown error")
+            }
+        }
+    }
+
+    private fun disableAllErrors(){
+        firstNameLayout.isErrorEnabled = false
+        lastNameLayout.isErrorEnabled = false
+        emailLayout.isErrorEnabled = false
+        phoneNumberLayout.isErrorEnabled = false
     }
 }

@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.openclassrooms.realestatemanager.data.entity.Agent
-import io.reactivex.Observable
 
 /**
  * Created by galou on 2019-07-03
@@ -21,5 +20,5 @@ interface AgentDao {
     fun getAgent(agentId: Int): LiveData<List<Agent>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createAgent(agent: Agent)
+    suspend fun createAgent(agent: Agent): Long
 }

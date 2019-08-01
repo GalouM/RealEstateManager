@@ -8,8 +8,6 @@ import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.extensions.isCorrectEmail
 import com.openclassrooms.realestatemanager.extensions.isCorrectName
 import com.openclassrooms.realestatemanager.extensions.isCorrectPhoneNumber
-import com.openclassrooms.realestatemanager.mainActivity.MainActivityIntent
-import com.openclassrooms.realestatemanager.mainActivity.MainActivityResult
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import kotlinx.coroutines.Job
@@ -32,11 +30,11 @@ class AddAgentViewModel (
         }
 
     private var addAgentsJob: Job? = null
+    private var getAgentsJog: Job? = null
 
      fun actionFromIntent(intent: AddAgentIntent) {
         when(intent) {
             is AddAgentIntent.AddAgentToDBIntent -> {
-                Log.e("tag", "intent click received VM")
                 addAgentToDBRequest(
                         intent.pictureUrl,
                         intent.firstName,
@@ -54,7 +52,6 @@ class AddAgentViewModel (
             is Lce.Content ->{
                 when(result.packet){
                     is AddAgentResult.AddAgentToDBResult -> {
-                        Log.e("tag", "Result click emit VM")
                         currentViewState.copy(
                                 isSaved = true,
                                 errors = null,
@@ -73,7 +70,8 @@ class AddAgentViewModel (
                     is AddAgentResult.AddAgentToDBResult -> {
                         currentViewState.copy(
                                 errors = result.packet.errorSource,
-                                isLoading = false)
+                                isLoading = false,
+                                isSaved = false)
                     }
                 }
 
@@ -89,21 +87,32 @@ class AddAgentViewModel (
         resultToViewState(Lce.Loading())
         if(addAgentsJob?.isActive == true) addAgentsJob?.cancel()
 
-        val listErrorInputs = mutableListOf<ErrorSourceAddAgent>()
-        if(!firstName.isCorrectName()) listErrorInputs.add(ErrorSourceAddAgent.FIRST_NAME_INCORRECT)
-        if(!lastName.isCorrectName()) listErrorInputs.add(ErrorSourceAddAgent.LAST_NAME_INCORRECT)
-        if(!email.isCorrectEmail()) listErrorInputs.add(ErrorSourceAddAgent.EMAIL_INCORRECT)
-        if(!phoneNumber.isCorrectPhoneNumber()) listErrorInputs.add(ErrorSourceAddAgent.PHONE_INCORRECT)
+        fun checkErrors(): List<ErrorSourceAddAgent>{
+            val listErrorInputs = mutableListOf<ErrorSourceAddAgent>()
+            if(!firstName.isCorrectName()) listErrorInputs.add(ErrorSourceAddAgent.FIRST_NAME_INCORRECT)
+            if(!lastName.isCorrectName()) listErrorInputs.add(ErrorSourceAddAgent.LAST_NAME_INCORRECT)
+            if(!email.isCorrectEmail()) listErrorInputs.add(ErrorSourceAddAgent.EMAIL_INCORRECT)
+            if(!phoneNumber.isCorrectPhoneNumber()) listErrorInputs.add(ErrorSourceAddAgent.PHONE_INCORRECT)
 
-        if (listErrorInputs.isEmpty()) {
+            return listErrorInputs
+        }
+
+        val listErrors = checkErrors()
+
+        if (listErrors.isEmpty()) {
             addAgentsJob = launch {
-                val agent = Agent(firstName, lastName, email, phoneNumber, urlPicture)
-                agentRepository.createAgent(agent)
-                resultToViewState(Lce.Content(AddAgentResult.AddAgentToDBResult(null)))
+                val agent = Agent(null, firstName, lastName, email, phoneNumber, urlPicture)
+                val idAgent = agentRepository.createAgent(agent)
+                getAgentsJog = launch {
+                    val agents = agentRepository.getAgent(idAgent.toInt())
+                    Log.e("id", agents.value.toString())
+                    Log.e("agents", agents.value.toString())
+                }
+                //resultToViewState(Lce.Content(AddAgentResult.AddAgentToDBResult(null)))
             }
         }
         else{
-            resultToViewState(Lce.Error(AddAgentResult.AddAgentToDBResult(listErrorInputs)))
+            resultToViewState(Lce.Error(AddAgentResult.AddAgentToDBResult(listErrors)))
         }
 
     }

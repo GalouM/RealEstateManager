@@ -1,12 +1,16 @@
 package com.openclassrooms.realestatemanager.extensions
 
+import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
+import java.text.SimpleDateFormat
+import java.util.*
+
 /**
  * Created by galou on 2019-07-25
  */
 
 fun String.isCorrectName(): Boolean{
     val pattern = "[^a-z ]".toRegex(RegexOption.IGNORE_CASE)
-    return !this.contains(pattern) && this.length > 3
+    return !this.contains(pattern) && this.length >= 3
 
 }
 
@@ -26,5 +30,11 @@ fun String.isCorrectPhoneNumber(): Boolean{
     return this.matches(pattern) &&
             this.length >= 10 &&
             this.length <= 13
+
+}
+
+fun String.toDate(): Date{
+    val formatter = SimpleDateFormat(DATE_FORMAT, Locale.CANADA)
+    return formatter.parse(this)
 
 }

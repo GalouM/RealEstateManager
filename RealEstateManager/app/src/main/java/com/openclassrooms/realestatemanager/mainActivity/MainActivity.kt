@@ -2,11 +2,11 @@ package com.openclassrooms.realestatemanager.mainActivity
 
 import android.content.Intent
 import android.graphics.PorterDuff
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -25,7 +25,6 @@ import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList
 import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
-import io.reactivex.subjects.PublishSubject
 
 
 class MainActivity : AppCompatActivity(),

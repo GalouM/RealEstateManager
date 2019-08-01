@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.injection
 
 import android.content.Context
 import com.openclassrooms.realestatemanager.data.AgentRepository
+import com.openclassrooms.realestatemanager.data.PropertyRepository
 import com.openclassrooms.realestatemanager.data.database.REMDatabase
 
 /**
@@ -16,9 +17,16 @@ class Injection {
             return AgentRepository(database.agentDao())
         }
 
+        private fun providesPropertyRepository(context: Context): PropertyRepository{
+            val database = REMDatabase.getDatabase(context)
+            return PropertyRepository(database.propertyDao(), database.amenityDao(),
+                    database.pictureDao(), database.addressDao())
+        }
+
         fun providesViewModelFactory(context: Context): ViewModelFactory {
             val agentRepository = providesAgentRepository(context)
-            return ViewModelFactory(agentRepository)
+            val propertyRepository = providesPropertyRepository(context)
+            return ViewModelFactory(agentRepository, propertyRepository)
         }
     }
 }

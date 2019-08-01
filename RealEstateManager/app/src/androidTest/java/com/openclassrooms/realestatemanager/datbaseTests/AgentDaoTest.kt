@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.datbaseTests
 
+import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
@@ -16,7 +17,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
-import java.lang.Exception
 
 /**
  * Created by galou on 2019-07-03
@@ -30,7 +30,7 @@ class AgentDaoTest {
 
     private lateinit var agentDao: AgentDao
     private lateinit var db: REMDatabase
-    private val agent1 = Agent("Galou", "Minisini", "galou@rem.com", "+999-803-999", "http://mypictute")
+    private val agent1 = Agent(1, "Galou", "Minisini", "galou@rem.com", "+999-803-999", "http://mypictute")
 
     @Before
     fun createDatabase(){
@@ -52,15 +52,17 @@ class AgentDaoTest {
     @Test
     @Throws(Exception::class)
     fun createAndGetAgent() = runBlocking {
-        agentDao.createAgent(agent1)
-        val agentFromDB = agentDao.getAgent(agent1.id).waitForValue()
-        assertEquals(agentFromDB[0].id, agent1.id)
+        val id = agentDao.createAgent(agent1)
+        val agentFromDB = agentDao.getAgent(id.toInt()).waitForValue()
+        Log.d("id", id.toString())
+        Log.d("agents", agentFromDB.toString())
+        assertEquals(agentFromDB[0].id, id.toInt())
     }
 
     @Test
     @Throws(Exception::class)
     fun getAllAgents() = runBlocking{
-        val agent2 = Agent("New", "Agent", "agent2u@rem.com", "+999-999-999", "http://mypictute1")
+        val agent2 = Agent(2,"New", "Agent", "agent2u@rem.com", "+999-999-999", "http://mypictute1")
         agentDao.createAgent(agent1)
         agentDao.createAgent(agent2)
         val allAgents = agentDao.getAllAgents().waitForValue()

@@ -16,7 +16,7 @@ interface AmenityDao {
     fun getAmenities(propertyId: Int): LiveData<List<Amenity>>
 
     @Insert
-    suspend fun insertAmenity(amenity: Amenity)
+    suspend fun insertAmenity(amenities: Amenity)
 
     @Query("DELETE FROM Amenity WHERE id = :amenityId")
     suspend fun deleteAmenity(amenityId: Int)

@@ -1,9 +1,12 @@
 package com.openclassrooms.realestatemanager.data.database
 
 import android.content.Context
-import androidx.room.*
-import com.openclassrooms.realestatemanager.data.entity.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.openclassrooms.realestatemanager.data.database.dao.*
+import com.openclassrooms.realestatemanager.data.entity.*
 
 /**
  * Created by galou on 2019-07-03

@@ -37,6 +37,7 @@
         android:layout_marginBottom="@dimen/margin_small">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_property_view_price_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/price_dollar"
@@ -55,6 +56,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_property_view_surface_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/surface_m2"
@@ -81,6 +83,7 @@
         android:layout_marginBottom="@dimen/margin_small">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_property_view_room_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/rooms"
@@ -99,6 +102,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_property_view_bedroom_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/bedrooms"
@@ -117,6 +121,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_property_view_bathroom_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/bathrooms"
@@ -154,6 +159,7 @@
         android:layout_marginBottom="@dimen/margin_small">
 
         <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/add_property_view_nearby_school"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_columnWeight="1"
@@ -162,6 +168,7 @@
             app:layout_column="0"/>
 
         <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/add_property_view_nearby_playground"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_columnWeight="1"
@@ -170,6 +177,7 @@
             app:layout_column="1"/>
 
         <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/add_property_view_nearby_shop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_columnWeight="1"
@@ -178,6 +186,7 @@
             app:layout_column="2"/>
 
         <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/add_property_view_nearby_buses"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_columnWeight="1"
@@ -186,6 +195,7 @@
             app:layout_column="0"/>
 
         <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/add_property_view_nearby_subway"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_columnWeight="1"
@@ -194,6 +204,7 @@
             app:layout_column="1"/>
 
         <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/add_property_view_nearby_park"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_columnWeight="1"
@@ -272,6 +283,7 @@
         android:layout_marginBottom="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small">
         <Switch
+            android:id="@+id/add_property_view_sold_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView

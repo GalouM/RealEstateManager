@@ -1,8 +1,6 @@
 package com.openclassrooms.realestatemanager.mviBase
 
 import androidx.lifecycle.ViewModel
-import com.openclassrooms.realestatemanager.mainActivity.MainActivityIntent
-import com.openclassrooms.realestatemanager.mainActivity.MainActivityResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

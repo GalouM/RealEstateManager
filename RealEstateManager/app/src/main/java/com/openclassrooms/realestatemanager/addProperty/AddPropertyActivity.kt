@@ -1,11 +1,10 @@
 package com.openclassrooms.realestatemanager.addProperty
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
@@ -15,8 +14,6 @@ class AddPropertyActivity : AppCompatActivity() {
     @BindView(R.id.add_property_activity_toolbar) lateinit var toolbar: Toolbar
 
     private var addPropertyView: AddPropertyView? = null
-
-    private var currency = "euros"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,24 +37,8 @@ class AddPropertyActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
-            R.id.menu_add_property_activity_currency -> {
-                when(currency){
-                    "euros" -> {
-                        item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
-                        currency = "dollars"
-                        return true
-                    }
-                    "dollars" -> {
-                        item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
-                        currency = "euros"
-                        return true
-                    }
-                }
-                item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
-                return true
-            }
-        }
+        addPropertyView!!.toolBarClickListener(item?.itemId)
+        //item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
         return super.onOptionsItemSelected(item)
     }
 

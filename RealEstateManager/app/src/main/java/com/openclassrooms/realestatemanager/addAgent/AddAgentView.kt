@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.addAgent
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.Intent.*
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -88,25 +89,10 @@ class AddAgentView : Fragment() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.menu_add_agent_activity_check -> {
-                viewModel.actionFromIntent(AddAgentIntent.AddAgentToDBIntent(
-                        uriProfileImage,
-                        firstName.text.toString(),
-                        lastName.text.toString(),
-                        email.text.toString(),
-                        phoneNumber.text.toString()
-                ))
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     fun clickListenerToolbar(){
         disableAllErrors()
         viewModel.actionFromIntent(AddAgentIntent.AddAgentToDBIntent(
-                null,
+                uriProfileImage,
                 firstName.text.toString(),
                 lastName.text.toString(),
                 email.text.toString(),
@@ -166,7 +152,12 @@ class AddAgentView : Fragment() {
             return
         }
 
-        val photoIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val photoIntent = Intent(ACTION_OPEN_DOCUMENT).apply {
+            addCategory(CATEGORY_OPENABLE)
+            type = "image/*"
+        }
+        photoIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+        photoIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         startActivityForResult(photoIntent, RC_CHOOSE_PHOTO)
 
     }

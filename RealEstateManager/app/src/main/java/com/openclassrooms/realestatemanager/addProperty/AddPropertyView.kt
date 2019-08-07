@@ -15,9 +15,11 @@ import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import butterknife.OnItemSelected
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.database.Converters
+import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.extensions.toCalendar
 import com.openclassrooms.realestatemanager.extensions.toDate
 import com.openclassrooms.realestatemanager.extensions.toStringForDisplay
@@ -29,7 +31,7 @@ import java.util.*
  * A simple [Fragment] subclass.
  *
  */
-class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener {
+class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListAgentsDialogView.OnAgentSelected {
 
     @BindView(R.id.add_property_view_dropdown_type) lateinit var dropdowPropertyType: AutoCompleteTextView
     @BindView(R.id.add_property_view_price) lateinit var priceText: EditText
@@ -62,6 +64,7 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener {
     @BindView(R.id.add_property_view_since_inputlayout) lateinit var onMarketSinceLayout: TextInputLayout
 
     private lateinit var viewModel: AddPropertyViewModel
+    private var agentSelectedId: Int? = null
 
     internal lateinit var callback: OnCurrencyChangedListener
 
@@ -118,6 +121,10 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener {
         }
         changeCurrency(viewState.currency)
 
+        if(viewState.openListAgents && viewState.listAgents != null){
+            showAgentDialogView(viewState.listAgents)
+        }
+
 
     }
 
@@ -155,6 +162,14 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener {
         }
     }
 
+    private fun showAgentDialogView(agents: List<Agent>){
+        Log.e("here", "again")
+        val listAgentDialog = ListAgentsDialogView(agents)
+        listAgentDialog.setTargetFragment(this, AGENT_LIST_DIALOG_CODE)
+        listAgentDialog.show(fragmentManager!!.beginTransaction(), AGENT_LIST_TAG)
+
+    }
+
     private fun disableAllErrors(){
         priceLayout.isErrorEnabled = false
         surfaceLayout.isErrorEnabled = false
@@ -181,7 +196,7 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener {
                 typeProperty, priceText.text.toString(), surfaceText.text.toString(), roomText.text.toString(),
                 bedroomText.text.toString(), bathroomText.text.toString(), descriptionText.text.toString(),
                 addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOnText.text.toString(), 1, listAmenities, null, null)
+                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, listAmenities, null, null)
         )
     }
 
@@ -212,6 +227,13 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener {
         }
     }
 
+    override fun onAgentSelected(agent: Agent) {
+        val displayNameAgent = "${agent.firstName} ${agent.lastName}"
+        dropdowAgent.setText(displayNameAgent)
+        agentSelectedId = agent.id
+        Log.e("id", "${agentSelectedId}")
+    }
+
     @OnClick(value = [R.id.add_property_view_sold_on, R.id.add_property_view_since])
     fun onClickDate(view: View){
         val calendar: Calendar? = when(view){
@@ -224,9 +246,10 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener {
         datePickerDialog.setTargetFragment(this, PICK_DATE_DIALOG_CODE)
         datePickerDialog.show(fragmentManager!!.beginTransaction(), PICK_DATE_TAG)
 
+    }
 
-
-
-
+    @OnClick(R.id.add_property_view_dropdown_agent)
+    fun onClickAgentDropdown(){
+        viewModel.actionFromIntent(AddPropertyIntent.OpenListAgentsIntent)
     }
 }

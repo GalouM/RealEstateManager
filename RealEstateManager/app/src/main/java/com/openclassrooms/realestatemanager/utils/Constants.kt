@@ -12,3 +12,5 @@ const val RC_IMAGE_PERMS = 100
 const val RC_CHOOSE_PHOTO = 200
 const val PICK_DATE_TAG = "PickDateView"
 const val PICK_DATE_DIALOG_CODE = 300
+const val AGENT_LIST_TAG = "AgentListView"
+const val AGENT_LIST_DIALOG_CODE = 400

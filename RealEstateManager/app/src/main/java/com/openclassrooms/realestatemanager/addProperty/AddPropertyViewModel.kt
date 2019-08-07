@@ -68,7 +68,8 @@ class AddPropertyViewModel (
                 when(result.packet){
                     is AddPropertyResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
-                                currency = result.packet.currency)
+                                currency = result.packet.currency,
+                                openListAgents = false)
                     }
 
                     is AddPropertyResult.ListAgentsResult -> {
@@ -81,14 +82,17 @@ class AddPropertyViewModel (
                     is AddPropertyResult.AddPropertyToDBResult -> {
                         currentViewState.copy(
                                 isLoading = false,
-                                isSaved = true
+                                isSaved = true,
+                                openListAgents = false
                         )
                     }
                 }
             }
 
             is Lce.Loading ->{
-                currentViewState.copy(isLoading = true)
+                currentViewState.copy(
+                        isLoading = true,
+                        openListAgents = false)
 
             }
 
@@ -97,18 +101,21 @@ class AddPropertyViewModel (
                     is AddPropertyResult.AddPropertyToDBResult -> {
                         currentViewState.copy(
                                 errors = result.packet.errorSource,
-                                isLoading = false)
+                                isLoading = false,
+                                openListAgents = false)
                     }
 
                     is AddPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
                                 isLoading = false,
-                                errors = result.packet.errorSource
+                                errors = result.packet.errorSource,
+                                openListAgents = false
                         )
                     }
                     is AddPropertyResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
-                                isLoading = false
+                                isLoading = false,
+                                openListAgents = false
                         )
                     }
                 }

@@ -10,4 +10,6 @@
     <dimen name="shadow_dy">5dp</dimen>
     <dimen name="medium_padding">16dp</dimen>
     <dimen name="margin_small">15dp</dimen>
+    <dimen name="list_agent_picture">50dip</dimen>
+    <dimen name="list_agent_name">15sp</dimen>
 </resources>

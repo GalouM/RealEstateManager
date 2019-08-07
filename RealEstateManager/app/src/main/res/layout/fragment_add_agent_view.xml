@@ -11,7 +11,7 @@
     tools:context=".addAgent.AddAgentView">
 
     <ImageView
-        android:id="@+id/add_agent_view_add_photo"
+        android:id="@+id/add_agent_view_picture_agent"
         android:layout_marginTop="@dimen/margin_small"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -21,7 +21,7 @@
         android:src="@drawable/agent_picture_default"/>
 
     <ImageView
-        android:id="@+id/add_agent_view_picture_agent"
+        android:id="@+id/add_agent_view_add_photo"
         android:layout_marginTop="@dimen/margin_small"
         android:layout_width="100dp"
         android:layout_height="100dp"

@@ -63,7 +63,6 @@ class PickDateDialogView(private val dateViewId: View, private var existingDate:
 
     override fun onClick(dialog: DialogInterface?, button: Int) {
         if(button == BUTTON_POSITIVE){
-            Log.e("ok button", pickedDate.toString())
             setDate()
             callback.onOkButtonListener(pickedDate, dateViewId)
         }

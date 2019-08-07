@@ -51,7 +51,6 @@ class AddAgentActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.menu_add_agent_activity_check -> {
-                Log.e("tag", "click toolbar detected Activity")
                 addAgentView!!.clickListenerToolbar()
             }
         }

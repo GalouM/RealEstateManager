@@ -14,11 +14,11 @@ import com.openclassrooms.realestatemanager.data.entity.Agent
 @Dao
 interface AgentDao {
     @Query("SELECT * FROM Agent")
-    fun getAllAgents(): LiveData<List<Agent>>
+    suspend fun getAllAgents(): List<Agent>
 
     @Query("SELECT * FROM Agent WHERE id = :agentId")
-    fun getAgent(agentId: Int): LiveData<List<Agent>>
+    fun getAgent(agentId: Int): List<Agent>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createAgent(agent: Agent): Long
+    suspend fun createAgent(agent: Agent)
 }

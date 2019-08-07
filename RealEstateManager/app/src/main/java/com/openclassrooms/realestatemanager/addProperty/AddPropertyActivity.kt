@@ -5,15 +5,19 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
 
-class AddPropertyActivity : AppCompatActivity() {
+class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChangedListener {
 
     @BindView(R.id.add_property_activity_toolbar) lateinit var toolbar: Toolbar
 
     private var addPropertyView: AddPropertyView? = null
+
+    private var menuToolbar: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +26,12 @@ class AddPropertyActivity : AppCompatActivity() {
 
         configureToolbar()
         configureAndShowView()
+    }
+
+    override fun onAttachFragment(fragment: Fragment) {
+        if(fragment is AddPropertyView){
+            fragment.setOnCurrencyChangedListener(this)
+        }
     }
 
     private fun configureToolbar() {
@@ -33,6 +43,8 @@ class AddPropertyActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar_add_property_activity, menu)
+        menuToolbar = menu
+
         return true
     }
 
@@ -50,6 +62,19 @@ class AddPropertyActivity : AppCompatActivity() {
                     .beginTransaction()
                     .add(R.id.add_property_activity_frame_layout, addPropertyView!!)
                     .commit()
+        }
+    }
+
+    override fun onClickCurrency(currency: Currency) {
+        when(currency){
+            Currency.EURO -> {
+                val currencyItem = menuToolbar!!.findItem(R.id.menu_add_property_activity_currency)
+                currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
+            }
+            Currency.DOLLAR -> {
+                val currencyItem = menuToolbar!!.findItem(R.id.menu_add_property_activity_currency)
+                currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
+            }
         }
     }
 }

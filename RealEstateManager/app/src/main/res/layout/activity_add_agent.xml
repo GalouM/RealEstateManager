@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".addAgent.AddAgentActivity"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/add_agent_activity_toolbar"
-        layout="@layout/toolbar"
+    <LinearLayout
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        tools:context=".addAgent.AddAgentActivity"
+        android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/add_agent_activity_frame_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <include
+            android:id="@+id/add_agent_activity_toolbar"
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+        <FrameLayout
+            android:id="@+id/add_agent_activity_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,15 +9,15 @@ import com.openclassrooms.realestatemanager.data.entity.Agent
  */
 class AgentRepository (private val agentDao: AgentDao){
 
-    fun getAllAgents(): LiveData<List<Agent>> {
+    suspend fun getAllAgents(): List<Agent> {
         return agentDao.getAllAgents()
     }
 
-    fun getAgent(agentId: Int): LiveData<List<Agent>> {
+    fun getAgent(agentId: Int): List<Agent> {
         return agentDao.getAgent(agentId)
     }
 
-    suspend fun createAgent(agent: Agent): Long {
-        return agentDao.createAgent(agent)
+    suspend fun createAgent(agent: Agent){
+        agentDao.createAgent(agent)
     }
 }

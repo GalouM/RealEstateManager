@@ -54,7 +54,8 @@ class MainActivityViewModel(
             is Lce.Error -> {
                 when(result.packet){
                     is MainActivityResult.OpenAddPropertyResult ->{
-                        currentViewState.copy(isOpenAddProperty = false,
+                        currentViewState.copy(
+                                isOpenAddProperty = false,
                                 errorSource = ErrorSource.NO_AGENT_IN_DB,
                                 isLoading = false)
                     }
@@ -68,8 +69,7 @@ class MainActivityViewModel(
         if(searchAgentsJob?.isActive == true) searchAgentsJob?.cancel()
 
         searchAgentsJob = launch {
-            val agents: List<Agent>? = agentRepository.getAllAgents().value
-            Log.e("agents", agents.toString())
+            val agents: List<Agent>? = agentRepository.getAllAgents()
             val result: Lce<MainActivityResult> = if(agents == null || agents.isEmpty()){
                 Lce.Error(MainActivityResult.OpenAddPropertyResult)
             } else{

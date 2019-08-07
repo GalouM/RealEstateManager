@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.data.AgentRepository
 import com.openclassrooms.realestatemanager.data.PropertyRepository
+import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.data.entity.*
 import com.openclassrooms.realestatemanager.extensions.*
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
@@ -116,7 +117,7 @@ class AddPropertyViewModel (
         }
     }
 
-    private fun addPropertyToDB(type: TypeProperty?, price: String,
+    private fun addPropertyToDB(type: String, price: String,
                                 surface: String, rooms: String,
                                 bedrooms: String, bathrooms: String,
                                 description: String, address: String,
@@ -136,13 +137,13 @@ class AddPropertyViewModel (
         val sellDate = sellOn?.toDate()
 
         fun checkErrors(){
-            if(onMarketDate != null &&
+            if(onMarketDate == null ||
                     !onMarketDate.isCorrectOnMarketDate()) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE)
-            if(sellDate != null &&
+            if(sellDate == null ||
                     onMarketDate != null
                     && !sellDate.isCorrectSoldDate(onMarketDate)) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_SOLD_DATE)
             if(isSold && sellOn == null) listErrorInputs.add(ErrorSourceAddProperty.NO_SOLD_DATE)
-            if(type == null) listErrorInputs.add(ErrorSourceAddProperty.NO_TYPE_SELECTED)
+            if(!type.isExistingPropertyType()) listErrorInputs.add(ErrorSourceAddProperty.NO_TYPE_SELECTED)
             if(price.isEmpty() || price.toDoubleOrNull() == null) listErrorInputs.add(ErrorSourceAddProperty.NO_PRICE)
             if(surface.isEmpty() || surface.toDoubleOrNull() == null) listErrorInputs.add(ErrorSourceAddProperty.NO_SURFACE)
             if(rooms.isEmpty() || rooms.toIntOrNull() == null) listErrorInputs.add(ErrorSourceAddProperty.NO_ROOMS)
@@ -183,7 +184,7 @@ class AddPropertyViewModel (
         fun createNewPropertyInDB(){
             addPropertyJob = launch {
                 val propertyForDB = Property(
-                        null, type!!, price.toDouble().toEuro(currentCurency),
+                        null, Converters.toTypeProperty(type), price.toDouble().toEuro(currentCurency),
                         surface.toDouble().toSqMeter(currentCurency), rooms.toInt(),
                         bedrooms.toIntOrNull(), bathrooms.toIntOrNull(),
                         description, onMarketSince!!,
@@ -242,8 +243,7 @@ class AddPropertyViewModel (
         if(searchAgentsJob?.isActive == true) searchAgentsJob?.cancel()
 
         searchAgentsJob = launch {
-            val agents: List<Agent>? = agentRepository.getAllAgents().value
-            Log.e("agents", agents.toString())
+            val agents: List<Agent>? = agentRepository.getAllAgents()
             val result: Lce<AddPropertyResult> = if(agents == null || agents.isEmpty()){
                 val listErrors = listOf(ErrorSourceAddProperty.ERROR_FETCHING_AGENTS)
                 Lce.Error(AddPropertyResult.ListAgentsResult(null, listErrors))

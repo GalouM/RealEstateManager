@@ -30,7 +30,6 @@ class AddAgentViewModel (
         }
 
     private var addAgentsJob: Job? = null
-    private var getAgentsJog: Job? = null
 
      fun actionFromIntent(intent: AddAgentIntent) {
         when(intent) {
@@ -85,6 +84,7 @@ class AddAgentViewModel (
                                             email: String,
                                             phoneNumber: String){
         resultToViewState(Lce.Loading())
+
         if(addAgentsJob?.isActive == true) addAgentsJob?.cancel()
 
         fun checkErrors(): List<ErrorSourceAddAgent>{
@@ -102,13 +102,8 @@ class AddAgentViewModel (
         if (listErrors.isEmpty()) {
             addAgentsJob = launch {
                 val agent = Agent(null, firstName, lastName, email, phoneNumber, urlPicture)
-                val idAgent = agentRepository.createAgent(agent)
-                getAgentsJog = launch {
-                    val agents = agentRepository.getAgent(idAgent.toInt())
-                    Log.e("id", agents.value.toString())
-                    Log.e("agents", agents.value.toString())
-                }
-                //resultToViewState(Lce.Content(AddAgentResult.AddAgentToDBResult(null)))
+                agentRepository.createAgent(agent)
+                resultToViewState(Lce.Content(AddAgentResult.AddAgentToDBResult(null)))
             }
         }
         else{

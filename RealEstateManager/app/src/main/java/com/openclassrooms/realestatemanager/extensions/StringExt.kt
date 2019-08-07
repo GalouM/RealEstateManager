@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.extensions
 
 import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
+import com.openclassrooms.realestatemanager.utils.TypeProperty
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,8 +34,20 @@ fun String.isCorrectPhoneNumber(): Boolean{
 
 }
 
-fun String.toDate(): Date{
+fun String.toDate(): Date?{
     val formatter = SimpleDateFormat(DATE_FORMAT, Locale.CANADA)
-    return formatter.parse(this)
+    return try {
+        formatter.parse(this)
+    } catch (e : Exception){
+        null
+    }
 
+}
+
+fun String.isExistingPropertyType(): Boolean{
+    TypeProperty.values().forEach {
+        if(this == it.typeName) return true
+    }
+
+    return false
 }

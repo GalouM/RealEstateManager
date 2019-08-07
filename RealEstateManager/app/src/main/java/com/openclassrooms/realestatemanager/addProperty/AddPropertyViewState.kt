@@ -19,7 +19,7 @@ data class AddPropertyViewState(
 
 sealed class AddPropertyIntent{
     data class AddPropertyToDBIntent(
-            val type: TypeProperty?, val price: String,
+            val type: String, val price: String,
             val surface: String, val rooms: String,
             val bedrooms: String, val bathrooms: String,
             val description: String, val address: String,

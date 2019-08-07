@@ -12,7 +12,7 @@
     <string name="validate_menu">Validate</string>
     <string name="type_dropdown_menu">Type</string>
     <string name="price_dollar">Price ($)</string>
-    <string name="surface_m2">Surface (m2)</string>
+    <string name="surface_m2">Surface (m²)</string>
     <string name="rooms">Rooms</string>
     <string name="bedrooms">Bedrooms</string>
     <string name="bathrooms">Bathrooms</string>
@@ -35,6 +35,17 @@
     <string name="email">Email</string>
     <string name="last_name">Last name</string>
     <string name="first_name">First name</string>
+    <string name="error_message_first_name">Incorrect First Name</string>
+    <string name="error_message_last_name">Incorrect Last Name</string>
+    <string name="error_message_email">Incorrect Email</string>
+    <string name="error_message_phone">Incorrect Phone Number</string>
+    <string name="storage_perm_request">App need storage permission</string>
+    <string name="unknow_error">Unknown error</string>
+    <string name="price_euros">Price (€)</string>
+    <string name="surface_ft2">Surface (ft²)</string>
+    <string name="create_agent_first">Create an agent first</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">CANCEL</string>
 
 
     <string-array name="planets_array">

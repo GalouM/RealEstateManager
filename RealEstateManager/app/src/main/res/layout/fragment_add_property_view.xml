@@ -295,14 +295,16 @@
             app:layout_constraintTop_toBottomOf="@id/add_property_view_neighbourhood_inputlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/sold_on">
+            android:hint="@string/sold_on"
+            android:visibility="invisible">
 
             <EditText
                 android:id="@+id/add_property_view_sold_on"
                 style="@style/Widget.AppCompat.Spinner.Underlined"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:inputType="date"/>
+                android:inputType="date"
+                android:visibility="invisible"/>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 

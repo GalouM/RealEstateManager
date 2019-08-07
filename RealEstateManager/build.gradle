@@ -40,4 +40,6 @@ ext {
     rxJavaVersion = "2.1.6"
     rxAndroidVersion = "2.0.1"
     dagger2Version = '2.21'
+    easyPermVersion = '1.1.1'
+    glideVersion = '4.6.1'
 }

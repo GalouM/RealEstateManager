@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.ContentFrameLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -19,6 +20,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.utils.showSnackBar
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
@@ -218,9 +220,15 @@ class MainActivity : AppCompatActivity(),
 
     private fun renderErrorOpeningActivity(errorSource: ErrorSource){
         when(errorSource){
-            ErrorSource.NO_AGENT_IN_DB -> Log.e("message", "no agent in db")
-            else -> Log.e("message", "unknow error")
+            ErrorSource.NO_AGENT_IN_DB -> showSnackBarMessage(getString(R.string.create_agent_first))
+            else -> showSnackBarMessage(getString(R.string.unknow_error))
         }
+
+    }
+
+    private fun showSnackBarMessage(message: String){
+        val viewLayout = findViewById<ContentFrameLayout>(android.R.id.content)
+        showSnackBar(viewLayout, message)
 
     }
 }

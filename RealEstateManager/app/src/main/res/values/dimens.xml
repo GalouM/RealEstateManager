@@ -12,4 +12,5 @@
     <dimen name="margin_small">15dp</dimen>
     <dimen name="list_agent_picture">50dip</dimen>
     <dimen name="list_agent_name">15sp</dimen>
+    <dimen name="picture_agent">100dp</dimen>
 </resources>

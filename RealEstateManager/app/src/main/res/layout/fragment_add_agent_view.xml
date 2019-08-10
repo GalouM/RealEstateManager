@@ -13,8 +13,8 @@
     <ImageView
         android:id="@+id/add_agent_view_picture_agent"
         android:layout_marginTop="@dimen/margin_small"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/picture_agent"
+        android:layout_height="@dimen/picture_agent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -23,8 +23,8 @@
     <ImageView
         android:id="@+id/add_agent_view_add_photo"
         android:layout_marginTop="@dimen/margin_small"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/picture_agent"
+        android:layout_height="@dimen/picture_agent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -43,7 +43,7 @@
             android:id="@+id/add_agent_view_firstname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="text"
+            android:inputType="textCapWords"
             android:background="@android:color/transparent"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -61,7 +61,7 @@
             android:id="@+id/add_agent_view_lastname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="text"
+            android:inputType="textCapWords"
             android:background="@android:color/transparent"/>
 
     </com.google.android.material.textfield.TextInputLayout>

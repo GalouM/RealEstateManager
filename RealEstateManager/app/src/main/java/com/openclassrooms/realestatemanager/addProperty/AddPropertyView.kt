@@ -45,7 +45,7 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
     @BindView(R.id.add_property_view_since) lateinit var onMarketSinceText: EditText
     @BindView(R.id.add_property_view_sold_on) lateinit var soldOnText: EditText
     @BindView(R.id.add_property_view_sold_switch) lateinit var soldSwithch: Switch
-    @BindView(R.id.add_property_view_dropdown_agent) lateinit var dropdowAgent: AutoCompleteTextView
+    @BindView(R.id.add_property_view_dropdown_agent) lateinit var dropdowAgent: EditText
     @BindView(R.id.add_property_view_nearby_school) lateinit var schoolBox: CheckBox
     @BindView(R.id.add_property_view_nearby_buses) lateinit var busesBox: CheckBox
     @BindView(R.id.add_property_view_nearby_park) lateinit var parkBox: CheckBox
@@ -62,6 +62,8 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
     @BindView(R.id.add_property_view_address_inputlayout) lateinit var addressLayout: TextInputLayout
     @BindView(R.id.add_property_view_neighbourhood_inputlayout) lateinit var neighbourhoodLayout: TextInputLayout
     @BindView(R.id.add_property_view_since_inputlayout) lateinit var onMarketSinceLayout: TextInputLayout
+    @BindView(R.id.add_property_view_dropdown_agent_inputlayout) lateinit var agentLayout: TextInputLayout
+    @BindView(R.id.add_property_view_type_inputlayout) lateinit var typeLayout: TextInputLayout
 
     private lateinit var viewModel: AddPropertyViewModel
     private var agentSelectedId: Int? = null
@@ -82,14 +84,9 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
         ButterKnife.bind(this, view)
 
         configureViewModel()
-
-
-        ArrayAdapter(activity!!, android.R.layout.simple_spinner_item, TypeProperty.values())
-                .also { adapter -> adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    dropdowPropertyType.setAdapter(adapter) }
+        configureTypeDropdownOptions()
 
         return view
-
 
     }
 
@@ -98,6 +95,17 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
             R.id.menu_add_property_activity_currency -> viewModel.actionFromIntent(AddPropertyIntent.ChangeCurrencyIntent)
             R.id.menu_add_property_activity_check -> fetchInfoPropertyFromUI()
         }
+    }
+
+    private fun configureTypeDropdownOptions(){
+        val propertyType = mutableListOf<String>()
+        TypeProperty.values().forEach {
+            propertyType.add(it.typeName)
+        }
+
+        ArrayAdapter(activity!!, android.R.layout.simple_spinner_item, propertyType)
+                .also { adapter -> adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    dropdowPropertyType.setAdapter(adapter) }
     }
 
     private fun configureViewModel(){
@@ -146,24 +154,23 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
     private fun showErrors(errors: List<ErrorSourceAddProperty>){
         errors.forEach{
             when(it){
-                ErrorSourceAddProperty.NO_TYPE_SELECTED -> TODO()
-                ErrorSourceAddProperty.NO_PRICE -> priceLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.NO_SURFACE -> surfaceLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.NO_ROOMS -> roomLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.NO_ADDRESS -> addressLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.NO_NEIGHBORHOOD -> neighbourhoodLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.NO_ON_MARKET_DATE -> onMarketSinceLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.NO_SOLD_DATE -> soldOnLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.NO_AGENT -> TODO()
-                ErrorSourceAddProperty.INCORRECT_SOLD_DATE -> soldOnLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE -> onMarketSinceLayout.isErrorEnabled = true
-                ErrorSourceAddProperty.ERROR_FETCHING_AGENTS -> showSnackBarMessage("Error finding agents please try again")
+                ErrorSourceAddProperty.NO_TYPE_SELECTED -> typeLayout.error = getString(R.string.incorrect_type)
+                ErrorSourceAddProperty.NO_PRICE -> priceLayout.error = getString(R.string.can_t_be_empty)
+                ErrorSourceAddProperty.NO_SURFACE -> surfaceLayout.error = getString(R.string.can_t_be_empty)
+                ErrorSourceAddProperty.NO_ROOMS -> roomLayout.error = getString(R.string.can_t_be_empty)
+                ErrorSourceAddProperty.NO_ADDRESS -> addressLayout.error = getString(R.string.can_t_be_empty)
+                ErrorSourceAddProperty.NO_NEIGHBORHOOD -> neighbourhoodLayout.error = getString(R.string.can_t_be_empty)
+                ErrorSourceAddProperty.NO_ON_MARKET_DATE -> onMarketSinceLayout.error = getString(R.string.can_t_be_empty)
+                ErrorSourceAddProperty.NO_SOLD_DATE -> soldOnLayout.error = getString(R.string.can_t_be_empty)
+                ErrorSourceAddProperty.NO_AGENT -> agentLayout.error = getString(R.string.can_t_be_empty)
+                ErrorSourceAddProperty.INCORRECT_SOLD_DATE -> soldOnLayout.error = getString(R.string.incorrect_date)
+                ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE -> onMarketSinceLayout.error = getString(R.string.incorrect_date)
+                ErrorSourceAddProperty.ERROR_FETCHING_AGENTS -> showSnackBarMessage(getString(R.string.error_finding_agents))
             }
         }
     }
 
     private fun showAgentDialogView(agents: List<Agent>){
-        Log.e("here", "again")
         val listAgentDialog = ListAgentsDialogView(agents)
         listAgentDialog.setTargetFragment(this, AGENT_LIST_DIALOG_CODE)
         listAgentDialog.show(fragmentManager!!.beginTransaction(), AGENT_LIST_TAG)

@@ -142,14 +142,18 @@ class AddPropertyViewModel (
         val listErrorInputs = mutableListOf<ErrorSourceAddProperty>()
         val onMarketDate = onMarketSince?.toDate()
         val sellDate = sellOn?.toDate()
+        Log.e("type string", type)
+        Log.e("type string", type.isExistingPropertyType().toString())
 
         fun checkErrors(){
             if(onMarketDate == null ||
                     !onMarketDate.isCorrectOnMarketDate()) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE)
-            if(sellDate == null ||
-                    onMarketDate != null
-                    && !sellDate.isCorrectSoldDate(onMarketDate)) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_SOLD_DATE)
-            if(isSold && sellOn == null) listErrorInputs.add(ErrorSourceAddProperty.NO_SOLD_DATE)
+            if(isSold) {
+                if (sellDate == null ||
+                        onMarketDate != null
+                        && !sellDate.isCorrectSoldDate(onMarketDate)) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_SOLD_DATE)
+                if (sellOn == null) listErrorInputs.add(ErrorSourceAddProperty.NO_SOLD_DATE)
+            }
             if(!type.isExistingPropertyType()) listErrorInputs.add(ErrorSourceAddProperty.NO_TYPE_SELECTED)
             if(price.isEmpty() || price.toDoubleOrNull() == null) listErrorInputs.add(ErrorSourceAddProperty.NO_PRICE)
             if(surface.isEmpty() || surface.toDoubleOrNull() == null) listErrorInputs.add(ErrorSourceAddProperty.NO_SURFACE)

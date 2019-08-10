@@ -46,6 +46,10 @@
     <string name="create_agent_first">Create an agent first</string>
     <string name="ok_button">OK</string>
     <string name="cancel_button">CANCEL</string>
+    <string name="error_finding_agents">Error finding agents please try again</string>
+    <string name="incorrect_type">Incorrect Type</string>
+    <string name="can_t_be_empty">Can\'t be empty</string>
+    <string name="incorrect_date">Incorrect Date</string>
 
 
     <string-array name="planets_array">

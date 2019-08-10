@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.extensions
 
+import android.util.Log
 import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import java.text.SimpleDateFormat
@@ -45,7 +46,9 @@ fun String.toDate(): Date?{
 }
 
 fun String.isExistingPropertyType(): Boolean{
+    Log.e("this", this)
     TypeProperty.values().forEach {
+        Log.e("type" , it.toString())
         if(this == it.typeName) return true
     }
 

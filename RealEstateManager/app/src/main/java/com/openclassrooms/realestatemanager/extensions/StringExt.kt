@@ -46,11 +46,14 @@ fun String.toDate(): Date?{
 }
 
 fun String.isExistingPropertyType(): Boolean{
-    Log.e("this", this)
     TypeProperty.values().forEach {
-        Log.e("type" , it.toString())
         if(this == it.typeName) return true
     }
 
     return false
+}
+
+fun String.convertForApi():String{
+    return this.replace("\\s+", "+")
+            .replace(",", "")
 }

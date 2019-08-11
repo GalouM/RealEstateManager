@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -20,6 +21,8 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_AGENT
+import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_PROPERTY
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
@@ -55,6 +58,20 @@ class MainActivity : AppCompatActivity(),
         configureToolbar()
         configureViewPagerAndTablayout()
         configureRapidFloatingActionButton()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == RC_CODE_ADD_AGENT){
+            if(resultCode == Activity.RESULT_OK){
+                showSnackBarMessage("Agent added to the database")
+            }
+        }
+        if(requestCode == RC_CODE_ADD_PROPERTY){
+            if(resultCode == Activity.RESULT_OK){
+                showSnackBarMessage("Property added to the database")
+            }
+        }
     }
 
     //--------------------
@@ -194,7 +211,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     //--------------------
-    // SATE AND INTENT
+    // STATE AND INTENT
     //--------------------
 
     private fun render(viewState: MainActivityViewState?) {
@@ -210,18 +227,17 @@ class MainActivity : AppCompatActivity(),
 
     private fun renderShowAddPropertyActivity(){
         val intent = Intent(this, AddPropertyActivity::class.java)
-        startActivity(intent)
+        startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 
     private fun showAddAgentActivity(){
         val intent = Intent(this, AddAgentActivity::class.java)
-        startActivity(intent)
+        startActivityForResult(intent, RC_CODE_ADD_AGENT)
     }
 
     private fun renderErrorOpeningActivity(errorSource: ErrorSource){
         when(errorSource){
             ErrorSource.NO_AGENT_IN_DB -> showSnackBarMessage(getString(R.string.create_agent_first))
-            else -> showSnackBarMessage(getString(R.string.unknow_error))
         }
 
     }

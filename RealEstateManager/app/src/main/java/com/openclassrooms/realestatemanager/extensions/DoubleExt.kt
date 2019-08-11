@@ -1,6 +1,6 @@
 package com.openclassrooms.realestatemanager.extensions
 
-import com.openclassrooms.realestatemanager.addProperty.Currency
+import com.openclassrooms.realestatemanager.utils.Currency
 import kotlin.math.roundToLong
 
 /**

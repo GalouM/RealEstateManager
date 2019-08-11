@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.data.AgentRepository
+import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
  * Created by galou on 2019-07-04
  */
 class MainActivityViewModel(
-        private val agentRepository: AgentRepository
+        private val agentRepository: AgentRepository,
+        private val currencyRepository: CurrencyRepository
 ) : BaseViewModel(){
 
     private val viewStateLD = MutableLiveData<MainActivityViewState>()
@@ -41,7 +43,8 @@ class MainActivityViewModel(
             is Lce.Content -> {
                 when(result.packet){
                     is MainActivityResult.OpenAddPropertyResult ->{
-                        currentViewState.copy(isOpenAddProperty = true,
+                        currentViewState.copy(
+                                isOpenAddProperty = true,
                                 errorSource = null,
                                 isLoading = false)
                     }
@@ -49,7 +52,9 @@ class MainActivityViewModel(
             }
 
             is Lce.Loading -> {
-                currentViewState.copy(isLoading = true)
+                currentViewState.copy(
+                        isLoading = true,
+                        errorSource = null)
             }
             is Lce.Error -> {
                 when(result.packet){

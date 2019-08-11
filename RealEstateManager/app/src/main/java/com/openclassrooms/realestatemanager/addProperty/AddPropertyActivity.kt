@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.utils.Currency
 
 class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChangedListener {
 

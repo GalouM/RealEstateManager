@@ -15,4 +15,4 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE)])
 data class Address (@PrimaryKey val propertyId: Int, var address: String,
                     var longitude: Double, var latitude: Double,
-                    var neighbourhood: String)
+                    var neighbourhood: String, var mapIconUrl: String)

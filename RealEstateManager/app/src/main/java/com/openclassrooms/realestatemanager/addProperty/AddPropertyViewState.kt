@@ -1,8 +1,8 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 import com.openclassrooms.realestatemanager.data.entity.Agent
+import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
-import com.openclassrooms.realestatemanager.utils.TypeProperty
 
 /**
  * Created by galou on 2019-07-27
@@ -23,9 +23,9 @@ sealed class AddPropertyIntent{
             val surface: String, val rooms: String,
             val bedrooms: String, val bathrooms: String,
             val description: String, val address: String,
-            val neighborhood: String, val onMarketSince: String?,
+            val neighborhood: String, val onMarketSince: String,
             val isSold: Boolean, val sellDate: String?,
-            val agent: Int?, val amenities: List<TypeAmenity>?,
+            val agent: Int?, val amenities: List<TypeAmenity>,
             val pictures: List<String>?, val pictureDescription: String?
     ) : AddPropertyIntent()
 

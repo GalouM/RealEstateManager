@@ -50,6 +50,7 @@
     <string name="incorrect_type">Incorrect Type</string>
     <string name="can_t_be_empty">Can\'t be empty</string>
     <string name="incorrect_date">Incorrect Date</string>
+    <string name="incorrect_address">Incorrect address</string>
 
 
     <string-array name="planets_array">

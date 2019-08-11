@@ -9,7 +9,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath 'com.android.tools.build:gradle:3.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         
 
@@ -42,4 +42,6 @@ ext {
     dagger2Version = '2.21'
     easyPermVersion = '1.1.1'
     glideVersion = '4.6.1'
+    retrofitVersion = '2.4.0'
+    gsonVersion = '2.8.5'
 }

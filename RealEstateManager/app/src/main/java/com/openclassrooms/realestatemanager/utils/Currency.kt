@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.addProperty
+package com.openclassrooms.realestatemanager.utils
 
 /**
  * Created by galou on 2019-07-27

@@ -89,6 +89,10 @@ class AddAgentView : Fragment() {
         }
     }
 
+    //--------------------
+    // CLICK LISTENER
+    //--------------------
+
     fun clickListenerToolbar(){
         disableAllErrors()
         viewModel.actionFromIntent(AddAgentIntent.AddAgentToDBIntent(
@@ -105,6 +109,10 @@ class AddAgentView : Fragment() {
         chooseProfilePictureFromPhone()
     }
 
+    //--------------------
+    // VIEW MODEL CONNECTION
+    //--------------------
+
     private fun configureViewModel(){
         val viewModelFactory = Injection.providesViewModelFactory(activity!!.applicationContext)
         viewModel = ViewModelProviders.of(
@@ -114,6 +122,10 @@ class AddAgentView : Fragment() {
 
         viewModel.viewState.observe(this, Observer { render(it) })
     }
+
+    //--------------------
+    // STATE AND INTENT
+    //--------------------
 
     private fun render(viewState: AddAgentViewState?){
         if (viewState == null) return

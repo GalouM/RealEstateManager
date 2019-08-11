@@ -18,6 +18,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField ('String', "MapQuestApiKey", mapQuestApiKey)
+        }
+        debug{
+            buildConfigField ('String', "MapQuestApiKey", mapQuestApiKey)
+
         }
     }
 
@@ -93,6 +98,12 @@ dependencies {
 
     //GLIDE
     implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
+
+    //RETROFIT
+    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitVersion"
 
 }
 

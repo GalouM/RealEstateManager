@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,16 +14,15 @@ import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import butterknife.OnItemSelected
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.extensions.toCalendar
 import com.openclassrooms.realestatemanager.extensions.toDate
 import com.openclassrooms.realestatemanager.extensions.toStringForDisplay
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.Currency
 import java.util.*
 
 /**
@@ -68,11 +66,7 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
     private lateinit var viewModel: AddPropertyViewModel
     private var agentSelectedId: Int? = null
 
-    internal lateinit var callback: OnCurrencyChangedListener
-
-    fun setOnCurrencyChangedListener(callback: OnCurrencyChangedListener){
-        this.callback = callback
-    }
+    private lateinit var callback: OnCurrencyChangedListener
 
     interface OnCurrencyChangedListener{
         fun onClickCurrency(currency: Currency)
@@ -90,12 +84,69 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
 
     }
 
+    fun setOnCurrencyChangedListener(callback: OnCurrencyChangedListener){
+        this.callback = callback
+    }
+
+    //--------------------
+    // CLICK LISTENER
+    //--------------------
+
     fun toolBarClickListener(buttonId: Int?){
         when(buttonId){
             R.id.menu_add_property_activity_currency -> viewModel.actionFromIntent(AddPropertyIntent.ChangeCurrencyIntent)
             R.id.menu_add_property_activity_check -> fetchInfoPropertyFromUI()
         }
     }
+
+    override fun onOkButtonListener(calendar: Calendar, view: View) {
+        val dateForDisplay = calendar.time.toStringForDisplay()
+        when(view){
+            onMarketSinceText -> onMarketSinceText.setText(dateForDisplay)
+            soldOnText -> soldOnText.setText(dateForDisplay)
+        }
+    }
+
+    @OnClick(value = [R.id.add_property_view_sold_on, R.id.add_property_view_since])
+    fun onClickDate(view: View){
+        val calendar: Calendar? = when(view){
+            onMarketSinceText -> onMarketSinceText.text.toString().toDate()?.toCalendar()
+            soldOnText -> soldOnText.text.toString().toDate()?.toCalendar()
+            else -> null
+        }
+
+        val datePickerDialog = PickDateDialogView(view, calendar)
+        datePickerDialog.setTargetFragment(this, PICK_DATE_DIALOG_CODE)
+        datePickerDialog.show(fragmentManager!!.beginTransaction(), PICK_DATE_TAG)
+
+    }
+
+    @OnClick(R.id.add_property_view_dropdown_agent)
+    fun onClickAgentDropdown(){
+        viewModel.actionFromIntent(AddPropertyIntent.OpenListAgentsIntent)
+    }
+
+    override fun onAgentSelected(agent: Agent) {
+        val displayNameAgent = "${agent.firstName} ${agent.lastName}"
+        dropdowAgent.setText(displayNameAgent)
+        agentSelectedId = agent.id
+    }
+
+    @OnClick(R.id.add_property_view_sold_switch)
+    fun clickSoldButtonListener(){
+        if(soldSwithch.isChecked){
+            soldOnText.visibility = View.VISIBLE
+            soldOnLayout.visibility = View.VISIBLE
+        } else {
+            soldOnText.visibility = View.INVISIBLE
+            soldOnLayout.visibility = View.INVISIBLE
+        }
+
+    }
+
+    //--------------------
+    // CONFIGURE UI
+    //--------------------
 
     private fun configureTypeDropdownOptions(){
         val propertyType = mutableListOf<String>()
@@ -108,6 +159,10 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
                     dropdowPropertyType.setAdapter(adapter) }
     }
 
+    //--------------------
+    // VIEW MODEL CONNECTION
+    //--------------------
+
     private fun configureViewModel(){
         val viewModelFactory = Injection.providesViewModelFactory(activity!!.applicationContext)
         viewModel = ViewModelProviders.of(
@@ -117,6 +172,10 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
 
         viewModel.viewState.observe(this, Observer { render(it) })
     }
+
+    //--------------------
+    // STATE AND INTENT
+    //--------------------
 
     private fun render(viewState: AddPropertyViewState?){
         if (viewState == null) return
@@ -166,6 +225,9 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
                 ErrorSourceAddProperty.INCORRECT_SOLD_DATE -> soldOnLayout.error = getString(R.string.incorrect_date)
                 ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE -> onMarketSinceLayout.error = getString(R.string.incorrect_date)
                 ErrorSourceAddProperty.ERROR_FETCHING_AGENTS -> showSnackBarMessage(getString(R.string.error_finding_agents))
+                ErrorSourceAddProperty.TOO_MANY_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
+                ErrorSourceAddProperty.INCORECT_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
+                ErrorSourceAddProperty.UNKNOW_ERROR -> showSnackBarMessage(getString(R.string.unknow_error))
             }
         }
     }
@@ -207,56 +269,9 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
         )
     }
 
-
-    @OnClick(R.id.add_property_view_sold_switch)
-    fun clickSoldButtonListener(){
-        if(soldSwithch.isChecked){
-            soldOnText.visibility = View.VISIBLE
-            soldOnLayout.visibility = View.VISIBLE
-        } else {
-            soldOnText.visibility = View.INVISIBLE
-            soldOnLayout.visibility = View.INVISIBLE
-        }
-
-    }
-
     private fun showSnackBarMessage(message: String){
         val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
         showSnackBar(viewLayout, message)
 
-    }
-
-    override fun onOkButtonListener(calendar: Calendar, view: View) {
-        val dateForDisplay = calendar.time.toStringForDisplay()
-        when(view){
-            onMarketSinceText -> onMarketSinceText.setText(dateForDisplay)
-            soldOnText -> soldOnText.setText(dateForDisplay)
-        }
-    }
-
-    override fun onAgentSelected(agent: Agent) {
-        val displayNameAgent = "${agent.firstName} ${agent.lastName}"
-        dropdowAgent.setText(displayNameAgent)
-        agentSelectedId = agent.id
-        Log.e("id", "${agentSelectedId}")
-    }
-
-    @OnClick(value = [R.id.add_property_view_sold_on, R.id.add_property_view_since])
-    fun onClickDate(view: View){
-        val calendar: Calendar? = when(view){
-            onMarketSinceText -> onMarketSinceText.text.toString().toDate()?.toCalendar()
-            soldOnText -> soldOnText.text.toString().toDate()?.toCalendar()
-            else -> null
-        }
-
-        val datePickerDialog = PickDateDialogView(view, calendar)
-        datePickerDialog.setTargetFragment(this, PICK_DATE_DIALOG_CODE)
-        datePickerDialog.show(fragmentManager!!.beginTransaction(), PICK_DATE_TAG)
-
-    }
-
-    @OnClick(R.id.add_property_view_dropdown_agent)
-    fun onClickAgentDropdown(){
-        viewModel.actionFromIntent(AddPropertyIntent.OpenListAgentsIntent)
     }
 }

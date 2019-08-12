@@ -51,6 +51,8 @@
     <string name="can_t_be_empty">Can\'t be empty</string>
     <string name="incorrect_date">Incorrect Date</string>
     <string name="incorrect_address">Incorrect address</string>
+    <string name="agent_added">Agent added to the database</string>
+    <string name="property_added">Property added to the database</string>
 
 
     <string-array name="planets_array">

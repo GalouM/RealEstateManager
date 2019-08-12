@@ -33,7 +33,8 @@ class MainActivityViewModel(
      fun actionFromIntent(intent: MainActivityIntent){
         when(intent){
             is MainActivityIntent.OpenAddPropertyActivityIntent -> onOpenAddPropertyRequest()
-            else -> throw Exception("No Intent found")
+            is MainActivityIntent.ChangeCurrencyIntent -> changeCurrency()
+            is MainActivityIntent.GetCurrentCurrencyIntent -> emitCurrentCurrency()
         }
 
     }
@@ -48,13 +49,18 @@ class MainActivityViewModel(
                                 errorSource = null,
                                 isLoading = false)
                     }
+                    is MainActivityResult.ChangeCurrencyResult -> {
+                        currentViewState.copy(
+                                currency = result.packet.currency)
+                    }
                 }
             }
 
             is Lce.Loading -> {
                 currentViewState.copy(
                         isLoading = true,
-                        errorSource = null)
+                        errorSource = null,
+                        isOpenAddProperty = false)
             }
             is Lce.Error -> {
                 when(result.packet){
@@ -63,6 +69,11 @@ class MainActivityViewModel(
                                 isOpenAddProperty = false,
                                 errorSource = ErrorSource.NO_AGENT_IN_DB,
                                 isLoading = false)
+                    }
+                    is MainActivityResult.ChangeCurrencyResult -> {
+                        currentViewState.copy(
+                                isOpenAddProperty = false
+                        )
                     }
                 }
             }
@@ -83,6 +94,19 @@ class MainActivityViewModel(
             resultToViewState(result)
         }
 
+    }
+
+    private fun changeCurrency(){
+        currencyRepository.setCurrency()
+        emitCurrentCurrency()
+
+    }
+
+    private fun emitCurrentCurrency(){
+        val currency = currencyRepository.getCurrentCurrency()
+        val result: Lce<MainActivityResult> = Lce.Content(MainActivityResult.ChangeCurrencyResult(currency))
+
+        resultToViewState(result)
     }
 
 }

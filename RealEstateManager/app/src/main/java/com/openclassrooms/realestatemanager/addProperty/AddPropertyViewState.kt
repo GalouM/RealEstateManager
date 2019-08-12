@@ -33,6 +33,8 @@ sealed class AddPropertyIntent{
 
     object OpenListAgentsIntent : AddPropertyIntent()
 
+    object GetCurrentCurrencyIntent : AddPropertyIntent()
+
 }
 
 sealed class AddPropertyResult{

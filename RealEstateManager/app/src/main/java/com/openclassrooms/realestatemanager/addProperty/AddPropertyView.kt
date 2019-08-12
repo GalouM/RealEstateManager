@@ -159,6 +159,10 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
                     dropdowPropertyType.setAdapter(adapter) }
     }
 
+    fun configureCurrentCurrency(){
+        viewModel.actionFromIntent(AddPropertyIntent.GetCurrentCurrencyIntent)
+    }
+
     //--------------------
     // VIEW MODEL CONNECTION
     //--------------------

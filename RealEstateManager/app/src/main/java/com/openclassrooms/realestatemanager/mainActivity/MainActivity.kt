@@ -21,6 +21,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_AGENT
 import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_PROPERTY
 import com.openclassrooms.realestatemanager.utils.showSnackBar
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity(),
     @BindView(R.id.activity_main_rfab) lateinit var rfaButton: RapidFloatingActionButton
     private lateinit var rfabHelper: RapidFloatingActionHelper
 
-    private var currency = "euros"
+    private var menuToolbar: Menu? = null
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
@@ -60,16 +61,21 @@ class MainActivity : AppCompatActivity(),
         configureRapidFloatingActionButton()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.actionFromIntent(MainActivityIntent.GetCurrentCurrencyIntent)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == RC_CODE_ADD_AGENT){
             if(resultCode == Activity.RESULT_OK){
-                showSnackBarMessage("Agent added to the database")
+                showSnackBarMessage(getString(R.string.agent_added))
             }
         }
         if(requestCode == RC_CODE_ADD_PROPERTY){
             if(resultCode == Activity.RESULT_OK){
-                showSnackBarMessage("Property added to the database")
+                showSnackBarMessage(getString(R.string.property_added))
             }
         }
     }
@@ -82,25 +88,15 @@ class MainActivity : AppCompatActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar_main_activity, menu)
+        menuToolbar = menu
+        viewModel.actionFromIntent(MainActivityIntent.GetCurrentCurrencyIntent)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.menu_main_activity_currency -> {
-                when(currency){
-                    "euros" -> {
-                        item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
-                        currency = "dollars"
-                        return true
-                    }
-                    "dollars" -> {
-                        item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
-                        currency = "euros"
-                        return true
-                    }
-                }
-                item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
+                viewModel.actionFromIntent(MainActivityIntent.ChangeCurrencyIntent)
                 return true
             }
         }
@@ -222,6 +218,7 @@ class MainActivity : AppCompatActivity(),
         } else{
             viewState.errorSource?.let { renderErrorOpeningActivity(it) }
         }
+        renderChangeCurrency(viewState.currency)
 
     }
 
@@ -238,6 +235,22 @@ class MainActivity : AppCompatActivity(),
     private fun renderErrorOpeningActivity(errorSource: ErrorSource){
         when(errorSource){
             ErrorSource.NO_AGENT_IN_DB -> showSnackBarMessage(getString(R.string.create_agent_first))
+        }
+
+    }
+
+    private fun renderChangeCurrency(currency: Currency){
+        menuToolbar?.let {
+            when(currency){
+                Currency.EURO -> {
+                    val currencyItem = menuToolbar!!.findItem(R.id.menu_main_activity_currency)
+                    currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
+                }
+                Currency.DOLLAR -> {
+                    val currencyItem = menuToolbar!!.findItem(R.id.menu_main_activity_currency)
+                    currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
+                }
+            }
         }
 
     }

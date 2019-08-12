@@ -89,6 +89,7 @@ class AddPropertyViewModel (
 
             is AddPropertyIntent.OpenListAgentsIntent -> fetchAgentsFromDB()
 
+            is AddPropertyIntent.GetCurrentCurrencyIntent -> emitCurrentCurrency()
         }
     }
 
@@ -319,11 +320,14 @@ class AddPropertyViewModel (
 
     private fun changeCurrency(){
         currencyRepository.setCurrency()
+        emitCurrentCurrency()
+    }
+
+    private fun emitCurrentCurrency(){
         val currency = currencyRepository.getCurrentCurrency()
         val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.ChangeCurrencyResult(currency))
 
         resultToViewState(result)
-
     }
 
     //--------------------

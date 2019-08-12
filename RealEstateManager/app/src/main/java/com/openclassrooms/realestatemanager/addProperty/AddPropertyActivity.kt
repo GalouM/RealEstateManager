@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -45,13 +46,12 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar_add_property_activity, menu)
         menuToolbar = menu
-
+        addPropertyView?.configureCurrentCurrency()
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         addPropertyView!!.toolBarClickListener(item?.itemId)
-        //item.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
         return super.onOptionsItemSelected(item)
     }
 
@@ -67,15 +67,18 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
     }
 
     override fun onClickCurrency(currency: Currency) {
-        when(currency){
-            Currency.EURO -> {
-                val currencyItem = menuToolbar!!.findItem(R.id.menu_add_property_activity_currency)
-                currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
-            }
-            Currency.DOLLAR -> {
-                val currencyItem = menuToolbar!!.findItem(R.id.menu_add_property_activity_currency)
-                currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
+        menuToolbar?.let{
+            when(currency){
+                Currency.EURO -> {
+                    val currencyItem = menuToolbar!!.findItem(R.id.menu_add_property_activity_currency)
+                    currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
+                }
+                Currency.DOLLAR -> {
+                    val currencyItem = menuToolbar!!.findItem(R.id.menu_add_property_activity_currency)
+                    currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
+                }
             }
         }
+
     }
 }

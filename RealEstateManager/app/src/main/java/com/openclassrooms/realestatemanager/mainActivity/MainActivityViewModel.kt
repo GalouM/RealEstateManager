@@ -51,7 +51,9 @@ class MainActivityViewModel(
                     }
                     is MainActivityResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
-                                currency = result.packet.currency)
+                                isOpenAddProperty = false,
+                                currency = result.packet.currency
+                                )
                     }
                 }
             }

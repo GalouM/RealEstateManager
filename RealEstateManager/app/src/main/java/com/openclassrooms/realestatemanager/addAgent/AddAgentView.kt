@@ -5,17 +5,13 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.Intent.*
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -24,7 +20,6 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.injection.Injection
@@ -130,14 +125,19 @@ class AddAgentView : Fragment() {
     private fun render(viewState: AddAgentViewState?){
         if (viewState == null) return
         if(viewState.isSaved) {
-            activity!!.finish()
+            renderPropertyAddedToDB()
         }
         if(viewState.errors != null){
-            displayErrors(viewState.errors)
+            renderErrors(viewState.errors)
         }
     }
 
-    private fun displayErrors(errors: List<ErrorSourceAddAgent>){
+    private fun renderPropertyAddedToDB(){
+        activity!!.setResult(RESULT_OK)
+        activity!!.finish()
+    }
+
+    private fun renderErrors(errors: List<ErrorSourceAddAgent>){
         errors.forEach{
             when(it){
                 ErrorSourceAddAgent.FIRST_NAME_INCORRECT -> firstNameLayout.error = getString(R.string.error_message_first_name)

@@ -212,7 +212,6 @@ class MainActivity : AppCompatActivity(),
 
     private fun render(viewState: MainActivityViewState?) {
         if (viewState == null) return
-        Log.e("tag", viewState.toString())
         if(viewState.isOpenAddProperty){
             renderShowAddPropertyActivity()
         } else{

@@ -1,8 +1,8 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -184,16 +184,16 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
     private fun render(viewState: AddPropertyViewState?){
         if (viewState == null) return
         if(viewState.isSaved) {
-            activity!!.finish()
+            renderPropertyAddedToDB()
         }
 
         if(viewState.errors != null){
-            showErrors(viewState.errors)
+            renderErrors(viewState.errors)
         }
         changeCurrency(viewState.currency)
 
         if(viewState.openListAgents && viewState.listAgents != null){
-            showAgentDialogView(viewState.listAgents)
+            renderAgentDialog(viewState.listAgents)
         }
 
 
@@ -214,7 +214,7 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
     }
 
 
-    private fun showErrors(errors: List<ErrorSourceAddProperty>){
+    private fun renderErrors(errors: List<ErrorSourceAddProperty>){
         errors.forEach{
             when(it){
                 ErrorSourceAddProperty.NO_TYPE_SELECTED -> typeLayout.error = getString(R.string.incorrect_type)
@@ -236,11 +236,16 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
         }
     }
 
-    private fun showAgentDialogView(agents: List<Agent>){
+    private fun renderAgentDialog(agents: List<Agent>){
         val listAgentDialog = ListAgentsDialogView(agents)
         listAgentDialog.setTargetFragment(this, AGENT_LIST_DIALOG_CODE)
         listAgentDialog.show(fragmentManager!!.beginTransaction(), AGENT_LIST_TAG)
 
+    }
+
+    private fun renderPropertyAddedToDB(){
+        activity!!.setResult(RESULT_OK)
+        activity!!.finish()
     }
 
     private fun disableAllErrors(){

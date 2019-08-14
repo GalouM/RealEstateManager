@@ -53,6 +53,7 @@
     <string name="incorrect_address">Incorrect address</string>
     <string name="agent_added">Agent added to the database</string>
     <string name="property_added">Property added to the database</string>
+    <string name="no_properties">No properties available</string>
 
 
     <string-array name="planets_array">

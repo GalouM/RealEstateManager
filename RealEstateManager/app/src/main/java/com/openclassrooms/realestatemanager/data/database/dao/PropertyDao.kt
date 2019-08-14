@@ -11,10 +11,10 @@ import com.openclassrooms.realestatemanager.data.entity.Property
 @Dao
 interface PropertyDao {
     @Query("SELECT * FROM Property")
-    fun getAllProperties(): LiveData<List<Property>>
+    suspend fun getAllProperties(): List<Property>
 
     @Query("SELECT * FROM Property WHERE id = :propertyId")
-    fun getProperty(propertyId: Int): LiveData<List<Property>>
+    suspend fun getProperty(propertyId: Int): List<Property>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createProperty(agent: Property): Long

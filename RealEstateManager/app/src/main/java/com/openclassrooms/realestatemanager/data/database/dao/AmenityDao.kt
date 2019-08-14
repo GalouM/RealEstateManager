@@ -13,7 +13,7 @@ import com.openclassrooms.realestatemanager.data.entity.Amenity
 @Dao
 interface AmenityDao {
     @Query("SELECT * FROM Amenity WHERE property = :propertyId")
-    fun getAmenities(propertyId: Int): LiveData<List<Amenity>>
+    suspend fun getAmenities(propertyId: Int): List<Amenity>
 
     @Insert
     suspend fun insertAmenity(amenities: Amenity)

@@ -13,4 +13,8 @@
     <dimen name="list_agent_picture">50dip</dimen>
     <dimen name="list_agent_name">15sp</dimen>
     <dimen name="picture_agent">100dp</dimen>
+    <dimen name="size_list_item">130dip</dimen>
+    <dimen name="text_title">20sp</dimen>
+    <dimen name="text_subtitle">18sp</dimen>
+    <dimen name="text_price">23sp</dimen>
 </resources>

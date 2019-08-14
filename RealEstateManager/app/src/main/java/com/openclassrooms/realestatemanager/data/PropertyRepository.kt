@@ -48,4 +48,20 @@ class PropertyRepository(
                 .observeOn(AndroidSchedulers.mainThread())
                 .timeout(10, TimeUnit.SECONDS)
     }
+
+    suspend fun getAllProperties(): List<Property>{
+        return propertyDao.getAllProperties()
+    }
+
+    suspend fun getPropertyAddress(idProperty: Int): List<Address>{
+        return addressDao.getAddress(idProperty)
+    }
+
+    suspend fun getPropertyPicture(idProperty: Int): List<Picture>{
+        return pictureDao.getPictures(idProperty)
+    }
+
+    suspend fun getPropertyAmenities(idProperty: Int): List<Amenity>{
+        return amenityDao.getAmenities(idProperty)
+    }
 }

@@ -13,7 +13,7 @@ import com.openclassrooms.realestatemanager.data.entity.Picture
 @Dao
 interface PictureDao {
     @Query("SELECT * FROM Picture WHERE property = :propertyId")
-    fun getPictures(propertyId: Int): LiveData<List<Picture>>
+    suspend fun getPictures(propertyId: Int): List<Picture>
 
     @Insert
     suspend fun insertPicture(pictures: Picture)

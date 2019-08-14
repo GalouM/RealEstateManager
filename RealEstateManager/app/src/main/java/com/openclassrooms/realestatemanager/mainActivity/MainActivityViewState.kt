@@ -8,7 +8,7 @@ import com.openclassrooms.realestatemanager.utils.Currency
 
 data class MainActivityViewState(
         val isOpenAddProperty:Boolean = false,
-        val errorSource: ErrorSource? = null,
+        val errorSource: ErrorSourceMainActivity? = null,
         val isLoading: Boolean = false,
         val currency: Currency = Currency.EURO
 )

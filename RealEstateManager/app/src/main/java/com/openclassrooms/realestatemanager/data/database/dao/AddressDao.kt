@@ -11,7 +11,7 @@ import com.openclassrooms.realestatemanager.data.entity.Address
 @Dao
 interface AddressDao {
     @Query("SELECT * FROM Address WHERE propertyId = :propertyId")
-    fun getAddress(propertyId: Int): LiveData<List<Address>>
+    suspend fun getAddress(propertyId: Int): List<Address>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createAddress(address: Address): Long

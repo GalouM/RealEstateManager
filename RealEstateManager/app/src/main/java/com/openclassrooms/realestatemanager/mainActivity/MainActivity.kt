@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +35,12 @@ import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
 class MainActivity : AppCompatActivity(),
         RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>{
 
+    interface OnClickChangeCurrencyListener{
+        fun onChangeCurrency(currency: Currency)
+    }
+
+    private lateinit var callback: OnClickChangeCurrencyListener
+
     private lateinit var viewModel: MainActivityViewModel
 
     @BindView(R.id.main_activity_toolbar) lateinit var toolbar: Toolbar
@@ -48,6 +53,10 @@ class MainActivity : AppCompatActivity(),
     private var menuToolbar: Menu? = null
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
+
+    fun setOnClickChangeCurrency(callback: OnClickChangeCurrencyListener){
+        this.callback = callback
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -231,9 +240,9 @@ class MainActivity : AppCompatActivity(),
         startActivityForResult(intent, RC_CODE_ADD_AGENT)
     }
 
-    private fun renderErrorOpeningActivity(errorSource: ErrorSource){
+    private fun renderErrorOpeningActivity(errorSource: ErrorSourceMainActivity){
         when(errorSource){
-            ErrorSource.NO_AGENT_IN_DB -> showSnackBarMessage(getString(R.string.create_agent_first))
+            ErrorSourceMainActivity.NO_AGENT_IN_DB -> showSnackBarMessage(getString(R.string.create_agent_first))
         }
 
     }
@@ -250,6 +259,7 @@ class MainActivity : AppCompatActivity(),
                     currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
                 }
             }
+            callback.onChangeCurrency(currency)
         }
 
     }

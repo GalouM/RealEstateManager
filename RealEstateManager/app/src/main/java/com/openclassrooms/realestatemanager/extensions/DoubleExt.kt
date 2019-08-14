@@ -1,6 +1,8 @@
 package com.openclassrooms.realestatemanager.extensions
 
 import com.openclassrooms.realestatemanager.utils.Currency
+import java.text.NumberFormat
+import java.util.*
 import kotlin.math.roundToLong
 
 /**
@@ -18,4 +20,12 @@ fun Double.toSqMeter(currency: Currency): Double{
 
     return (this * 0.092903).roundToLong().toDouble()
 
+}
+
+fun Double.toEuroDisplay(): String{
+    return NumberFormat.getNumberInstance(Locale.FRANCE).format(this)
+}
+
+fun Double.toDollarDisplay(): String{
+    return NumberFormat.getNumberInstance(Locale.US).format(this)
 }

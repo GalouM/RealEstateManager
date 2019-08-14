@@ -30,10 +30,8 @@ class ListAgentDialogViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val nameToDisplay = "${agent.firstName} ${agent.lastName}"
         nameAgent.text = nameToDisplay
 
-        val urlPicture = agent.urlProfilePicture
-
-        if(urlPicture != null) {
-            glide.load(agent.urlProfilePicture).apply(RequestOptions.circleCropTransform()).into(pictureAgent)
+        agent.urlProfilePicture?.let {
+            glide.load(it).apply(RequestOptions.circleCropTransform()).into(pictureAgent)
         }
     }
 

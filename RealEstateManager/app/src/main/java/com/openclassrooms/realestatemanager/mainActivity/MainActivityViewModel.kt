@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.data.AgentRepository
@@ -69,7 +68,7 @@ class MainActivityViewModel(
                     is MainActivityResult.OpenAddPropertyResult ->{
                         currentViewState.copy(
                                 isOpenAddProperty = false,
-                                errorSource = ErrorSource.NO_AGENT_IN_DB,
+                                errorSource = ErrorSourceMainActivity.NO_AGENT_IN_DB,
                                 isLoading = false)
                     }
                     is MainActivityResult.ChangeCurrencyResult -> {

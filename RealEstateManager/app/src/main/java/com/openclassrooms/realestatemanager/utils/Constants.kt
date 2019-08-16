@@ -18,3 +18,5 @@ const val BASE_URL_MAP_QUEST = "http://www.mapquestapi.com/"
 const val API_KEY_MAP_QUEST = "fndM1cehAwY9CPe0Gyz2EvWJNodLdEhA"
 const val RC_CODE_ADD_AGENT = 500
 const val RC_CODE_ADD_PROPERTY = 600
+const val PERMS_LOCALISATION = Manifest.permission.ACCESS_FINE_LOCATION
+const val RC_LOCATION_PERMS = 700

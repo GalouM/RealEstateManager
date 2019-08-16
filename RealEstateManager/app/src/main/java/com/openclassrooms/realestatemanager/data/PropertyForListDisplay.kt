@@ -6,4 +6,5 @@ package com.openclassrooms.realestatemanager.data
 data class PropertyForListDisplay(
         val id: Int,
         val type: String, val neighborhood: String,
+        val lat: Double, val lng: Double,
         val price: Double, val pictureUrl: String?)

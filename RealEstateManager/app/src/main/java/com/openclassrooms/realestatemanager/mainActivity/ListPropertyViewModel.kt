@@ -1,9 +1,7 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.openclassrooms.realestatemanager.data.AgentRepository
 import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.data.PropertyRepository
@@ -17,8 +15,7 @@ import kotlinx.coroutines.launch
  * Created by galou on 2019-08-12
  */
 class ListPropertyViewModel(
-        private val propertyRepository: PropertyRepository,
-        private val currencyRepository: CurrencyRepository)
+        private val propertyRepository: PropertyRepository)
     : BaseViewModel(){
 
 
@@ -77,6 +74,8 @@ class ListPropertyViewModel(
 
         var neighborhood = ""
         var pictureUrl = ""
+        var latitude: Double = 0.0
+        var longitude: Double = 0.0
         val propertiesForDisplay = mutableListOf<PropertyForListDisplay>()
 
         fun emitResult(){
@@ -90,16 +89,19 @@ class ListPropertyViewModel(
 
         fun configurePropertyForDisplay(property: Property){
             val propertyToDisplay = PropertyForListDisplay(
-                    property.id!!, property.type.typeName, neighborhood, property.price, pictureUrl)
-            Log.e("propertyDisplay", propertyToDisplay.toString())
+                    property.id!!, property.type.typeName, neighborhood,
+                    latitude, longitude, property.price, pictureUrl)
             propertiesForDisplay.add(propertyToDisplay)
 
             emitResult()
         }
 
-        fun fetchNeighborhood(idProperty: Int, property: Property){
+        fun fetchAddress(idProperty: Int, property: Property){
             launch {
-                neighborhood = propertyRepository.getPropertyAddress(idProperty)[0].neighbourhood
+                val propertyAddress = propertyRepository.getPropertyAddress(idProperty)[0]
+                neighborhood = propertyAddress.neighbourhood
+                longitude = propertyAddress.longitude
+                latitude = propertyAddress.latitude
                 configurePropertyForDisplay(property)
             }
         }
@@ -111,7 +113,7 @@ class ListPropertyViewModel(
                     pictureUrl = pictures[0].url
                 }
 
-                fetchNeighborhood(idProperty, property)
+                fetchAddress(idProperty, property)
             }
         }
 

@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.mainActivity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.mapbox.mapboxsdk.annotations.Icon
+import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -20,12 +21,12 @@ import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapquest.mapping.MapQuest
 import com.mapquest.mapping.maps.MapView
 import com.mapquest.mapping.maps.MyLocationPresenter
-import com.mapquest.mapping.utils.MapUtils
 import com.mapzen.android.lost.api.LocationServices
 import com.mapzen.android.lost.api.LostApiClient
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.extensions.toBounds
+import com.openclassrooms.realestatemanager.extensions.toDollar
 import com.openclassrooms.realestatemanager.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.extensions.toEuroDisplay
 import com.openclassrooms.realestatemanager.injection.Injection
@@ -71,7 +72,7 @@ class MapPropertyView : Fragment(), LostApiClient.ConnectionCallbacks, MainActiv
 
     private fun setupCurrencyListener(){
         if(activity is MainActivity){
-            (activity as MainActivity).setOnClickChangeCurrency(this)
+            (activity as MainActivity).setOnClickChangeCurrencyMap(this)
         }
     }
 
@@ -129,17 +130,22 @@ class MapPropertyView : Fragment(), LostApiClient.ConnectionCallbacks, MainActiv
     private fun displayPropertiesAround(currency: Currency) {
         mapView.getMapAsync { mapbox ->
             mapbox.clear()
+            val iconFactory = IconFactory.getInstance(activity!!.applicationContext)
             propertiesNearBy.forEach {
                 val positionProperty = LatLng(it.lat, it.lng)
+                val drawable = if(it.sold) R.drawable.icon_location_sold else R.drawable.icon_location_normal
+                val markerIcon = iconFactory.fromResource(drawable)
                 val markerOption = MarkerOptions().apply {
                     position = positionProperty
                     title = it.type
                     snippet = when (currency) {
                         Currency.EURO -> "${it.price.toEuroDisplay()}€"
-                        Currency.DOLLAR -> "$${it.price.toDollarDisplay()}"
+                        Currency.DOLLAR -> "$${it.price.toDollar().toDollarDisplay()}"
                     }
+                    icon = markerIcon
                 }
                 mapbox.addMarker(markerOption)
+
 
 
             }
@@ -159,15 +165,16 @@ class MapPropertyView : Fragment(), LostApiClient.ConnectionCallbacks, MainActiv
     }
 
     private fun displayUserLocation(locationUser: LatLng){
-        mapView.getMapAsync { mapbox ->
-            MyLocationPresenter(mapView, mapbox, null).apply {
+        mapView.getMapAsync { mapboxMap ->
+
+            MyLocationPresenter(mapView, mapboxMap, null).apply {
                 setInitialZoomLevel(18.0)
                 setFollowCameraAngle(50.0)
                 setLockNorthUp(false)
                 setFollow(true)
                 onStart()
             }
-            mapbox.moveCamera(CameraUpdateFactory.newLatLngZoom(locationUser, 14.0))
+            mapboxMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationUser, 14.0))
 
         }
 

@@ -107,7 +107,10 @@ dependencies {
     // MULTIDEX
     implementation "androidx.multidex:multidex:$rootProject.multidexVersion"
 
+    // LOCATION MAPZEN
     implementation "com.mapzen.android:lost:$rootProject.mapzenVersion"
+
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1'
 
 
 }

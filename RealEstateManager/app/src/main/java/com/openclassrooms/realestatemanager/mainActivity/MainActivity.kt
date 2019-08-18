@@ -39,7 +39,8 @@ class MainActivity : AppCompatActivity(),
         fun onChangeCurrency(currency: Currency)
     }
 
-    private lateinit var callback: OnClickChangeCurrencyListener
+    private lateinit var callbackListProperties: OnClickChangeCurrencyListener
+    private lateinit var callbackMapProperties: OnClickChangeCurrencyListener
 
     private lateinit var viewModel: MainActivityViewModel
 
@@ -54,8 +55,12 @@ class MainActivity : AppCompatActivity(),
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
-    fun setOnClickChangeCurrency(callback: OnClickChangeCurrencyListener){
-        this.callback = callback
+    fun setOnClickChangeCurrencyList(callback: OnClickChangeCurrencyListener){
+        this.callbackListProperties = callback
+    }
+
+    fun setOnClickChangeCurrencyMap(callback: OnClickChangeCurrencyListener){
+        this.callbackMapProperties = callback
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -259,7 +264,8 @@ class MainActivity : AppCompatActivity(),
                     currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
                 }
             }
-            callback.onChangeCurrency(currency)
+            callbackListProperties.onChangeCurrency(currency)
+            callbackMapProperties.onChangeCurrency(currency)
         }
 
     }

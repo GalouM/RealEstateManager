@@ -90,7 +90,7 @@ class ListPropertyViewModel(
         fun configurePropertyForDisplay(property: Property){
             val propertyToDisplay = PropertyForListDisplay(
                     property.id!!, property.type.typeName, neighborhood,
-                    latitude, longitude, property.price, pictureUrl)
+                    latitude, longitude, property.price, pictureUrl, property.sold)
             propertiesForDisplay.add(propertyToDisplay)
 
             emitResult()

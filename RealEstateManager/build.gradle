@@ -22,6 +22,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         // mq maven repo
         maven { url 'https://artifactory.cloud.mapquest.com/artifactory/et-android-binaries' }
     }

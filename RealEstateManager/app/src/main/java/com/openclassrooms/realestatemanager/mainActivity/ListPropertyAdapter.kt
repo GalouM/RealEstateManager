@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -19,8 +20,11 @@ class ListPropertyAdapter(var properties: List<PropertyForListDisplay>,
                           var currency: Currency,
                           val glide: RequestManager)
     : RecyclerView.Adapter<ListPropertyViewHolder>(){
+
+    private lateinit var context: Context
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListPropertyViewHolder {
-        val context = parent.context
+        context = parent.context
         val layoutInflater = LayoutInflater.from(context)
         val view = layoutInflater.inflate(R.layout.list_view_item, parent, false)
 
@@ -32,7 +36,7 @@ class ListPropertyAdapter(var properties: List<PropertyForListDisplay>,
     }
 
     override fun onBindViewHolder(holder: ListPropertyViewHolder, position: Int) {
-        holder.updateWithProperty(properties[position], glide, currency)
+        holder.updateWithProperty(properties[position], glide, currency, context)
     }
 
     fun getProperty(position: Int): Int{

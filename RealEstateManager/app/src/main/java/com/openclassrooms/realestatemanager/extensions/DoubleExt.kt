@@ -15,6 +15,10 @@ fun Double.toEuro(currency: Currency): Double{
     return (this * 0.812).roundToLong().toDouble()
 }
 
+fun Double.toDollar():Double{
+    return (this * 1.137).roundToLong().toDouble()
+}
+
 fun Double.toSqMeter(currency: Currency): Double{
     if(currency == Currency.EURO) return this
 

@@ -19,7 +19,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.addProperty.AddPropertyView
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.utils.Currency
@@ -56,7 +55,7 @@ class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener 
 
     private fun setupCurrencyListener(){
         if(activity is MainActivity){
-            (activity as MainActivity).setOnClickChangeCurrency(this)
+            (activity as MainActivity).setOnClickChangeCurrencyList(this)
         }
     }
 

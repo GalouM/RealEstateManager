@@ -20,11 +20,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField ('String', "MapQuestApiKey", mapQuestApiKey)
-            resValue ('string', 'mapQuestApiKey', mapQuestApiKey)
+            buildConfigField ('String', "MapBoxToken", mapBoxToken)
         }
         debug{
             buildConfigField ('String', "MapQuestApiKey", mapQuestApiKey)
-            resValue ('string', 'mapQuestApiKey', mapQuestApiKey)
+            buildConfigField ('String', "MapBoxToken", mapBoxToken)
 
         }
     }
@@ -101,16 +101,12 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitVersion"
 
-    // MAP QUEST
-    implementation "com.mapquest:mapping-android-sdk:$rootProject.mapQuestVersion"
-
-    // MULTIDEX
+    //MULTIDEX
     implementation "androidx.multidex:multidex:$rootProject.multidexVersion"
 
-    // LOCATION MAPZEN
-    implementation "com.mapzen.android:lost:$rootProject.mapzenVersion"
-
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1'
+    //MAPBOX
+    implementation "com.mapbox.mapboxsdk:mapbox-android-sdk:$rootProject.mapBoxVersion"
+    implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$rootProject.mapBoxPluginVersion"
 
 
 }

@@ -23,8 +23,6 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
-        // mq maven repo
-        maven { url 'https://artifactory.cloud.mapquest.com/artifactory/et-android-binaries' }
     }
 }
 
@@ -47,7 +45,7 @@ ext {
     glideVersion = '4.8.0'
     retrofitVersion = '2.4.0'
     gsonVersion = '2.8.5'
-    mapQuestVersion = '2.0.10'
     multidexVersion = '2.0.1'
-    mapzenVersion = '3.0.2'
+    mapBoxVersion = '8.2.1'
+    mapBoxPluginVersion = '0.7.0'
 }

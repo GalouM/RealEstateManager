@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.mainActivity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,17 +13,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.mapbox.mapboxsdk.annotations.Icon
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
-import com.mapquest.mapping.MapQuest
-import com.mapquest.mapping.maps.MapView
-import com.mapquest.mapping.maps.MyLocationPresenter
-import com.mapzen.android.lost.api.LocationServices
-import com.mapzen.android.lost.api.LostApiClient
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
+import com.mapbox.mapboxsdk.location.modes.CameraMode
+import com.mapbox.mapboxsdk.location.modes.RenderMode
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.Style
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.extensions.toBounds
@@ -38,18 +37,13 @@ import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
 
-
-
-
 /**
  * A simple [Fragment] subclass.
  *
  */
-class MapPropertyView : Fragment(), LostApiClient.ConnectionCallbacks, MainActivity.OnClickChangeCurrencyListener {
+class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
 
     @BindView(R.id.map_view_map) lateinit var mapView: MapView
-
-    private var lostApiClient: LostApiClient? = null
 
     private lateinit var viewModel: ListPropertyViewModel
 
@@ -57,14 +51,13 @@ class MapPropertyView : Fragment(), LostApiClient.ConnectionCallbacks, MainActiv
 
     private var propertiesNearBy = mutableListOf<PropertyForListDisplay>()
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_map_property_view, container, false)
-        MapQuest.start(activity!!.applicationContext)
         ButterKnife.bind(this, view)
         configureViewModel()
         mapView.onCreate(savedInstanceState)
-        lostApiClient = LostApiClient.Builder(activity!!.applicationContext).addConnectionCallbacks(this).build()
         fetchUserLocation()
         setupCurrencyListener()
         return view
@@ -160,21 +153,32 @@ class MapPropertyView : Fragment(), LostApiClient.ConnectionCallbacks, MainActiv
             return
         }
 
-        lostApiClient?.connect()
+        displayUserLocation()
 
     }
 
-    private fun displayUserLocation(locationUser: LatLng){
+    @SuppressLint("MissingPermission")
+    private fun displayUserLocation(){
         mapView.getMapAsync { mapboxMap ->
-
-            MyLocationPresenter(mapView, mapboxMap, null).apply {
-                setInitialZoomLevel(18.0)
-                setFollowCameraAngle(50.0)
-                setLockNorthUp(false)
-                setFollow(true)
-                onStart()
+            mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+                val locationComponent = mapboxMap.locationComponent.apply {
+                    activateLocationComponent(LocationComponentActivationOptions.builder(activity!!.applicationContext, style).build())
+                    isLocationComponentEnabled = true
+                    cameraMode = CameraMode.TRACKING
+                    renderMode = RenderMode.COMPASS
+                }
+                val lastKnowLocation = locationComponent.lastKnownLocation
+                if(lastKnowLocation != null){
+                    val latLngBounds = LatLng(
+                            lastKnowLocation.latitude,
+                            lastKnowLocation.longitude
+                    )
+                    userLocationBounds = latLngBounds.toBounds(2500.0)
+                    viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
+                } else{
+                    showSnackBarMessage(getString(R.string.no_gps))
+                }
             }
-            mapboxMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationUser, 14.0))
 
         }
 
@@ -198,21 +202,6 @@ class MapPropertyView : Fragment(), LostApiClient.ConnectionCallbacks, MainActiv
      override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onConnected() {
-        val location = LocationServices.FusedLocationApi.getLastLocation(lostApiClient!!)
-        location?.let{
-            val latLng = LatLng(location.latitude, location.longitude)
-            userLocationBounds = latLng.toBounds(2500.0)
-            viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
-            displayUserLocation(latLng)
-        }
-    }
-
-    override fun onConnectionSuspended() {
-        showSnackBarMessage(getString(R.string.no_gps))
     }
 
     private fun showSnackBarMessage(message: String){

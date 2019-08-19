@@ -16,6 +16,8 @@ import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.tabs.TabLayout
+import com.mapbox.mapboxsdk.Mapbox
+import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
@@ -65,6 +67,8 @@ class MainActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Mapbox.getInstance(applicationContext, BuildConfig.MapBoxToken)
+
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
 

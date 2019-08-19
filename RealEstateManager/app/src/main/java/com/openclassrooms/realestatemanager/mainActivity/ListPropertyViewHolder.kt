@@ -22,7 +22,6 @@ import com.openclassrooms.realestatemanager.extensions.toDollar
 import com.openclassrooms.realestatemanager.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.extensions.toEuroDisplay
 import com.openclassrooms.realestatemanager.utils.Currency
-import timber.log.Timber
 
 /**
  * Created by galou on 2019-08-12
@@ -42,8 +41,6 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun updateWithProperty(property: PropertyForListDisplay, glide: RequestManager, currency: Currency, context: Context){
 
-
-        Timber.e(property.toString())
         property.pictureUrl?.let{
             glide.load(this).apply(RequestOptions.centerCropTransform()).into(pictureView)
         }

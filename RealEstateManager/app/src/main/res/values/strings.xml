@@ -55,6 +55,7 @@
     <string name="property_added">Property added to the database</string>
     <string name="no_properties">No properties available</string>
     <string name="no_gps">No GPS Signal found</string>
+    <string name="center_camera_on_location">Center camera on location</string>
 
 
     <string-array name="planets_array">

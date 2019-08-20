@@ -7,14 +7,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
+import butterknife.OnClick
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
@@ -22,6 +25,10 @@ import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions
+import com.mapbox.mapboxsdk.utils.BitmapUtils
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.extensions.toBounds
@@ -29,10 +36,7 @@ import com.openclassrooms.realestatemanager.extensions.toDollar
 import com.openclassrooms.realestatemanager.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.extensions.toEuroDisplay
 import com.openclassrooms.realestatemanager.injection.Injection
-import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.PERMS_LOCALISATION
-import com.openclassrooms.realestatemanager.utils.RC_LOCATION_PERMS
-import com.openclassrooms.realestatemanager.utils.showSnackBar
+import com.openclassrooms.realestatemanager.utils.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -41,13 +45,15 @@ import pub.devrel.easypermissions.EasyPermissions
  * A simple [Fragment] subclass.
  *
  */
-class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
+class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener, MainActivity.OnListPropertiesChangeListener {
 
     @BindView(R.id.map_view_map) lateinit var mapView: MapView
+    @BindView(R.id.map_view_button) lateinit var buttonCenter: Button
 
     private lateinit var viewModel: ListPropertyViewModel
 
     private var userLocationBounds: LatLngBounds? = null
+    private var userLastKnowLocation: LatLng? = null
 
     private var propertiesNearBy = mutableListOf<PropertyForListDisplay>()
 
@@ -60,6 +66,7 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
         mapView.onCreate(savedInstanceState)
         fetchUserLocation()
         setupCurrencyListener()
+        setupRefreshPropertiesListener()
         return view
     }
 
@@ -69,8 +76,18 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
         }
     }
 
+    private fun setupRefreshPropertiesListener(){
+        if(activity is MainActivity){
+            (activity as MainActivity).setListPropertiesChangeMap(this)
+        }
+    }
+
     override fun onChangeCurrency(currency: Currency) {
         displayPropertiesAround(currency)
+    }
+
+    override fun onListPropertiesChange() {
+        viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
     }
 
     //--------------------
@@ -126,7 +143,7 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
             val iconFactory = IconFactory.getInstance(activity!!.applicationContext)
             propertiesNearBy.forEach {
                 val positionProperty = LatLng(it.lat, it.lng)
-                val drawable = if(it.sold) R.drawable.icon_location_sold else R.drawable.icon_location_normal
+                val drawable = if (it.sold) R.drawable.icon_location_sold else R.drawable.icon_location_normal
                 val markerIcon = iconFactory.fromResource(drawable)
                 val markerOption = MarkerOptions().apply {
                     position = positionProperty
@@ -138,9 +155,6 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
                     icon = markerIcon
                 }
                 mapbox.addMarker(markerOption)
-
-
-
             }
         }
     }
@@ -161,6 +175,7 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
     private fun displayUserLocation(){
         mapView.getMapAsync { mapboxMap ->
             mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
+
                 val locationComponent = mapboxMap.locationComponent.apply {
                     activateLocationComponent(LocationComponentActivationOptions.builder(activity!!.applicationContext, style).build())
                     isLocationComponentEnabled = true
@@ -169,12 +184,20 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
                 }
                 val lastKnowLocation = locationComponent.lastKnownLocation
                 if(lastKnowLocation != null){
-                    val latLngBounds = LatLng(
+                    userLastKnowLocation = LatLng(
                             lastKnowLocation.latitude,
                             lastKnowLocation.longitude
                     )
-                    userLocationBounds = latLngBounds.toBounds(2500.0)
+                    userLocationBounds = userLastKnowLocation?.toBounds(2500.0)
                     viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
+
+                    mapboxMap.addOnCameraMoveListener {
+                        val newLocation = mapboxMap.cameraPosition.target
+                        if(newLocation != lastKnowLocation){
+                            buttonCenter.visibility = View.VISIBLE
+                        }
+
+                    }
                 } else{
                     showSnackBarMessage(getString(R.string.no_gps))
                 }
@@ -182,6 +205,18 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
 
         }
 
+    }
+
+    private fun centerCameraOnUser(){
+        mapView.getMapAsync{mapboxMap ->
+            mapboxMap.animateCamera(CameraUpdateFactory.newLatLng(userLastKnowLocation!!))
+            buttonCenter.visibility = View.GONE
+        }
+    }
+
+    @OnClick(R.id.map_view_button)
+    fun centerCameraButtonListener(){
+        centerCameraOnUser()
     }
 
     override fun onResume() {

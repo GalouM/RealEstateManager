@@ -41,7 +41,8 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun updateWithProperty(property: PropertyForListDisplay, glide: RequestManager, currency: Currency, context: Context){
 
-        property.pictureUrl?.let{
+        val pictureUrl = property.pictureUrl
+        if(pictureUrl != null && pictureUrl.isNotEmpty()){
             glide.load(this).apply(RequestOptions.centerCropTransform()).into(pictureView)
         }
 

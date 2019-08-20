@@ -41,13 +41,19 @@ class MainActivity : AppCompatActivity(),
         fun onChangeCurrency(currency: Currency)
     }
 
-    private lateinit var callbackListProperties: OnClickChangeCurrencyListener
-    private lateinit var callbackMapProperties: OnClickChangeCurrencyListener
+    interface OnListPropertiesChangeListener{
+        fun onListPropertiesChange()
+    }
+
+    private lateinit var callbackListPropertiesCurrency: OnClickChangeCurrencyListener
+    private lateinit var callbackMapPropertiesCurrency: OnClickChangeCurrencyListener
+    private lateinit var callbackListPropertiesRefresh: OnListPropertiesChangeListener
+    private lateinit var callbackMapPropertiesRefresh: OnListPropertiesChangeListener
 
     private lateinit var viewModel: MainActivityViewModel
 
     @BindView(R.id.main_activity_toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.main_activity_tablayout_viewpager) lateinit var viewPager: ViewPager
+    @BindView(R.id.main_activity_tablayout_viewpager) lateinit var viewPager: MainActivityViewPager
     @BindView(R.id.main_activity_tablayout) lateinit var tabLayout: TabLayout
     @BindView(R.id.activity_main_rfal) lateinit var rfaLayout: RapidFloatingActionLayout
     @BindView(R.id.activity_main_rfab) lateinit var rfaButton: RapidFloatingActionButton
@@ -58,11 +64,19 @@ class MainActivity : AppCompatActivity(),
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
     fun setOnClickChangeCurrencyList(callback: OnClickChangeCurrencyListener){
-        this.callbackListProperties = callback
+        this.callbackListPropertiesCurrency = callback
     }
 
     fun setOnClickChangeCurrencyMap(callback: OnClickChangeCurrencyListener){
-        this.callbackMapProperties = callback
+        this.callbackMapPropertiesCurrency = callback
+    }
+
+    fun setListPropertiesChangeList(callback: OnListPropertiesChangeListener){
+        this.callbackListPropertiesRefresh = callback
+    }
+
+    fun setListPropertiesChangeMap(callback: OnListPropertiesChangeListener){
+        this.callbackMapPropertiesRefresh = callback
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,6 +108,8 @@ class MainActivity : AppCompatActivity(),
         if(requestCode == RC_CODE_ADD_PROPERTY){
             if(resultCode == Activity.RESULT_OK){
                 showSnackBarMessage(getString(R.string.property_added))
+                callbackListPropertiesRefresh.onListPropertiesChange()
+                callbackMapPropertiesRefresh.onListPropertiesChange()
             }
         }
     }
@@ -268,8 +284,8 @@ class MainActivity : AppCompatActivity(),
                     currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
                 }
             }
-            callbackListProperties.onChangeCurrency(currency)
-            callbackMapProperties.onChangeCurrency(currency)
+            callbackListPropertiesCurrency.onChangeCurrency(currency)
+            callbackMapPropertiesCurrency.onChangeCurrency(currency)
         }
 
     }

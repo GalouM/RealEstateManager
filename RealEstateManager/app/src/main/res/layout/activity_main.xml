@@ -31,7 +31,7 @@
             android:minHeight="?attr/actionBarSize"
             android:elevation="10dp"/>
 
-        <androidx.viewpager.widget.ViewPager
+        <com.openclassrooms.realestatemanager.mainActivity.MainActivityViewPager
             android:id="@+id/main_activity_tablayout_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

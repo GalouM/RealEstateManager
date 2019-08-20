@@ -29,7 +29,7 @@ import com.openclassrooms.realestatemanager.utils.showSnackBar
  * A simple [Fragment] subclass.
  *
  */
-class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener {
+class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener, MainActivity.OnListPropertiesChangeListener {
 
     @BindView(R.id.list_property_view_rv) lateinit var recyclerView: RecyclerView
     @BindView(R.id.list_property_view_refresh) lateinit var refreshLayout: SwipeRefreshLayout
@@ -49,6 +49,7 @@ class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener 
         configureForeground()
         configureViewModel()
         setupCurrencyListener()
+        setupRefreshPropertiesListener()
 
         return view
     }
@@ -56,6 +57,12 @@ class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener 
     private fun setupCurrencyListener(){
         if(activity is MainActivity){
             (activity as MainActivity).setOnClickChangeCurrencyList(this)
+        }
+    }
+
+    private fun setupRefreshPropertiesListener(){
+        if(activity is MainActivity){
+            (activity as MainActivity).setListPropertiesChangeList(this)
         }
     }
 
@@ -130,6 +137,10 @@ class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener 
     override fun onChangeCurrency(currency: Currency) {
         currentCurrency = currency
         adapter?.updateCurrency(currentCurrency)
+    }
+
+    override fun onListPropertiesChange() {
+        onRefreshLayout()
     }
 
     private fun configureRefreshLayout(){

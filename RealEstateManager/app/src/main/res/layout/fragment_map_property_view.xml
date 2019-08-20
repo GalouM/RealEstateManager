@@ -13,5 +13,17 @@
         android:layout_height="match_parent"
         mapbox:mapbox_cameraZoom="14" />
 
+    <Button
+        android:id="@+id/map_view_button"
+        style="@style/ButtonCenterREM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/center_camera_on_location"
+        mapbox:cornerRadius="@dimen/radius_medium_button"
+        android:layout_gravity="top|center"
+        android:layout_margin="@dimen/margin_small"
+        android:textSize="@dimen/small_text"
+        android:visibility="gone"/>
+
 </FrameLayout>
 

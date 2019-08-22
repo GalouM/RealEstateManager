@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".mainActivity.ListPropertyView"
+    tools:context=".listProperties.ListPropertyView"
     android:id="@+id/list_property_view_frameLayout">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

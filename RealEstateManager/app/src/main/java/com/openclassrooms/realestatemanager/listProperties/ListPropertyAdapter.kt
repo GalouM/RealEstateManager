@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.mainActivity
+package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,9 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
-import com.openclassrooms.realestatemanager.data.entity.Address
-import com.openclassrooms.realestatemanager.data.entity.Picture
-import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.utils.Currency
 
 /**

@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.mainActivity
+package com.openclassrooms.realestatemanager.listProperties
 
 
 import android.graphics.Color
@@ -8,10 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.appcompat.widget.ContentFrameLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -20,16 +17,16 @@ import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
-import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.ItemClickSupport
-import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
  * A simple [Fragment] subclass.
  *
  */
-class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener, MainActivity.OnListPropertiesChangeListener {
+class ListPropertyView : BaseViewListProperties(),
+        MainActivity.OnClickChangeCurrencyListener, MainActivity.OnListPropertiesChangeListener {
 
     @BindView(R.id.list_property_view_rv) lateinit var recyclerView: RecyclerView
     @BindView(R.id.list_property_view_refresh) lateinit var refreshLayout: SwipeRefreshLayout
@@ -37,8 +34,6 @@ class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener,
 
     private var adapter: ListPropertyAdapter? = null
     private var currentCurrency: Currency = Currency.EURO
-
-    private lateinit var viewModel: ListPropertyViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -70,38 +65,13 @@ class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener,
     // VIEW MODEL CONNECTION
     //--------------------
 
-    private fun configureViewModel(){
-        val viewModelFactory = Injection.providesViewModelFactory(activity!!.applicationContext)
-        viewModel = ViewModelProviders.of(
-                this,
-                viewModelFactory
-        ).get(ListPropertyViewModel::class.java)
-
-        viewModel.viewState.observe(this, Observer { render(it) })
-
-        viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
-    }
-
-    private fun render(viewState: PropertyListViewState?) {
-        if (viewState == null) return
-
-        viewState.listProperties?.let {
-            renderListProperties(viewState.listProperties)
-        }
-
-        viewState.errorSource?.let { renderErrorFetchingProperty(it) }
-
-        if(viewState.isLoading) renderIsLoading()
-
-    }
-
-    private fun renderListProperties(properties: List<PropertyForListDisplay>){
+    override fun renderListProperties(properties: List<PropertyForListDisplay>){
         turnOffLoading()
         configureRecyclerView(properties)
         configureClickRecyclerView()
     }
 
-    private fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
+    override fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
         turnOffLoading()
         when(errorSource){
             ErrorSourceListProperty.NO_PROPERTY_IN_DB -> showSnackBarMessage(getString(R.string.no_properties))
@@ -109,7 +79,7 @@ class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener,
         }
     }
 
-    private fun renderIsLoading(){
+    override fun renderIsLoading(){
         frameLayout.foreground.alpha = 50
     }
 
@@ -121,17 +91,7 @@ class ListPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener,
 
     private fun configureClickRecyclerView(){
         ItemClickSupport.addTo(recyclerView, R.layout.list_agent_dialog_item)
-                .setOnItemClickListener{ _, position, _ ->  setPropertySelected(adapter!!.getProperty(position))}
-    }
-
-    private fun setPropertySelected(id: Int){
-
-    }
-
-    private fun showSnackBarMessage(message: String){
-        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
-        showSnackBar(viewLayout, message)
-
+                .setOnItemClickListener{ _, position, _ ->  openPropertyDetails(adapter!!.getProperty(position))}
     }
 
     override fun onChangeCurrency(currency: Currency) {

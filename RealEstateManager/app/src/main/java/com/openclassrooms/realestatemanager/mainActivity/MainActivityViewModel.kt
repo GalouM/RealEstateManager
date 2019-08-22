@@ -7,6 +7,7 @@ import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
+import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -16,11 +17,8 @@ import kotlinx.coroutines.launch
 class MainActivityViewModel(
         private val agentRepository: AgentRepository,
         private val currencyRepository: CurrencyRepository
-) : BaseViewModel(){
+) : BaseViewModel<MainActivityViewState>(), REMViewModel<MainActivityIntent, MainActivityResult>{
 
-    private val viewStateLD = MutableLiveData<MainActivityViewState>()
-    val viewState: LiveData<MainActivityViewState>
-        get() = viewStateLD
     private var currentViewState = MainActivityViewState()
         set(value) {
             field = value
@@ -29,7 +27,7 @@ class MainActivityViewModel(
 
     private var searchAgentsJob: Job? = null
 
-     fun actionFromIntent(intent: MainActivityIntent){
+     override fun actionFromIntent(intent: MainActivityIntent){
         when(intent){
             is MainActivityIntent.OpenAddPropertyActivityIntent -> onOpenAddPropertyRequest()
             is MainActivityIntent.ChangeCurrencyIntent -> changeCurrency()
@@ -38,7 +36,7 @@ class MainActivityViewModel(
 
     }
 
-     private fun resultToViewState(result: Lce<MainActivityResult>){
+     override fun resultToViewState(result: Lce<MainActivityResult>){
         currentViewState = when (result){
             is Lce.Content -> {
                 when(result.packet){

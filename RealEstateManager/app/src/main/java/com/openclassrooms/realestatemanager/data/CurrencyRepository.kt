@@ -1,11 +1,15 @@
 package com.openclassrooms.realestatemanager.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.utils.Currency
 
 /**
  * Created by galou on 2019-08-11
  */
 object CurrencyRepository {
+
+
 
     private var currentCurrency = Currency.EURO
 

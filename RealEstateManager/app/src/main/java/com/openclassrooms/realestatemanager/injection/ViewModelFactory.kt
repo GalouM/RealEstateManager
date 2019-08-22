@@ -7,7 +7,7 @@ import com.openclassrooms.realestatemanager.addProperty.AddPropertyViewModel
 import com.openclassrooms.realestatemanager.data.AgentRepository
 import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyRepository
-import com.openclassrooms.realestatemanager.mainActivity.ListPropertyViewModel
+import com.openclassrooms.realestatemanager.listProperties.ListPropertyViewModel
 import com.openclassrooms.realestatemanager.mainActivity.MainActivityViewModel
 
 /**

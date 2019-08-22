@@ -11,6 +11,7 @@ import com.openclassrooms.realestatemanager.data.entity.*
 import com.openclassrooms.realestatemanager.extensions.*
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
+import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import io.reactivex.disposables.Disposable
@@ -25,12 +26,8 @@ class AddPropertyViewModel (
         private val agentRepository: AgentRepository,
         private val propertyRepository: PropertyRepository,
         private val currencyRepository: CurrencyRepository)
-    : BaseViewModel(){
+    : BaseViewModel<AddPropertyViewState>(), REMViewModel<AddPropertyIntent, AddPropertyResult>{
 
-    //livedata
-    private val viewStateLD = MutableLiveData<AddPropertyViewState>()
-    val viewState: LiveData<AddPropertyViewState>
-        get() = viewStateLD
     private var currentViewState = AddPropertyViewState()
         set(value) {
             field = value
@@ -70,7 +67,7 @@ class AddPropertyViewModel (
     private var searchAgentsJob: Job? = null
 
 
-    fun actionFromIntent(intent: AddPropertyIntent) {
+    override fun actionFromIntent(intent: AddPropertyIntent) {
         when(intent) {
             is AddPropertyIntent.AddPropertyToDBIntent -> {
                 checkErrorsFromUserInput(
@@ -93,7 +90,7 @@ class AddPropertyViewModel (
         }
     }
 
-    private fun resultToViewState(result: Lce<AddPropertyResult>) {
+    override fun resultToViewState(result: Lce<AddPropertyResult>) {
         currentViewState = when (result){
             is Lce.Content ->{
                 when(result.packet){

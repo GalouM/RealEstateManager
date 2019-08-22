@@ -1,8 +1,6 @@
-package com.openclassrooms.realestatemanager.mainActivity
+package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Context
-import android.graphics.Color
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -15,9 +13,6 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
-import com.openclassrooms.realestatemanager.data.entity.Address
-import com.openclassrooms.realestatemanager.data.entity.Picture
-import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.extensions.toDollar
 import com.openclassrooms.realestatemanager.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.extensions.toEuroDisplay

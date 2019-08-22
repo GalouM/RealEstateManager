@@ -1,6 +1,9 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 import com.openclassrooms.realestatemanager.data.entity.Agent
+import com.openclassrooms.realestatemanager.mviBase.REMIntent
+import com.openclassrooms.realestatemanager.mviBase.REMResult
+import com.openclassrooms.realestatemanager.mviBase.REMViewState
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 
@@ -15,9 +18,9 @@ data class AddPropertyViewState(
         val openListAgents: Boolean = false,
         val listAgents: List<Agent>? = null,
         val currency: Currency = Currency.EURO
-)
+) : REMViewState
 
-sealed class AddPropertyIntent{
+sealed class AddPropertyIntent : REMIntent{
     data class AddPropertyToDBIntent(
             val type: String, val price: String,
             val surface: String, val rooms: String,
@@ -37,7 +40,7 @@ sealed class AddPropertyIntent{
 
 }
 
-sealed class AddPropertyResult{
+sealed class AddPropertyResult : REMResult{
     data class AddPropertyToDBResult(val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
     data class ListAgentsResult(val listAgents: List<Agent>?, val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
     data class ChangeCurrencyResult(val currency: Currency) : AddPropertyResult()

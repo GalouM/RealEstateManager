@@ -1,13 +1,14 @@
-package com.openclassrooms.realestatemanager.mainActivity
+package com.openclassrooms.realestatemanager.listProperties
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.data.PropertyRepository
 import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
+import com.openclassrooms.realestatemanager.mviBase.REMViewModel
+import com.openclassrooms.realestatemanager.utils.Currency
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -16,28 +17,27 @@ import kotlinx.coroutines.launch
  */
 class ListPropertyViewModel(
         private val propertyRepository: PropertyRepository)
-    : BaseViewModel(){
+    : BaseViewModel<PropertyListViewState>(), REMViewModel<PropertyListIntent, PropertyListResult>{
 
-
-    private val viewStateLD = MutableLiveData<PropertyListViewState>()
-    val viewState: LiveData<PropertyListViewState>
-        get() = viewStateLD
     private var currentViewState = PropertyListViewState()
         set(value) {
             field = value
             viewStateLD.value = value
         }
 
+    private val currencyLD = MutableLiveData<Currency>()
+    val currency: LiveData<Currency> = currencyLD
+
     private var searchPropertiesJob: Job? = null
 
-    fun actionFromIntent(intent: PropertyListIntent){
+    override fun actionFromIntent(intent: PropertyListIntent){
         when(intent){
             is PropertyListIntent.DisplayPropertiesIntent -> fetchPropertiesFromDB()
         }
 
     }
 
-    private fun resultToViewState(result: Lce<PropertyListResult>){
+    override fun resultToViewState(result: Lce<PropertyListResult>){
         currentViewState = when (result){
             is Lce.Content -> {
                 when(result.packet){

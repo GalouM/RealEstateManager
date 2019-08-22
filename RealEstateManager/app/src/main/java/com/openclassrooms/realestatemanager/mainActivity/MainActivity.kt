@@ -22,6 +22,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_AGENT
 import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_PROPERTY
@@ -34,7 +35,7 @@ import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloating
 import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
 
 
-class MainActivity : AppCompatActivity(),
+class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>{
 
     interface OnClickChangeCurrencyListener{
@@ -44,6 +45,8 @@ class MainActivity : AppCompatActivity(),
     interface OnListPropertiesChangeListener{
         fun onListPropertiesChange()
     }
+
+
 
     private lateinit var callbackListPropertiesCurrency: OnClickChangeCurrencyListener
     private lateinit var callbackMapPropertiesCurrency: OnClickChangeCurrencyListener
@@ -230,7 +233,7 @@ class MainActivity : AppCompatActivity(),
     // VIEW MODEL CONNECTION
     //--------------------
 
-    private fun configureViewModel(){
+    override fun configureViewModel(){
         val viewModelFactory = Injection.providesViewModelFactory(this)
         viewModel = ViewModelProviders.of(
                 this,
@@ -244,7 +247,7 @@ class MainActivity : AppCompatActivity(),
     // STATE AND INTENT
     //--------------------
 
-    private fun render(viewState: MainActivityViewState?) {
+    override fun render(viewState: MainActivityViewState?) {
         if (viewState == null) return
         if(viewState.isOpenAddProperty){
             renderShowAddPropertyActivity()

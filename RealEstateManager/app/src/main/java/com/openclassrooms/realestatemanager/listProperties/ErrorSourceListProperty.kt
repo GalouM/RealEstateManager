@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.mainActivity
+package com.openclassrooms.realestatemanager.listProperties
 
 /**
  * Created by galou on 2019-08-12

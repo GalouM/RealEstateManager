@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.ContentFrameLayout
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -23,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.PERMS_EXT_STORAGE
 import com.openclassrooms.realestatemanager.utils.RC_CHOOSE_PHOTO
 import com.openclassrooms.realestatemanager.utils.RC_IMAGE_PERMS
@@ -36,9 +36,8 @@ import pub.devrel.easypermissions.EasyPermissions
  * A simple [Fragment] subclass.
  *
  */
-class AddAgentView : Fragment() {
+class AddAgentView : Fragment(), REMView<AddAgentViewState> {
 
-    private lateinit var toolbar: Toolbar
     @BindView(R.id.add_agent_view_firstname) lateinit var firstName: EditText
     @BindView(R.id.add_agent_view_lastname) lateinit var lastName: EditText
     @BindView(R.id.add_agent_view_email) lateinit var email: EditText
@@ -54,11 +53,8 @@ class AddAgentView : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_add_agent_view, container, false)
         ButterKnife.bind(this, view)
-
-        toolbar = activity!!.findViewById(R.id.add_agent_activity_toolbar)
 
         configureViewModel()
         return view
@@ -108,7 +104,7 @@ class AddAgentView : Fragment() {
     // VIEW MODEL CONNECTION
     //--------------------
 
-    private fun configureViewModel(){
+    override fun configureViewModel(){
         val viewModelFactory = Injection.providesViewModelFactory(activity!!.applicationContext)
         viewModel = ViewModelProviders.of(
                 this,
@@ -122,13 +118,13 @@ class AddAgentView : Fragment() {
     // STATE AND INTENT
     //--------------------
 
-    private fun render(viewState: AddAgentViewState?){
-        if (viewState == null) return
-        if(viewState.isSaved) {
+    override fun render(state: AddAgentViewState?){
+        if (state == null) return
+        if(state.isSaved) {
             renderPropertyAddedToDB()
         }
-        if(viewState.errors != null){
-            renderErrors(viewState.errors)
+        if(state.errors != null){
+            renderErrors(state.errors)
         }
     }
 

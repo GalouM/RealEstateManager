@@ -10,6 +10,7 @@ import com.openclassrooms.realestatemanager.extensions.isCorrectName
 import com.openclassrooms.realestatemanager.extensions.isCorrectPhoneNumber
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
+import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -18,11 +19,8 @@ import kotlinx.coroutines.launch
  */
 class AddAgentViewModel (
         private val agentRepository: AgentRepository
-) : BaseViewModel() {
+) : BaseViewModel<AddAgentViewState>(), REMViewModel<AddAgentIntent, AddAgentResult> {
 
-    private val viewStateLD = MutableLiveData<AddAgentViewState>()
-    val viewState: LiveData<AddAgentViewState>
-        get() = viewStateLD
     private var currentViewState = AddAgentViewState()
         set(value) {
             field = value
@@ -31,7 +29,7 @@ class AddAgentViewModel (
 
     private var addAgentsJob: Job? = null
 
-     fun actionFromIntent(intent: AddAgentIntent) {
+     override fun actionFromIntent(intent: AddAgentIntent) {
         when(intent) {
             is AddAgentIntent.AddAgentToDBIntent -> {
                 addAgentToDBRequest(
@@ -42,11 +40,10 @@ class AddAgentViewModel (
                         intent.phoneNumber)
 
         }
-            else -> throw Exception("No Intent found")
         }
     }
 
-     private fun resultToViewState(result: Lce<AddAgentResult>) {
+     override fun resultToViewState(result: Lce<AddAgentResult>) {
         currentViewState = when (result){
             is Lce.Content ->{
                 when(result.packet){

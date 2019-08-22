@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:mapbox="http://schemas.android.com/apk/res-auto"
-    tools:context=".mainActivity.MapPropertyView">
+    tools:context=".listProperties.MapPropertyView">
 
 
     <com.mapbox.mapboxsdk.maps.MapView

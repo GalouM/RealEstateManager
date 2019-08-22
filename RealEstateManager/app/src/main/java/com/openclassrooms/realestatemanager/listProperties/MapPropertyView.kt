@@ -1,17 +1,13 @@
-package com.openclassrooms.realestatemanager.mainActivity
+package com.openclassrooms.realestatemanager.listProperties
 
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.appcompat.widget.ContentFrameLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -25,17 +21,13 @@ import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
-import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions
-import com.mapbox.mapboxsdk.utils.BitmapUtils
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.extensions.toBounds
 import com.openclassrooms.realestatemanager.extensions.toDollar
 import com.openclassrooms.realestatemanager.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.extensions.toEuroDisplay
-import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -45,12 +37,11 @@ import pub.devrel.easypermissions.EasyPermissions
  * A simple [Fragment] subclass.
  *
  */
-class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener, MainActivity.OnListPropertiesChangeListener {
+class MapPropertyView : BaseViewListProperties(),
+        MainActivity.OnClickChangeCurrencyListener, MainActivity.OnListPropertiesChangeListener {
 
     @BindView(R.id.map_view_map) lateinit var mapView: MapView
     @BindView(R.id.map_view_button) lateinit var buttonCenter: Button
-
-    private lateinit var viewModel: ListPropertyViewModel
 
     private var userLocationBounds: LatLngBounds? = null
     private var userLastKnowLocation: LatLng? = null
@@ -93,31 +84,7 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener, 
     //--------------------
     // VIEW MODEL CONNECTION
     //--------------------
-
-    private fun configureViewModel(){
-        val viewModelFactory = Injection.providesViewModelFactory(activity!!.applicationContext)
-        viewModel = ViewModelProviders.of(
-                this,
-                viewModelFactory
-        ).get(ListPropertyViewModel::class.java)
-
-        viewModel.viewState.observe(this, Observer { render(it) })
-
-    }
-
-    private fun render(viewState: PropertyListViewState?) {
-        if (viewState == null) return
-
-        viewState.listProperties?.let {
-            renderListProperties(viewState.listProperties)
-        }
-
-        viewState.errorSource?.let { renderErrorFetchingProperty(it) }
-
-
-    }
-
-    private fun renderListProperties(properties: List<PropertyForListDisplay>){
+    override fun renderListProperties(properties: List<PropertyForListDisplay>){
         propertiesNearBy.clear()
         properties.forEach { property ->
             val position = LatLng(property.lat, property.lng)
@@ -130,11 +97,15 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener, 
         }
     }
 
-    private fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
+    override fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
         when(errorSource){
             ErrorSourceListProperty.NO_PROPERTY_IN_DB -> showSnackBarMessage(getString(R.string.no_properties))
             ErrorSourceListProperty.CAN_T_ACCESS_DB -> showSnackBarMessage(getString(R.string.unknow_error))
         }
+    }
+
+    override fun renderIsLoading() {
+
     }
 
     private fun displayPropertiesAround(currency: Currency) {
@@ -239,9 +210,4 @@ class MapPropertyView : Fragment(), MainActivity.OnClickChangeCurrencyListener, 
         mapView.onSaveInstanceState(outState)
     }
 
-    private fun showSnackBarMessage(message: String){
-        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
-        showSnackBar(viewLayout, message)
-
-    }
 }

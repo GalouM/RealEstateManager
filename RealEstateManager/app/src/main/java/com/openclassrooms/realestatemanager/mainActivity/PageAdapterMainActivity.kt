@@ -3,6 +3,8 @@ package com.openclassrooms.realestatemanager.mainActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.openclassrooms.realestatemanager.listProperties.ListPropertyView
+import com.openclassrooms.realestatemanager.listProperties.MapPropertyView
 
 /**
  * Created by galou on 2019-06-30

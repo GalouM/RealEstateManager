@@ -21,6 +21,7 @@ import com.openclassrooms.realestatemanager.extensions.toCalendar
 import com.openclassrooms.realestatemanager.extensions.toDate
 import com.openclassrooms.realestatemanager.extensions.toStringForDisplay
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
 import java.util.*
@@ -29,7 +30,8 @@ import java.util.*
  * A simple [Fragment] subclass.
  *
  */
-class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListAgentsDialogView.OnAgentSelected {
+class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
+        PickDateDialogView.OnOkButtonListener, ListAgentsDialogView.OnAgentSelected {
 
     @BindView(R.id.add_property_view_dropdown_type) lateinit var dropdowPropertyType: AutoCompleteTextView
     @BindView(R.id.add_property_view_price) lateinit var priceText: EditText
@@ -167,7 +169,7 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
     // VIEW MODEL CONNECTION
     //--------------------
 
-    private fun configureViewModel(){
+    override fun configureViewModel(){
         val viewModelFactory = Injection.providesViewModelFactory(activity!!.applicationContext)
         viewModel = ViewModelProviders.of(
                 this,
@@ -181,19 +183,19 @@ class AddPropertyView : Fragment(), PickDateDialogView.OnOkButtonListener, ListA
     // STATE AND INTENT
     //--------------------
 
-    private fun render(viewState: AddPropertyViewState?){
-        if (viewState == null) return
-        if(viewState.isSaved) {
+    override fun render(state: AddPropertyViewState?){
+        if (state == null) return
+        if(state.isSaved) {
             renderPropertyAddedToDB()
         }
 
-        if(viewState.errors != null){
-            renderErrors(viewState.errors)
+        if(state.errors != null){
+            renderErrors(state.errors)
         }
-        changeCurrency(viewState.currency)
+        changeCurrency(state.currency)
 
-        if(viewState.openListAgents && viewState.listAgents != null){
-            renderAgentDialog(viewState.listAgents)
+        if(state.openListAgents && state.listAgents != null){
+            renderAgentDialog(state.listAgents)
         }
 
 

@@ -38,18 +38,10 @@ import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
 class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>{
 
-    interface OnClickChangeCurrencyListener{
-        fun onChangeCurrency(currency: Currency)
-    }
-
     interface OnListPropertiesChangeListener{
         fun onListPropertiesChange()
     }
 
-
-
-    private lateinit var callbackListPropertiesCurrency: OnClickChangeCurrencyListener
-    private lateinit var callbackMapPropertiesCurrency: OnClickChangeCurrencyListener
     private lateinit var callbackListPropertiesRefresh: OnListPropertiesChangeListener
     private lateinit var callbackMapPropertiesRefresh: OnListPropertiesChangeListener
 
@@ -65,14 +57,6 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     private var menuToolbar: Menu? = null
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
-
-    fun setOnClickChangeCurrencyList(callback: OnClickChangeCurrencyListener){
-        this.callbackListPropertiesCurrency = callback
-    }
-
-    fun setOnClickChangeCurrencyMap(callback: OnClickChangeCurrencyListener){
-        this.callbackMapPropertiesCurrency = callback
-    }
 
     fun setListPropertiesChangeList(callback: OnListPropertiesChangeListener){
         this.callbackListPropertiesRefresh = callback
@@ -287,8 +271,6 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
                     currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
                 }
             }
-            callbackListPropertiesCurrency.onChangeCurrency(currency)
-            callbackMapPropertiesCurrency.onChangeCurrency(currency)
         }
 
     }

@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.listProperties
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.data.PropertyRepository
 import com.openclassrooms.realestatemanager.data.entity.Property
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
  * Created by galou on 2019-08-12
  */
 class ListPropertyViewModel(
-        private val propertyRepository: PropertyRepository)
+        private val propertyRepository: PropertyRepository,
+        private val currencyRepository: CurrencyRepository)
     : BaseViewModel<PropertyListViewState>(), REMViewModel<PropertyListIntent, PropertyListResult>{
 
     private var currentViewState = PropertyListViewState()
@@ -25,8 +27,7 @@ class ListPropertyViewModel(
             viewStateLD.value = value
         }
 
-    private val currencyLD = MutableLiveData<Currency>()
-    val currency: LiveData<Currency> = currencyLD
+    val currency: LiveData<Currency> = currencyRepository.currency
 
     private var searchPropertiesJob: Job? = null
 

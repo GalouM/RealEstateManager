@@ -9,6 +9,8 @@ import com.openclassrooms.realestatemanager.utils.Currency
  */
 object CurrencyRepository {
 
+    private val currencyLD = MutableLiveData<Currency>()
+    val currency: LiveData<Currency> = currencyLD
 
 
     private var currentCurrency = Currency.EURO
@@ -16,8 +18,12 @@ object CurrencyRepository {
     fun getCurrentCurrency() = currentCurrency
 
     fun setCurrency(){
+        currencyLD.value = when(currentCurrency){
+            Currency.EURO -> {Currency.DOLLAR}
+            Currency.DOLLAR -> Currency.EURO
+        }
         currentCurrency = when(currentCurrency){
-            Currency.EURO -> Currency.DOLLAR
+            Currency.EURO -> {Currency.DOLLAR}
             Currency.DOLLAR -> Currency.EURO
         }
     }

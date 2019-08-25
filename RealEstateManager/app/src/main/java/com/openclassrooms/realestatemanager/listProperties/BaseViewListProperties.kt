@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
+import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
@@ -15,10 +16,13 @@ import com.openclassrooms.realestatemanager.utils.showSnackBar
 abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewState> {
 
     protected lateinit var viewModel: ListPropertyViewModel
+    protected var currentCurrency: Currency = Currency.EURO
 
     protected abstract fun renderListProperties(properties: List<PropertyForListDisplay>)
     protected abstract fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty)
     protected abstract fun renderIsLoading()
+    protected abstract fun renderTurnOffLoading()
+    protected abstract fun renderChangeCurrency(currency: Currency)
 
     //--------------------
     // VIEW MODEL CONNECTION
@@ -45,8 +49,19 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
 
         state.errorSource?.let { renderErrorFetchingProperty(it) }
 
-        if(state.isLoading) renderIsLoading()
+        if(state.isLoading) {
+            renderIsLoading()
+        } else {
+            renderTurnOffLoading()
+        }
 
+    }
+
+    protected fun currencyObserver(){
+        viewModel.currency.observe(this, Observer {currency ->
+            currentCurrency = currency
+            renderChangeCurrency(currentCurrency)
+        })
     }
 
     protected fun openPropertyDetails(propertyId: Int){

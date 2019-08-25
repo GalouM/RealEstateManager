@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,14 +27,13 @@ import com.openclassrooms.realestatemanager.utils.ItemClickSupport
  *
  */
 class ListPropertyView : BaseViewListProperties(),
-        MainActivity.OnClickChangeCurrencyListener, MainActivity.OnListPropertiesChangeListener {
+         MainActivity.OnListPropertiesChangeListener {
 
     @BindView(R.id.list_property_view_rv) lateinit var recyclerView: RecyclerView
     @BindView(R.id.list_property_view_refresh) lateinit var refreshLayout: SwipeRefreshLayout
     @BindView(R.id.list_property_view_frameLayout) lateinit var frameLayout: FrameLayout
 
     private var adapter: ListPropertyAdapter? = null
-    private var currentCurrency: Currency = Currency.EURO
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -43,16 +43,10 @@ class ListPropertyView : BaseViewListProperties(),
         configureRefreshLayout()
         configureForeground()
         configureViewModel()
-        setupCurrencyListener()
+        currencyObserver()
         setupRefreshPropertiesListener()
 
         return view
-    }
-
-    private fun setupCurrencyListener(){
-        if(activity is MainActivity){
-            (activity as MainActivity).setOnClickChangeCurrencyList(this)
-        }
     }
 
     private fun setupRefreshPropertiesListener(){
@@ -66,13 +60,11 @@ class ListPropertyView : BaseViewListProperties(),
     //--------------------
 
     override fun renderListProperties(properties: List<PropertyForListDisplay>){
-        turnOffLoading()
         configureRecyclerView(properties)
         configureClickRecyclerView()
     }
 
     override fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
-        turnOffLoading()
         when(errorSource){
             ErrorSourceListProperty.NO_PROPERTY_IN_DB -> showSnackBarMessage(getString(R.string.no_properties))
             ErrorSourceListProperty.CAN_T_ACCESS_DB -> showSnackBarMessage(getString(R.string.unknow_error))
@@ -82,6 +74,16 @@ class ListPropertyView : BaseViewListProperties(),
     override fun renderIsLoading(){
         frameLayout.foreground.alpha = 50
     }
+
+    override fun renderTurnOffLoading() {
+        frameLayout.foreground.alpha = 0
+        refreshLayout.isRefreshing = false
+
+    }
+
+    //--------------------
+    // RECYCLERVIEW
+    //--------------------
 
     private fun configureRecyclerView(properties: List<PropertyForListDisplay>){
         adapter = ListPropertyAdapter(properties, currentCurrency, Glide.with(this))
@@ -94,17 +96,24 @@ class ListPropertyView : BaseViewListProperties(),
                 .setOnItemClickListener{ _, position, _ ->  openPropertyDetails(adapter!!.getProperty(position))}
     }
 
-    override fun onChangeCurrency(currency: Currency) {
-        currentCurrency = currency
-        adapter?.updateCurrency(currentCurrency)
+    //--------------------
+    // UPDATE UI FROM MAIN ACTIVITY ACTIONS
+    //--------------------
+
+    override fun renderChangeCurrency(currency: Currency) {
+        adapter?.updateCurrency(currency)
     }
 
     override fun onListPropertiesChange() {
-        onRefreshLayout()
+        refreshListProperties()
     }
 
+    //--------------------
+    // REFRESH VIEW
+    //--------------------
+
     private fun configureRefreshLayout(){
-        refreshLayout.setOnRefreshListener(this::onRefreshLayout)
+        refreshLayout.setOnRefreshListener(this::refreshListProperties)
     }
 
     private fun configureForeground(){
@@ -112,13 +121,8 @@ class ListPropertyView : BaseViewListProperties(),
         frameLayout.foreground.alpha = 0
     }
 
-    private fun onRefreshLayout(){
-        frameLayout.foreground.alpha = 50
+    private fun refreshListProperties(){
         viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
     }
 
-    private fun turnOffLoading(){
-        frameLayout.foreground.alpha = 0
-        refreshLayout.isRefreshing = false
-    }
 }

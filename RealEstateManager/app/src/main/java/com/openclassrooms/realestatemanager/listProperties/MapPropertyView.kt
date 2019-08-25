@@ -38,7 +38,7 @@ import pub.devrel.easypermissions.EasyPermissions
  *
  */
 class MapPropertyView : BaseViewListProperties(),
-        MainActivity.OnClickChangeCurrencyListener, MainActivity.OnListPropertiesChangeListener {
+       MainActivity.OnListPropertiesChangeListener {
 
     @BindView(R.id.map_view_map) lateinit var mapView: MapView
     @BindView(R.id.map_view_button) lateinit var buttonCenter: Button
@@ -56,25 +56,14 @@ class MapPropertyView : BaseViewListProperties(),
         configureViewModel()
         mapView.onCreate(savedInstanceState)
         fetchUserLocation()
-        setupCurrencyListener()
         setupRefreshPropertiesListener()
         return view
-    }
-
-    private fun setupCurrencyListener(){
-        if(activity is MainActivity){
-            (activity as MainActivity).setOnClickChangeCurrencyMap(this)
-        }
     }
 
     private fun setupRefreshPropertiesListener(){
         if(activity is MainActivity){
             (activity as MainActivity).setListPropertiesChangeMap(this)
         }
-    }
-
-    override fun onChangeCurrency(currency: Currency) {
-        displayPropertiesAround(currency)
     }
 
     override fun onListPropertiesChange() {
@@ -107,6 +96,18 @@ class MapPropertyView : BaseViewListProperties(),
     override fun renderIsLoading() {
 
     }
+
+    override fun renderTurnOffLoading() {
+
+    }
+
+    override fun renderChangeCurrency(currency: Currency) {
+        displayPropertiesAround(currency)
+    }
+
+    //--------------------
+    // MAP ACTIONS
+    //--------------------
 
     private fun displayPropertiesAround(currency: Currency) {
         mapView.getMapAsync { mapbox ->
@@ -189,6 +190,10 @@ class MapPropertyView : BaseViewListProperties(),
     fun centerCameraButtonListener(){
         centerCameraOnUser()
     }
+
+    //--------------------
+    // LIFE STATE MAP
+    //--------------------
 
     override fun onResume() {
         super.onResume()

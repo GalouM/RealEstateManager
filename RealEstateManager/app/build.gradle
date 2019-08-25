@@ -107,6 +107,7 @@ dependencies {
     //MAPBOX
     implementation "com.mapbox.mapboxsdk:mapbox-android-sdk:$rootProject.mapBoxVersion"
     implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$rootProject.mapBoxPluginVersion"
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha03'
 
 
 }

@@ -278,7 +278,7 @@ class AddPropertyViewModel (
 
         fun createNewPropertyInDB(){
             addPropertyJob = launch {
-                val currency = currencyRepository.getCurrentCurrency()
+                val currency = currencyRepository.currency.value!!
                 val propertyForDB = Property(
                         null, Converters.toTypeProperty(type), price.toDouble().toEuro(currency),
                         surface.toDouble().toSqMeter(currency), rooms.toInt(),
@@ -321,7 +321,7 @@ class AddPropertyViewModel (
     }
 
     private fun emitCurrentCurrency(){
-        val currency = currencyRepository.getCurrentCurrency()
+        val currency = currencyRepository.currency.value!!
         val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.ChangeCurrencyResult(currency))
 
         resultToViewState(result)

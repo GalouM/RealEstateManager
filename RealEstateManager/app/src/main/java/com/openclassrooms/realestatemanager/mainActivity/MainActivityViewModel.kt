@@ -102,7 +102,7 @@ class MainActivityViewModel(
     }
 
     private fun emitCurrentCurrency(){
-        val currency = currencyRepository.getCurrentCurrency()
+        val currency = currencyRepository.currency.value!!
         val result: Lce<MainActivityResult> = Lce.Content(MainActivityResult.ChangeCurrencyResult(currency))
 
         resultToViewState(result)

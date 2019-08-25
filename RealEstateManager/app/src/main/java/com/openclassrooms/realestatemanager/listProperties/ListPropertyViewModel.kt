@@ -27,7 +27,8 @@ class ListPropertyViewModel(
             viewStateLD.value = value
         }
 
-    val currency: LiveData<Currency> = currencyRepository.currency
+    val currency: LiveData<Currency>
+        get() = currencyRepository.currency
 
     private var searchPropertiesJob: Job? = null
 

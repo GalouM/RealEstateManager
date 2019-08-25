@@ -54,6 +54,7 @@ class MapPropertyView : BaseViewListProperties(),
         val view = inflater.inflate(R.layout.fragment_map_property_view, container, false)
         ButterKnife.bind(this, view)
         configureViewModel()
+        currencyObserver()
         mapView.onCreate(savedInstanceState)
         fetchUserLocation()
         setupRefreshPropertiesListener()

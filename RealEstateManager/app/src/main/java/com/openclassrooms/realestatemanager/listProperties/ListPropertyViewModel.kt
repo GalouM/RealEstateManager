@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
  */
 class ListPropertyViewModel(
         private val propertyRepository: PropertyRepository,
-        private val currencyRepository: CurrencyRepository)
+        private val currencyRepository: CurrencyRepository
+)
     : BaseViewModel<PropertyListViewState>(), REMViewModel<PropertyListIntent, PropertyListResult>{
 
     private var currentViewState = PropertyListViewState()
@@ -35,6 +36,7 @@ class ListPropertyViewModel(
     override fun actionFromIntent(intent: PropertyListIntent){
         when(intent){
             is PropertyListIntent.DisplayPropertiesIntent -> fetchPropertiesFromDB()
+            is PropertyListIntent.OpenPropertyDetailIntent -> setPropertySelected(intent.idProperty)
         }
 
     }
@@ -45,8 +47,15 @@ class ListPropertyViewModel(
                 when(result.packet){
                     is PropertyListResult.DisplayPropertiesResult -> {
                         currentViewState.copy(
+                                openDetails = false,
                                 isLoading = false,
                                 listProperties = result.packet.properties
+                        )
+                    }
+                    is PropertyListResult.OpenPropertyDetailResult -> {
+                        currentViewState.copy(
+                                isLoading = false,
+                                openDetails = true
                         )
                     }
                 }
@@ -54,6 +63,7 @@ class ListPropertyViewModel(
 
             is Lce.Loading -> {
                 currentViewState.copy(
+                        openDetails = false,
                         isLoading = true
                 )
             }
@@ -61,13 +71,21 @@ class ListPropertyViewModel(
                 when(result.packet){
                     is PropertyListResult.DisplayPropertiesResult -> {
                         currentViewState.copy(
+                                openDetails = false,
                                 isLoading = false,
                                 errorSource = ErrorSourceListProperty.NO_PROPERTY_IN_DB
                         )
                     }
+                    else -> throw Exception("unknow error")
                 }
             }
         }
+    }
+
+    private fun setPropertySelected(id: Int){
+        propertyRepository.setIdPropertyPicked(id)
+        val result: Lce<PropertyListResult> = Lce.Content(PropertyListResult.OpenPropertyDetailResult)
+        resultToViewState(result)
     }
 
     private fun fetchPropertiesFromDB() {

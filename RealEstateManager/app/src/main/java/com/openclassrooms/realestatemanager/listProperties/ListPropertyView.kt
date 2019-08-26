@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -71,14 +70,13 @@ class ListPropertyView : BaseViewListProperties(),
         }
     }
 
-    override fun renderIsLoading(){
-        frameLayout.foreground.alpha = 50
-    }
-
-    override fun renderTurnOffLoading() {
-        frameLayout.foreground.alpha = 0
-        refreshLayout.isRefreshing = false
-
+    override fun renderIsLoading(loading: Boolean){
+        if(loading) {
+            frameLayout.foreground.alpha = 50
+        } else {
+            frameLayout.foreground.alpha = 0
+            refreshLayout.isRefreshing = false
+        }
     }
 
     //--------------------
@@ -93,7 +91,7 @@ class ListPropertyView : BaseViewListProperties(),
 
     private fun configureClickRecyclerView(){
         ItemClickSupport.addTo(recyclerView, R.layout.list_agent_dialog_item)
-                .setOnItemClickListener{ _, position, _ ->  openPropertyDetails(adapter!!.getProperty(position))}
+                .setOnItemClickListener{ _, position, _ ->  setPropertyPicked(adapter!!.getProperty(position))}
     }
 
     //--------------------

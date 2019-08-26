@@ -1,10 +1,12 @@
 package com.openclassrooms.realestatemanager.listProperties
 
+import android.content.Intent
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
+import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.Currency
@@ -20,8 +22,7 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
 
     protected abstract fun renderListProperties(properties: List<PropertyForListDisplay>)
     protected abstract fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty)
-    protected abstract fun renderIsLoading()
-    protected abstract fun renderTurnOffLoading()
+    protected abstract fun renderIsLoading(loading: Boolean)
     protected abstract fun renderChangeCurrency(currency: Currency)
 
     //--------------------
@@ -44,17 +45,20 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
         if (state == null) return
 
         state.listProperties?.let {
-            renderListProperties(state.listProperties)
+            renderListProperties(it)
         }
 
         state.errorSource?.let { renderErrorFetchingProperty(it) }
 
-        if(state.isLoading) {
-            renderIsLoading()
-        } else {
-            renderTurnOffLoading()
-        }
+        renderIsLoading(state.isLoading)
 
+        if(state.openDetails) renderOpenPropertyDetails()
+
+    }
+
+    private fun renderOpenPropertyDetails(){
+        val intent = Intent(activity!!, DetailActivity::class.java)
+        startActivity(intent)
     }
 
     protected fun currencyObserver(){
@@ -64,7 +68,8 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
         })
     }
 
-    protected fun openPropertyDetails(propertyId: Int){
+    protected fun setPropertyPicked(propertyId: Int){
+        viewModel.actionFromIntent(PropertyListIntent.OpenPropertyDetailIntent(propertyId))
 
     }
 

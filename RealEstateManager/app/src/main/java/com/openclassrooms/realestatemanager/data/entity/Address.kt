@@ -13,6 +13,8 @@ import androidx.room.PrimaryKey
             parentColumns = ["id"],
             childColumns = ["propertyId"],
             onDelete = ForeignKey.CASCADE)])
-data class Address (@PrimaryKey val propertyId: Int, var address: String,
+data class Address (@PrimaryKey val propertyId: Int, var street: String,
+                    var city: String, var postalCode: String,
+                    var country: String, var state: String,
                     var longitude: Double, var latitude: Double,
                     var neighbourhood: String, var mapIconUrl: String)

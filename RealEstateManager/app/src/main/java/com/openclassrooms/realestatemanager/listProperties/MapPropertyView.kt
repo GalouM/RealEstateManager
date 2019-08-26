@@ -94,11 +94,7 @@ class MapPropertyView : BaseViewListProperties(),
         }
     }
 
-    override fun renderIsLoading() {
-
-    }
-
-    override fun renderTurnOffLoading() {
+    override fun renderIsLoading(loading: Boolean) {
 
     }
 

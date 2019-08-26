@@ -19,12 +19,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField ('String', "MapQuestApiKey", mapQuestApiKey)
-            buildConfigField ('String', "MapBoxToken", mapBoxToken)
+            buildConfigField('String', "MapQuestApiKey", mapQuestApiKey)
+            buildConfigField('String', "MapBoxToken", mapBoxToken)
         }
-        debug{
-            buildConfigField ('String', "MapQuestApiKey", mapQuestApiKey)
-            buildConfigField ('String', "MapBoxToken", mapBoxToken)
+        debug {
+            buildConfigField('String', "MapQuestApiKey", mapQuestApiKey)
+            buildConfigField('String', "MapBoxToken", mapBoxToken)
 
         }
     }
@@ -107,7 +107,10 @@ dependencies {
     //MAPBOX
     implementation "com.mapbox.mapboxsdk:mapbox-android-sdk:$rootProject.mapBoxVersion"
     implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$rootProject.mapBoxPluginVersion"
+
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha03'
+
+    implementation 'com.neovisionaries:nv-i18n:1.22'
 
 
 }

@@ -19,4 +19,7 @@
     <dimen name="text_price">23sp</dimen>
     <dimen name="radius_medium_button">10dp</dimen>
     <dimen name="small_text">10sp</dimen>
+    <dimen name="title_details_size">20sp</dimen>
+    <dimen name="details_size">15sp</dimen>
+    <dimen name="icon_details_size">20dip</dimen>
 </resources>

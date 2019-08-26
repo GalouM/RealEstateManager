@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name="androidx.multidex.MultiDexApplication"
@@ -16,9 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".addAgent.AddAgentActivity"
+        <activity android:name=".detailsProperty.DetailActivity"></activity>
+        <activity
+            android:name=".addAgent.AddAgentActivity"
             android:label="@string/add_agent"
-            android:parentActivityName=".mainActivity.MainActivity"/>
+            android:parentActivityName=".mainActivity.MainActivity" />
         <activity
             android:name=".addProperty.AddPropertyActivity"
             android:label="@string/add_property_title"

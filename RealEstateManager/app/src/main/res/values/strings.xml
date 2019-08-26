@@ -18,7 +18,7 @@
     <string name="bathrooms">Bathrooms</string>
     <string name="near_by">Near by:</string>
     <string name="school">School</string>
-    <string name="playgroud">Playgroud</string>
+    <string name="playgroud">Playground</string>
     <string name="shop">Shop</string>
     <string name="buses">Buses</string>
     <string name="subway">Subway</string>
@@ -56,16 +56,13 @@
     <string name="no_properties">No properties available</string>
     <string name="no_gps">No GPS Signal found</string>
     <string name="center_camera_on_location">Center camera on location</string>
-
-
-    <string-array name="planets_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
-    </string-array>
+    <string name="modify">Modify</string>
+    <string name="media">Media</string>
+    <string name="description_details_property">Description</string>
+    <string name="n_a">N/A</string>
+    <string name="surface">Surface</string>
+    <string name="number_of_rooms">Number of rooms</string>
+    <string name="number_of_bathrooms">Number of bathrooms</string>
+    <string name="location">Location</string>
+    <string name="number_of_bedrooms">Number of bedrooms</string>
 </resources>

@@ -23,7 +23,10 @@ fun Double.toSqMeter(currency: Currency): Double{
     if(currency == Currency.EURO) return this
 
     return (this * 0.092903).roundToLong().toDouble()
+}
 
+fun Double.toSqFt(): Double {
+    return (this * 10.7639).roundToLong().toDouble()
 }
 
 fun Double.toEuroDisplay(): String{

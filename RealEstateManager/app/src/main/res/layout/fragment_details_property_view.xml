@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".detailsProperty.DetailsPropertyView">
+
+    <TextView
+        android:id="@+id/details_view_media_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/media"
+        android:textSize="@dimen/title_details_size"
+        android:textStyle="bold"
+        android:layout_margin="@dimen/margin_small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/details_view_description_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/description"
+        android:textSize="@dimen/title_details_size"
+        android:textStyle="bold"
+        android:layout_margin="@dimen/margin_small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_view_media_title"/>
+
+    <TextView
+        android:id="@+id/details_view_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_view_description_title"
+        android:textSize="@dimen/details_size"
+        android:layout_margin="@dimen/margin_small"
+        android:textAlignment="textStart"
+        android:text="@string/n_a"/>
+
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/details_view_gridlayout_rooms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_view_description"
+        app:columnCount="2"
+        app:rowCount="4"
+        android:layout_margin="@dimen/margin_small">
+
+        <ImageView
+            android:id="@+id/details_view_surface_icon"
+            android:layout_width="@dimen/icon_details_size"
+            android:layout_height="@dimen/icon_details_size"
+            android:src="@drawable/surface_icon"
+            app:layout_column="0"
+            app:layout_row="0"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_row="0"
+            app:layout_column="1">
+
+        <TextView
+            android:id="@+id/details_view_surface_title"
+            android:text="@string/surface"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+        <TextView
+            android:id="@+id/details_view_surface"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/details_view_room_icon"
+            android:layout_width="@dimen/icon_details_size"
+            android:layout_height="@dimen/icon_details_size"
+            android:src="@drawable/home_icon"
+            app:layout_column="0"
+            app:layout_row="1"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_row="1"
+            app:layout_column="1">
+
+            <TextView
+                android:id="@+id/details_view_room_title"
+                android:text="@string/number_of_rooms"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+            <TextView
+                android:id="@+id/details_view_rooms"
+                android:text="@string/n_a"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/details_view_bath_icon"
+            android:layout_width="@dimen/icon_details_size"
+            android:layout_height="@dimen/icon_details_size"
+            android:src="@drawable/bathroom_icon"
+            app:layout_column="0"
+            app:layout_row="2"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_row="2"
+            app:layout_column="1">
+
+            <TextView
+                android:id="@+id/details_view_bath_title"
+                android:text="@string/number_of_bathrooms"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+            <TextView
+                android:id="@+id/details_view_bath"
+                android:text="@string/n_a"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/details_view_bed_icon"
+            android:layout_width="@dimen/icon_details_size"
+            android:layout_height="@dimen/icon_details_size"
+            android:src="@drawable/bed_icon"
+            app:layout_column="0"
+            app:layout_row="3"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_row="3"
+            app:layout_column="1">
+
+            <TextView
+                android:id="@+id/details_view_bed_title"
+                android:text="@string/number_of_bedrooms"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+            <TextView
+                android:id="@+id/details_view_bed"
+                android:text="@string/n_a"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+        </LinearLayout>
+
+    </androidx.gridlayout.widget.GridLayout>
+
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/details_view_gridlayout_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/details_view_gridlayout_rooms"
+        app:layout_constraintTop_toBottomOf="@id/details_view_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:columnCount="2"
+        app:rowCount="1"
+        android:layout_margin="@dimen/margin_small">
+
+    <ImageView
+        android:id="@+id/details_view_location_icon"
+        android:layout_width="@dimen/icon_details_size"
+        android:layout_height="@dimen/icon_details_size"
+        android:src="@drawable/icon_location_sold"
+        app:layout_column="0"
+        app:layout_row="0"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_row="0"
+        app:layout_column="1">
+
+        <TextView
+            android:id="@+id/details_view_location_title"
+            android:text="@string/location"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+        <TextView
+            android:id="@+id/details_view_location_street"
+            android:text="@string/n_a"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+        <TextView
+            android:id="@+id/details_view_location_details"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+        <TextView
+            android:id="@+id/details_view_location_city"
+            android:text="@string/n_a"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+        <TextView
+            android:id="@+id/details_view_location_zip"
+            android:text="@string/n_a"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+        <TextView
+            android:id="@+id/details_view_location_country"
+            android:text="@string/n_a"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+    </LinearLayout>
+    </androidx.gridlayout.widget.GridLayout>
+
+    <ImageView
+        android:id="@+id/details_view_map"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/margin_small"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

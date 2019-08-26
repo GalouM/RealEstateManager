@@ -11,13 +11,16 @@ import com.openclassrooms.realestatemanager.mviBase.REMViewState
 data class PropertyListViewState(
         val errorSource: ErrorSourceListProperty? = null,
         val isLoading: Boolean = false,
-        val listProperties: List<PropertyForListDisplay>? = null
+        val listProperties: List<PropertyForListDisplay>? = null,
+        val openDetails: Boolean = false
 ) : REMViewState
 
 sealed class PropertyListResult : REMResult{
     data class DisplayPropertiesResult(val properties: List<PropertyForListDisplay>?) : PropertyListResult()
+    object OpenPropertyDetailResult : PropertyListResult()
 }
 
 sealed class PropertyListIntent : REMIntent{
     object DisplayPropertiesIntent : PropertyListIntent()
+    data class OpenPropertyDetailIntent(val idProperty: Int) : PropertyListIntent()
 }

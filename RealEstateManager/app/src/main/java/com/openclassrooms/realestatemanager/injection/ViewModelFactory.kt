@@ -7,6 +7,7 @@ import com.openclassrooms.realestatemanager.addProperty.AddPropertyViewModel
 import com.openclassrooms.realestatemanager.data.AgentRepository
 import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyRepository
+import com.openclassrooms.realestatemanager.detailsProperty.DetailsPropertyViewModel
 import com.openclassrooms.realestatemanager.listProperties.ListPropertyViewModel
 import com.openclassrooms.realestatemanager.mainActivity.MainActivityViewModel
 
@@ -23,6 +24,7 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(AddAgentViewModel::class.java) -> AddAgentViewModel(agentRepository) as T
             modelClass.isAssignableFrom(AddPropertyViewModel::class.java) -> AddPropertyViewModel(agentRepository, propertyRepository, currencyRepository) as T
             modelClass.isAssignableFrom(ListPropertyViewModel::class.java) -> ListPropertyViewModel(propertyRepository, currencyRepository) as T
+            modelClass.isAssignableFrom(DetailsPropertyViewModel::class.java) -> DetailsPropertyViewModel(propertyRepository, currencyRepository) as T
             else -> throw Exception("Unknown ViewModel class")
 
         }

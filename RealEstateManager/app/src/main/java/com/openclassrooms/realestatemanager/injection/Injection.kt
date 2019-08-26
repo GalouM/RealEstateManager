@@ -22,7 +22,7 @@ class Injection {
         private fun providesPropertyRepository(context: Context): PropertyRepository{
             val database = REMDatabase.getDatabase(context)
             val geocodingApi = GeocodingApiService.create()
-            return PropertyRepository(database.propertyDao(), database.amenityDao(),
+            return PropertyRepository.getPropertyRepository(database.propertyDao(), database.amenityDao(),
                     database.pictureDao(), database.addressDao(), geocodingApi)
         }
 

@@ -26,6 +26,8 @@ class PropertyRepository(
         private val addressDao: AddressDao,
         private val geocodingApiService: GeocodingApiService){
 
+    var idPropertyPicked: Int? = null
+
     suspend fun createProperty(property: Property): Long{
         return propertyDao.createProperty(property)
     }
@@ -53,6 +55,10 @@ class PropertyRepository(
         return propertyDao.getAllProperties()
     }
 
+    suspend fun getProperty(idProperty: Int): List<Property>{
+        return propertyDao.getProperty(idProperty)
+    }
+
     suspend fun getPropertyAddress(idProperty: Int): List<Address>{
         return addressDao.getAddress(idProperty)
     }
@@ -64,4 +70,31 @@ class PropertyRepository(
     suspend fun getPropertyAmenities(idProperty: Int): List<Amenity>{
         return amenityDao.getAmenities(idProperty)
     }
+
+    fun setIdPropertyPicked(id: Int){
+        idPropertyPicked = id
+    }
+
+    fun getPropertyPickedId(): Int?{
+        return idPropertyPicked
+    }
+
+    companion object{
+        @Volatile
+        private var INSTANCE: PropertyRepository? = null
+        fun getPropertyRepository(propertyDao: PropertyDao,
+                                  amenityDao: AmenityDao,
+                                  pictureDao: PictureDao,
+                                  addressDao: AddressDao,
+                                  geocodingApiService: GeocodingApiService): PropertyRepository {
+            return INSTANCE
+                    ?: synchronized(this){
+                        val instance = PropertyRepository(
+                                propertyDao, amenityDao, pictureDao, addressDao, geocodingApiService)
+                        INSTANCE = instance
+                        return instance
+                    }
+        }
+    }
+
 }

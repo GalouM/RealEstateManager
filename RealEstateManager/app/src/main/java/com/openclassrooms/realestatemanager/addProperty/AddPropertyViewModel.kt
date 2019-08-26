@@ -46,6 +46,11 @@ class AddPropertyViewModel (
     private lateinit var bathrooms: String
     private lateinit var description: String
     private lateinit var address: String
+    private lateinit var street: String
+    private lateinit var city: String
+    private lateinit var postalCode: String
+    private lateinit var state: String
+    private lateinit var country: String
     private lateinit var neighborhood: String
     private lateinit var onMarketSince: String
     private var isSold: Boolean = false
@@ -232,7 +237,16 @@ class AddPropertyViewModel (
             map = location.mapUrl
             latitude = location.latLng.lat
             longitude = location.latLng.lng
-            neighborhood = if(neighborhood.isEmpty()) location.neighborhood else neighborhood
+            neighborhood = if(neighborhood.isEmpty()){
+                if(location.neighborhood.isEmpty()) {
+                    location.city
+                } else location.neighborhood
+            } else neighborhood
+            street = location.street
+            city = location.city
+            postalCode = location.postalCode
+            country = location.country
+            state = location.state
             address = results[0].providedLocation.location
         } else {
             listErrorInputs.add(ErrorSourceAddProperty.TOO_MANY_ADDRESS)
@@ -269,7 +283,10 @@ class AddPropertyViewModel (
 
         fun createAddressInDB(propertyId: Int){
             addAddressJob = launch {
-                val addressForDB = Address(propertyId, address, longitude!!, latitude!!, neighborhood, map!!)
+                val addressForDB = Address(
+                        propertyId, street, city, postalCode, country, state,
+                        longitude!!, latitude!!, neighborhood, map!!
+                )
                 propertyRepository.createAddress(addressForDB)
 
             }

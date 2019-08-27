@@ -1,7 +1,7 @@
 package com.openclassrooms.realestatemanager.detailsProperty
 
-import com.openclassrooms.realestatemanager.data.CurrencyRepository
-import com.openclassrooms.realestatemanager.data.PropertyRepository
+import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
+import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Amenity
 import com.openclassrooms.realestatemanager.data.entity.Picture

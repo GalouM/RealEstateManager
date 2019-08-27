@@ -125,7 +125,6 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         zipCode.text = String.format("%s %s", address.state, address.postalCode)
         country.text = address.country
         Glide.with(this).load(address.mapIconUrl).into(map)
-        Log.e("map", address.mapIconUrl)
     }
 
 

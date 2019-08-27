@@ -1,9 +1,7 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.openclassrooms.realestatemanager.data.AgentRepository
-import com.openclassrooms.realestatemanager.data.CurrencyRepository
+import com.openclassrooms.realestatemanager.data.repository.AgentRepository
+import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce

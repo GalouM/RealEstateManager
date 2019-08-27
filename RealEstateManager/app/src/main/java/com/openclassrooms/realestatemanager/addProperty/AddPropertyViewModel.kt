@@ -3,9 +3,9 @@ package com.openclassrooms.realestatemanager.addProperty
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import com.openclassrooms.realestatemanager.data.AgentRepository
-import com.openclassrooms.realestatemanager.data.CurrencyRepository
-import com.openclassrooms.realestatemanager.data.PropertyRepository
+import com.openclassrooms.realestatemanager.data.repository.AgentRepository
+import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
+import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.data.entity.*
@@ -352,7 +352,6 @@ BitmapDownloader.Listeners{
                         description, onMarketSince,
                         isSold, sellOn, agent!!)
                 propertyId = propertyRepository.createProperty(propertyForDB).toInt()
-                Log.e("prop", propertyForDB.toString())
 
                 if(pictures != null && pictures!!.isNotEmpty()){
                     createPicturesInDB()

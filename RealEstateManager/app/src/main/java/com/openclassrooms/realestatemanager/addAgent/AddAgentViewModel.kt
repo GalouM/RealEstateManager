@@ -1,9 +1,6 @@
 package com.openclassrooms.realestatemanager.addAgent
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.openclassrooms.realestatemanager.data.AgentRepository
+import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.extensions.isCorrectEmail
 import com.openclassrooms.realestatemanager.extensions.isCorrectName

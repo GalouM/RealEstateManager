@@ -1,9 +1,9 @@
 package com.openclassrooms.realestatemanager.injection
 
 import android.content.Context
-import com.openclassrooms.realestatemanager.data.AgentRepository
-import com.openclassrooms.realestatemanager.data.CurrencyRepository
-import com.openclassrooms.realestatemanager.data.PropertyRepository
+import com.openclassrooms.realestatemanager.data.repository.AgentRepository
+import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
+import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
 import com.openclassrooms.realestatemanager.data.database.REMDatabase
 
@@ -14,12 +14,12 @@ class Injection {
 
     companion object {
 
-        private fun providesAgentRepository(context: Context): AgentRepository{
+        private fun providesAgentRepository(context: Context): AgentRepository {
             val database = REMDatabase.getDatabase(context)
             return AgentRepository(database.agentDao())
         }
 
-        private fun providesPropertyRepository(context: Context): PropertyRepository{
+        private fun providesPropertyRepository(context: Context): PropertyRepository {
             val database = REMDatabase.getDatabase(context)
             val geocodingApi = GeocodingApiService.create()
             return PropertyRepository.getPropertyRepository(database.propertyDao(), database.amenityDao(),

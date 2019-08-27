@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.detailsProperty
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
@@ -51,6 +52,7 @@ class DetailActivity : AppCompatActivity(), DetailsPropertyView.OnCurrencyChange
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         detailPropertyView!!.toolBarClickListener(item?.itemId)
+        Log.e("item", item.toString())
         return super.onOptionsItemSelected(item)
     }
 

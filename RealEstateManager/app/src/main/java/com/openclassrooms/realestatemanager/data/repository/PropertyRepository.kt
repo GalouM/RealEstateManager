@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.data
+package com.openclassrooms.realestatemanager.data.repository
 
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService

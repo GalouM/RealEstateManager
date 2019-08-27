@@ -1,11 +1,9 @@
 package com.openclassrooms.realestatemanager.listProperties
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.openclassrooms.realestatemanager.data.CurrencyRepository
+import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
-import com.openclassrooms.realestatemanager.data.PropertyRepository
+import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
@@ -103,7 +101,6 @@ class ListPropertyViewModel(
             val result: Lce<PropertyListResult> = if(propertiesForDisplay.isEmpty()){
                 Lce.Error(PropertyListResult.DisplayPropertiesResult(null))
             } else{
-                Log.e("her", "here")
                 Lce.Content(PropertyListResult.DisplayPropertiesResult(propertiesForDisplay))
             }
             resultToViewState(result)
@@ -114,7 +111,6 @@ class ListPropertyViewModel(
                     property.id!!, property.type.typeName, neighborhood,
                     latitude, longitude, property.price, pictureUrl, property.sold)
             propertiesForDisplay.add(propertyToDisplay)
-            Log.e("display", property.toString())
 
             emitResult()
         }
@@ -143,7 +139,6 @@ class ListPropertyViewModel(
         searchPropertiesJob = launch {
             val properties: List<Property>? = propertyRepository.getAllProperties()
             properties?.forEach {
-                Log.e("property", it.toString())
                 fetchPicture(it.id!!, it)
             }
 

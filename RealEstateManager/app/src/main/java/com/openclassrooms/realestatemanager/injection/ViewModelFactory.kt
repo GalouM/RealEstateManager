@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.openclassrooms.realestatemanager.addAgent.AddAgentViewModel
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyViewModel
-import com.openclassrooms.realestatemanager.data.AgentRepository
-import com.openclassrooms.realestatemanager.data.CurrencyRepository
-import com.openclassrooms.realestatemanager.data.PropertyRepository
+import com.openclassrooms.realestatemanager.data.repository.AgentRepository
+import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
+import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.detailsProperty.DetailsPropertyViewModel
 import com.openclassrooms.realestatemanager.listProperties.ListPropertyViewModel
 import com.openclassrooms.realestatemanager.mainActivity.MainActivityViewModel

@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.addProperty
 
 
 import android.app.Activity.RESULT_OK
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
+import java.net.URL
 import java.util.*
 
 /**
@@ -31,7 +33,7 @@ import java.util.*
  *
  */
 class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
-        PickDateDialogView.OnOkButtonListener, ListAgentsDialogView.OnAgentSelected {
+        PickDateDialogView.OnOkButtonListener, ListAgentsDialogView.OnAgentSelected{
 
     @BindView(R.id.add_property_view_dropdown_type) lateinit var dropdowPropertyType: AutoCompleteTextView
     @BindView(R.id.add_property_view_price) lateinit var priceText: EditText
@@ -276,7 +278,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 typeProperty, priceText.text.toString(), surfaceText.text.toString(), roomText.text.toString(),
                 bedroomText.text.toString(), bathroomText.text.toString(), descriptionText.text.toString(),
                 addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, listAmenities, null, null)
+                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, listAmenities, null, null,
+                activity!!.applicationContext)
         )
     }
 

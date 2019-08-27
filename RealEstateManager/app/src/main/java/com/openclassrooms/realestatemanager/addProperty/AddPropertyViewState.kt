@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.addProperty
 
+import android.content.Context
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.mviBase.REMIntent
 import com.openclassrooms.realestatemanager.mviBase.REMResult
@@ -29,7 +30,8 @@ sealed class AddPropertyIntent : REMIntent{
             val neighborhood: String, val onMarketSince: String,
             val isSold: Boolean, val sellDate: String?,
             val agent: Int?, val amenities: List<TypeAmenity>,
-            val pictures: List<String>?, val pictureDescription: String?
+            val pictures: List<String>?, val pictureDescription: String?,
+            val context: Context
     ) : AddPropertyIntent()
 
     object ChangeCurrencyIntent : AddPropertyIntent()

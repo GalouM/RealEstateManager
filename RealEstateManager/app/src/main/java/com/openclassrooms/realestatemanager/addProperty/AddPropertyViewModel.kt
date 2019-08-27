@@ -1,5 +1,10 @@
 package com.openclassrooms.realestatemanager.addProperty
 
+import android.app.Application
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.data.AgentRepository
@@ -13,11 +18,16 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.ImageDownloader
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.io.BufferedInputStream
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
  * Created by galou on 2019-07-27
@@ -26,7 +36,8 @@ class AddPropertyViewModel (
         private val agentRepository: AgentRepository,
         private val propertyRepository: PropertyRepository,
         private val currencyRepository: CurrencyRepository)
-    : BaseViewModel<AddPropertyViewState>(), REMViewModel<AddPropertyIntent, AddPropertyResult>{
+    : BaseViewModel<AddPropertyViewState>(), REMViewModel<AddPropertyIntent, AddPropertyResult>,
+ImageDownloader.Listeners{
 
     private var currentViewState = AddPropertyViewState()
         set(value) {
@@ -62,6 +73,8 @@ class AddPropertyViewModel (
     private var map: String? = null
     private var latitude: Double? = null
     private var longitude: Double? = null
+    private var context: Context? = null
+    private var propertyId: Int? = null
 
 
     //Coroutine job
@@ -83,7 +96,8 @@ class AddPropertyViewModel (
                         intent.neighborhood, intent.onMarketSince,
                         intent.isSold, intent.sellDate,
                         intent.agent, intent.amenities,
-                        intent.pictures, intent.pictureDescription)
+                        intent.pictures, intent.pictureDescription,
+                        intent.context)
 
             }
 
@@ -168,12 +182,15 @@ class AddPropertyViewModel (
                                          neighborhood: String, onMarketSince: String,
                                          isSold: Boolean, sellOn: String?,
                                          agent: Int?, amenities: List<TypeAmenity>,
-                                         pictures: List<String>?, pictureDescription: String?){
+                                         pictures: List<String>?, pictureDescription: String?,
+                                         contextApp: Context){
         resultToViewState(Lce.Loading())
 
         listErrorInputs.clear()
         val onMarketDate = onMarketSince.toDate()
         val sellDate = sellOn?.toDate()
+
+        context = contextApp
 
         if(onMarketDate == null ||
                 !onMarketDate.isCorrectOnMarketDate()) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE)
@@ -230,6 +247,7 @@ class AddPropertyViewModel (
         }
     }
 
+
     private fun checkLocationAnMapAreCorrect(geocodingApi: GeocodingApi){
         val results = geocodingApi.results
         if(results.size == 1 && results[0].locations.size == 1){
@@ -248,13 +266,18 @@ class AddPropertyViewModel (
             country = location.country
             state = location.state
             address = results[0].providedLocation.location
+            fetchBitmapMap(location.mapUrl.toUrl()!!)
         } else {
             listErrorInputs.add(ErrorSourceAddProperty.TOO_MANY_ADDRESS)
+            emitResultAddPropertyToView()
 
         }
-        emitResultAddPropertyToView()
+
     }
 
+    private fun fetchBitmapMap(mapUrl: URL){
+        ImageDownloader(this).execute(mapUrl)
+    }
 
     private fun emitResultAddPropertyToView(){
         if(addPropertyJob?.isActive == true) addPropertyJob?.cancel()
@@ -262,29 +285,29 @@ class AddPropertyViewModel (
         if(addAmenitiesJob?.isActive == true) addAmenitiesJob?.cancel()
         if(addPicturesJob?.isActive == true) addPicturesJob?.cancel()
 
-        fun createAmenitiesInDB(propertyId: Int){
+        fun createAmenitiesInDB(){
             addAmenitiesJob = launch {
                 for(amenity in amenities){
-                    val amenityForDB = Amenity(null, propertyId, amenity)
+                    val amenityForDB = Amenity(null, propertyId!!, amenity)
                     propertyRepository.insertAmenity(amenityForDB)
                 }
             }
         }
 
-        fun createPicturesInDB(propertyId: Int){
+        fun createPicturesInDB(){
             addPicturesJob = launch {
                 for(picture in pictures!!){
-                    val pictureForDB = Picture(picture, propertyId, pictureDescription)
+                    val pictureForDB = Picture(picture, propertyId!!, pictureDescription)
                     propertyRepository.insertPicture(pictureForDB)
                 }
             }
 
         }
 
-        fun createAddressInDB(propertyId: Int){
+        fun createAddressInDB(){
             addAddressJob = launch {
                 val addressForDB = Address(
-                        propertyId, street, city, postalCode, country, state,
+                        propertyId!!, street, city, postalCode, country, state,
                         longitude!!, latitude!!, neighborhood, map!!
                 )
                 propertyRepository.createAddress(addressForDB)
@@ -302,16 +325,16 @@ class AddPropertyViewModel (
                         bedrooms.toIntOrNull(), bathrooms.toIntOrNull(),
                         description, onMarketSince,
                         isSold, sellOn, agent!!)
-                val propertyId = propertyRepository.createProperty(propertyForDB).toInt()
+                propertyId = propertyRepository.createProperty(propertyForDB).toInt()
 
                 if(pictures != null && pictures!!.isNotEmpty()){
-                    createPicturesInDB(propertyId)
+                    createPicturesInDB()
                 }
                 if(amenities.isNotEmpty()){
-                    createAmenitiesInDB(propertyId)
+                    createAmenitiesInDB()
                 }
 
-                createAddressInDB(propertyId)
+                createAddressInDB()
 
                 val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.AddPropertyToDBResult(null))
                 resultToViewState(result)
@@ -364,5 +387,10 @@ class AddPropertyViewModel (
             resultToViewState(result)
         }
 
+    }
+
+    override fun onPostExecute(bitmap: Bitmap) {
+        map = bitmap.saveToInternalStorage(context, propertyId.toString()).toString()
+        emitResultAddPropertyToView()
     }
 }

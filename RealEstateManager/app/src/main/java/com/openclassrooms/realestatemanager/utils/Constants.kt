@@ -20,3 +20,4 @@ const val RC_CODE_ADD_AGENT = 500
 const val RC_CODE_ADD_PROPERTY = 600
 const val PERMS_LOCALISATION = Manifest.permission.ACCESS_FINE_LOCATION
 const val RC_LOCATION_PERMS = 700
+const val ICON_MAP_FOLDER = "IconMap"

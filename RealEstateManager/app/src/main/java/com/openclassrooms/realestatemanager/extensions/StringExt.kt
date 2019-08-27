@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.extensions
 import android.util.Log
 import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
 import com.openclassrooms.realestatemanager.utils.TypeProperty
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,7 +54,11 @@ fun String.isExistingPropertyType(): Boolean{
     return false
 }
 
-fun String.convertForApi():String{
+fun String.convertForApi(): String{
     return this.replace("\\s+", "+")
             .replace(",", "")
+}
+
+fun String.toUrl(): URL?{
+    return URL(this)
 }

@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.data.api
 
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
-import com.openclassrooms.realestatemanager.utils.API_KEY_MAP
 import com.openclassrooms.realestatemanager.utils.BASE_URL_MAP_API
 import io.reactivex.Observable
 import retrofit2.Retrofit
@@ -16,7 +15,7 @@ import retrofit2.http.Query
 
 interface GeocodingApiService{
 
-    @GET("geocode/json?key=$API_KEY_MAP")
+    @GET("geocode/json?")
     fun getLocationFromAddress(
             @Query("address") address: String,
             @Query("key") apiKey: String

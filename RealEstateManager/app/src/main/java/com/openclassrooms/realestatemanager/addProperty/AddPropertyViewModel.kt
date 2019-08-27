@@ -20,7 +20,6 @@ import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.net.URL
-import kotlin.math.acosh
 
 /**
  * Created by galou on 2019-07-27
@@ -68,6 +67,7 @@ BitmapDownloader.Listeners{
     private var longitude: Double? = null
     private var context: Context? = null
     private var propertyId: Int? = null
+    private var idFromApi = ""
 
 
     //Coroutine job
@@ -81,7 +81,7 @@ BitmapDownloader.Listeners{
     override fun actionFromIntent(intent: AddPropertyIntent) {
         when(intent) {
             is AddPropertyIntent.AddPropertyToDBIntent -> {
-                checkErrorsFromUserInput(
+                receivePropertyData(
                         intent.type, intent.price,
                         intent.surface, intent.rooms,
                         intent.bedrooms, intent.bathrooms,
@@ -89,8 +89,7 @@ BitmapDownloader.Listeners{
                         intent.neighborhood, intent.onMarketSince,
                         intent.isSold, intent.sellDate,
                         intent.agent, intent.amenities,
-                        intent.pictures, intent.pictureDescription)
-                configureContext(intent.context)
+                        intent.pictures, intent.pictureDescription, intent.context)
 
             }
 
@@ -178,67 +177,77 @@ BitmapDownloader.Listeners{
                                     agent: Int?, amenities: List<TypeAmenity>,
                                     pictures: List<String>?, pictureDescription: String?,
                                     contextApp: Context){
-        configureContext(contextApp)
-        checkErrorsFromUserInput(type, price, surface, rooms, bedrooms, bathrooms,
-                description, address, neighborhood, onMarketSince, isSold, sellOn,
-                agent, amenities, pictures, pictureDescription)
-    }
-
-    private fun configureContext(contextApp: Context){
-        context = contextApp
-    }
-
-    private fun checkErrorsFromUserInput(type: String, price: String,
-                                         surface: String, rooms: String,
-                                         bedrooms: String, bathrooms: String,
-                                         description: String, address: String,
-                                         neighborhood: String, onMarketSince: String,
-                                         isSold: Boolean, sellOn: String?,
-                                         agent: Int?, amenities: List<TypeAmenity>,
-                                         pictures: List<String>?, pictureDescription: String?
-    ){
-        resultToViewState(Lce.Loading())
+        fun setGlobalProperties() {
+            context = contextApp
+            this.type = type
+            this.price = price
+            this.surface = surface
+            this.rooms = rooms
+            this.bedrooms = bedrooms
+            this.bathrooms = bathrooms
+            this.description = description
+            this.address = address
+            this.neighborhood = neighborhood
+            this.onMarketSince = onMarketSince
+            this.isSold = isSold
+            this.sellOn = sellOn
+            this.agent = agent
+            this.amenities = amenities
+            this.pictures = pictures
+            this.pictureDescription = pictureDescription
+        }
 
         listErrorInputs.clear()
+        resultToViewState(Lce.Loading())
+        setGlobalProperties()
+        checkErrorsFromUserInput().forEach { listErrorInputs.add(it) }
+        fetchAddressLocation(address)
+    }
+
+    private fun checkLocationAndMap(geocodingApi: GeocodingApiResponse){
+        if(isLocationCorrect(geocodingApi)){
+            val mapUrl = fetchMapFromApi(latitude!!, longitude!!)
+            if( mapUrl != null){
+                fetchBitmapMap(mapUrl)
+            } else {
+                emitResultAddPropertyToView()
+            }
+        } else {
+            listErrorInputs.add(ErrorSourceAddProperty.TOO_MANY_ADDRESS)
+            emitResultAddPropertyToView()
+        }
+    }
+
+    override fun onBitmapDownloaded(bitmap: Bitmap) {
+        map = bitmap.saveToInternalStorage(context, idFromApi).toString()
+        emitResultAddPropertyToView()
+    }
+
+    private fun checkErrorsFromUserInput(): List<ErrorSourceAddProperty>{
+
+        val listErrors = mutableListOf<ErrorSourceAddProperty>()
         val onMarketDate = onMarketSince.toDate()
         val sellDate = sellOn?.toDate()
 
         if(onMarketDate == null ||
-                !onMarketDate.isCorrectOnMarketDate()) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE)
+                !onMarketDate.isCorrectOnMarketDate()) listErrors.add(ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE)
         if(isSold) {
             if (sellDate == null ||
                     onMarketDate != null
-                    && !sellDate.isCorrectSoldDate(onMarketDate)) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_SOLD_DATE)
-            if (sellOn == null) listErrorInputs.add(ErrorSourceAddProperty.NO_SOLD_DATE)
+                    && !sellDate.isCorrectSoldDate(onMarketDate)) listErrors.add(ErrorSourceAddProperty.INCORRECT_SOLD_DATE)
+            if (sellOn == null) listErrors.add(ErrorSourceAddProperty.NO_SOLD_DATE)
         }
-        if(!type.isExistingPropertyType()) listErrorInputs.add(ErrorSourceAddProperty.NO_TYPE_SELECTED)
-        if(price.isEmpty() || price.toDoubleOrNull() == null) listErrorInputs.add(ErrorSourceAddProperty.NO_PRICE)
-        if(surface.isEmpty() || surface.toDoubleOrNull() == null) listErrorInputs.add(ErrorSourceAddProperty.NO_SURFACE)
-        if(rooms.isEmpty() || rooms.toIntOrNull() == null) listErrorInputs.add(ErrorSourceAddProperty.NO_ROOMS)
-        if(address.isEmpty()) listErrorInputs.add(ErrorSourceAddProperty.NO_ADDRESS)
-        if(agent == null) listErrorInputs.add(ErrorSourceAddProperty.NO_AGENT)
+        if(!type.isExistingPropertyType()) listErrors.add(ErrorSourceAddProperty.NO_TYPE_SELECTED)
+        if(price.isEmpty() || price.toDoubleOrNull() == null) listErrors.add(ErrorSourceAddProperty.NO_PRICE)
+        if(surface.isEmpty() || surface.toDoubleOrNull() == null) listErrors.add(ErrorSourceAddProperty.NO_SURFACE)
+        if(rooms.isEmpty() || rooms.toIntOrNull() == null) listErrors.add(ErrorSourceAddProperty.NO_ROOMS)
+        if(address.isEmpty()) listErrors.add(ErrorSourceAddProperty.NO_ADDRESS)
+        if(agent == null) listErrors.add(ErrorSourceAddProperty.NO_AGENT)
 
-        this.type = type
-        this.price = price
-        this.surface = surface
-        this.rooms = rooms
-        this.bedrooms = bedrooms
-        this.bathrooms = bathrooms
-        this.description = description
-        this.address = address
-        this.neighborhood = neighborhood
-        this.onMarketSince = onMarketSince
-        this.isSold = isSold
-        this.sellOn = sellOn
-        this.agent = agent
-        this.amenities = amenities
-        this.pictures = pictures
-        this.pictureDescription = pictureDescription
-
-        fetchAddressLocation()
+        return listErrors
     }
 
-    private fun fetchAddressLocation(){
+    private fun fetchAddressLocation(address: String){
         disposable = propertyRepository.getLocationFromAddress(address.convertForApi())
                 .subscribeWith(getObserverGeocodingApi())
     }
@@ -246,7 +255,7 @@ BitmapDownloader.Listeners{
     private fun getObserverGeocodingApi(): DisposableObserver<GeocodingApiResponse>{
         return object : DisposableObserver<GeocodingApiResponse>() {
             override fun onNext(geocodingApi: GeocodingApiResponse) {
-                fetchLocationInformationFromApiResponse(geocodingApi)
+                checkLocationAndMap(geocodingApi)
             }
 
             override fun onError(e: Throwable) {
@@ -259,55 +268,42 @@ BitmapDownloader.Listeners{
     }
 
 
-    private fun fetchLocationInformationFromApiResponse(geocodingApi: GeocodingApiResponse){
+    private fun isLocationCorrect(geocodingApi: GeocodingApiResponse): Boolean{
         val results = geocodingApi.results
-        if(results.size == 1){
-            val result = results[0]
-            latitude = result.geometry.location.lat
-            longitude = result.geometry.location.lng
-
-            var streetNumber = ""
-            var streetName = ""
-
-            result.addressComponents.forEach { component ->
-                component.types.forEach {
-                    when(it){
-                        "street_number" -> streetNumber = component.longName
-                        "route" -> streetName = component.longName
-                        "locality" -> city = component.longName
-                        "administrative_area_level_1" -> state = component.shortName
-                        "country" -> country = component.longName
-                        "postal_code" -> postalCode = component.longName
-                        "neighborhood" -> neighborhood.isEmpty().let { neighborhood = component.longName }
-                    }
+        if(results.isEmpty()) return false
+        val result = results[0]
+        latitude = result.geometry.location.lat
+        longitude = result.geometry.location.lng
+        var streetNumber = ""
+        var streetName = ""
+        result.addressComponents.forEach { component ->
+            component.types.forEach {
+                when(it){
+                    "street_number" -> streetNumber = component.longName
+                    "route" -> streetName = component.longName
+                    "locality" -> city = component.longName
+                    "administrative_area_level_1" -> state = component.shortName
+                    "country" -> country = component.longName
+                    "postal_code" -> postalCode = component.longName
+                    "neighborhood" -> neighborhood.isEmpty().let { neighborhood = component.longName }
                 }
             }
-            street = "$streetNumber + $streetName"
-            fetchMapFromApi(latitude!!, longitude!!)
-        } else {
-            listErrorInputs.add(ErrorSourceAddProperty.TOO_MANY_ADDRESS)
-            emitResultAddPropertyToView()
-
         }
+        neighborhood = if(neighborhood.isEmpty()) city else neighborhood
+        idFromApi = result.placeId
+        street = "$streetNumber $streetName"
+        return true
+
+
 
     }
 
-    private fun fetchMapFromApi(lat: Double, lng: Double){
-        val mapUrl = propertyRepository.getMapLocation(lat.toString(), lng.toString()).toUrl()
-        if(mapUrl != null){
-            fetchBitmapMap(mapUrl)
-        } else {
-            emitResultAddPropertyToView()
-        }
+    private fun fetchMapFromApi(lat: Double, lng: Double): URL? {
+        return propertyRepository.getMapLocation(lat.toString(), lng.toString()).toUrl()
     }
 
     private fun fetchBitmapMap(mapUrl: URL){
         BitmapDownloader(this).execute(mapUrl)
-    }
-
-    override fun onBitmapDownloaded(bitmap: Bitmap) {
-        map = bitmap.saveToInternalStorage(context, propertyId.toString()).toString()
-        emitResultAddPropertyToView()
     }
 
     private fun emitResultAddPropertyToView(){
@@ -342,9 +338,6 @@ BitmapDownloader.Listeners{
                         longitude!!, latitude!!, neighborhood, map
                 )
                 propertyRepository.createAddress(addressForDB)
-                Log.e("[address", propertyId.toString())
-                Log.e("[addressid", addressForDB.propertyId.toString())
-
             }
 
         }
@@ -359,7 +352,7 @@ BitmapDownloader.Listeners{
                         description, onMarketSince,
                         isSold, sellOn, agent!!)
                 propertyId = propertyRepository.createProperty(propertyForDB).toInt()
-                Log.e("[roperty", propertyId.toString())
+                Log.e("prop", propertyForDB.toString())
 
                 if(pictures != null && pictures!!.isNotEmpty()){
                     createPicturesInDB()

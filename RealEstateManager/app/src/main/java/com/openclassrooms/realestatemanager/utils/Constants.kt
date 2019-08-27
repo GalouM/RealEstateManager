@@ -15,7 +15,6 @@ const val PICK_DATE_DIALOG_CODE = 300
 const val AGENT_LIST_TAG = "AgentListView"
 const val AGENT_LIST_DIALOG_CODE = 400
 const val BASE_URL_MAP_API = "https://maps.googleapis.com/maps/api/"
-const val API_KEY_MAP = "AIzaSyBuT3nKSbjp0DuE7Ec8_MWQ8HL_dX1FDVM"
 const val RC_CODE_ADD_AGENT = 500
 const val RC_CODE_ADD_PROPERTY = 600
 const val PERMS_LOCALISATION = Manifest.permission.ACCESS_FINE_LOCATION

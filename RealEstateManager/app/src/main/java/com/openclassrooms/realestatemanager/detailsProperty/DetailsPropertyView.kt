@@ -123,7 +123,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         street.text = address.street
         city.text = address.city
         zipCode.text = String.format("%s %s", address.state, address.postalCode)
-        country.text = CountryCode.getByCode(address.country).getName()
+        country.text = address.country
         Glide.with(this).load(address.mapIconUrl).into(map)
         Log.e("map", address.mapIconUrl)
     }

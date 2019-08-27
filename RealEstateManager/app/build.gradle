@@ -19,11 +19,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField('String', "MapQuestApiKey", mapQuestApiKey)
+            buildConfigField('String', "GoogleMapApiKey", googleMapApiKey)
             buildConfigField('String', "MapBoxToken", mapBoxToken)
         }
         debug {
-            buildConfigField('String', "MapQuestApiKey", mapQuestApiKey)
+            buildConfigField('String', "GoogleMapApiKey", googleMapApiKey)
             buildConfigField('String', "MapBoxToken", mapBoxToken)
 
         }
@@ -110,6 +110,7 @@ dependencies {
 
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha03'
 
+    //COUNTRY CODE
     implementation 'com.neovisionaries:nv-i18n:1.22'
 
 

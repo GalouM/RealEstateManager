@@ -6,7 +6,7 @@ import android.util.Log
 import com.openclassrooms.realestatemanager.data.AgentRepository
 import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyRepository
-import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApi
+import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.data.entity.*
 import com.openclassrooms.realestatemanager.extensions.*
@@ -20,6 +20,7 @@ import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.net.URL
+import kotlin.math.acosh
 
 /**
  * Created by galou on 2019-07-27
@@ -62,7 +63,7 @@ BitmapDownloader.Listeners{
     private lateinit var amenities: List<TypeAmenity>
     private var pictures: List<String>? = null
     private var pictureDescription: String? = null
-    private var map: String? = null
+    private var map = ""
     private var latitude: Double? = null
     private var longitude: Double? = null
     private var context: Context? = null
@@ -168,6 +169,21 @@ BitmapDownloader.Listeners{
     // ADD PROPERTY TO DB
     //--------------------
 
+    private fun receivePropertyData(type: String, price: String,
+                                    surface: String, rooms: String,
+                                    bedrooms: String, bathrooms: String,
+                                    description: String, address: String,
+                                    neighborhood: String, onMarketSince: String,
+                                    isSold: Boolean, sellOn: String?,
+                                    agent: Int?, amenities: List<TypeAmenity>,
+                                    pictures: List<String>?, pictureDescription: String?,
+                                    contextApp: Context){
+        configureContext(contextApp)
+        checkErrorsFromUserInput(type, price, surface, rooms, bedrooms, bathrooms,
+                description, address, neighborhood, onMarketSince, isSold, sellOn,
+                agent, amenities, pictures, pictureDescription)
+    }
+
     private fun configureContext(contextApp: Context){
         context = contextApp
     }
@@ -179,7 +195,8 @@ BitmapDownloader.Listeners{
                                          neighborhood: String, onMarketSince: String,
                                          isSold: Boolean, sellOn: String?,
                                          agent: Int?, amenities: List<TypeAmenity>,
-                                         pictures: List<String>?, pictureDescription: String?){
+                                         pictures: List<String>?, pictureDescription: String?
+    ){
         resultToViewState(Lce.Loading())
 
         listErrorInputs.clear()
@@ -218,18 +235,18 @@ BitmapDownloader.Listeners{
         this.pictures = pictures
         this.pictureDescription = pictureDescription
 
-        fetchAddressLocationAndMap()
+        fetchAddressLocation()
     }
 
-    private fun fetchAddressLocationAndMap(){
-        disposable = propertyRepository.getLocationAndMapFromAddress(address.convertForApi())
+    private fun fetchAddressLocation(){
+        disposable = propertyRepository.getLocationFromAddress(address.convertForApi())
                 .subscribeWith(getObserverGeocodingApi())
     }
 
-    private fun getObserverGeocodingApi(): DisposableObserver<GeocodingApi>{
-        return object : DisposableObserver<GeocodingApi>() {
-            override fun onNext(geocodingApi: GeocodingApi) {
-                checkLocationAnMapAreCorrect(geocodingApi)
+    private fun getObserverGeocodingApi(): DisposableObserver<GeocodingApiResponse>{
+        return object : DisposableObserver<GeocodingApiResponse>() {
+            override fun onNext(geocodingApi: GeocodingApiResponse) {
+                fetchLocationInformationFromApiResponse(geocodingApi)
             }
 
             override fun onError(e: Throwable) {
@@ -242,30 +259,46 @@ BitmapDownloader.Listeners{
     }
 
 
-    private fun checkLocationAnMapAreCorrect(geocodingApi: GeocodingApi){
+    private fun fetchLocationInformationFromApiResponse(geocodingApi: GeocodingApiResponse){
         val results = geocodingApi.results
-        if(results.size == 1 && results[0].locations.size == 1){
-            val location = results[0].locations[0]
-            latitude = location.latLng.lat
-            longitude = location.latLng.lng
-            neighborhood = if(neighborhood.isEmpty()){
-                if(location.neighborhood.isEmpty()) {
-                    location.city
-                } else location.neighborhood
-            } else neighborhood
-            street = location.street
-            city = location.city
-            postalCode = location.postalCode
-            country = location.country
-            state = location.state
-            address = results[0].providedLocation.location
-            fetchBitmapMap(location.mapUrl.toUrl()!!)
+        if(results.size == 1){
+            val result = results[0]
+            latitude = result.geometry.location.lat
+            longitude = result.geometry.location.lng
+
+            var streetNumber = ""
+            var streetName = ""
+
+            result.addressComponents.forEach { component ->
+                component.types.forEach {
+                    when(it){
+                        "street_number" -> streetNumber = component.longName
+                        "route" -> streetName = component.longName
+                        "locality" -> city = component.longName
+                        "administrative_area_level_1" -> state = component.shortName
+                        "country" -> country = component.longName
+                        "postal_code" -> postalCode = component.longName
+                        "neighborhood" -> neighborhood.isEmpty().let { neighborhood = component.longName }
+                    }
+                }
+            }
+            street = "$streetNumber + $streetName"
+            fetchMapFromApi(latitude!!, longitude!!)
         } else {
             listErrorInputs.add(ErrorSourceAddProperty.TOO_MANY_ADDRESS)
             emitResultAddPropertyToView()
 
         }
 
+    }
+
+    private fun fetchMapFromApi(lat: Double, lng: Double){
+        val mapUrl = propertyRepository.getMapLocation(lat.toString(), lng.toString()).toUrl()
+        if(mapUrl != null){
+            fetchBitmapMap(mapUrl)
+        } else {
+            emitResultAddPropertyToView()
+        }
     }
 
     private fun fetchBitmapMap(mapUrl: URL){
@@ -306,7 +339,7 @@ BitmapDownloader.Listeners{
             addAddressJob = launch {
                 val addressForDB = Address(
                         propertyId!!, street, city, postalCode, country, state,
-                        longitude!!, latitude!!, neighborhood, map!!
+                        longitude!!, latitude!!, neighborhood, map
                 )
                 propertyRepository.createAddress(addressForDB)
                 Log.e("[address", propertyId.toString())

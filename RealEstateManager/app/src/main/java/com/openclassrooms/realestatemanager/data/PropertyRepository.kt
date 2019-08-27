@@ -1,7 +1,8 @@
 package com.openclassrooms.realestatemanager.data
 
+import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
-import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApi
+import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.dao.AddressDao
 import com.openclassrooms.realestatemanager.data.database.dao.AmenityDao
 import com.openclassrooms.realestatemanager.data.database.dao.PictureDao
@@ -10,8 +11,11 @@ import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Amenity
 import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.data.entity.Property
+import com.openclassrooms.realestatemanager.utils.BASE_URL_MAP_API
+import com.openclassrooms.realestatemanager.utils.MAP_ICON_MARKER_COLOR
+import com.openclassrooms.realestatemanager.utils.MAP_ICON_SIZE
+import com.openclassrooms.realestatemanager.utils.MAP_ICON_ZOOM
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -26,7 +30,7 @@ class PropertyRepository(
         private val addressDao: AddressDao,
         private val geocodingApiService: GeocodingApiService){
 
-    var idPropertyPicked: Int? = null
+    private var idPropertyPicked: Int? = null
 
     suspend fun createProperty(property: Property): Long{
         return propertyDao.createProperty(property)
@@ -44,11 +48,15 @@ class PropertyRepository(
         return addressDao.createAddress(address)
     }
 
-    fun getLocationAndMapFromAddress(address: String): Observable<GeocodingApi>{
-        return geocodingApiService.getLocationFromAddress(address)
+    fun getLocationFromAddress(address: String): Observable<GeocodingApiResponse>{
+        return geocodingApiService.getLocationFromAddress(address, BuildConfig.GoogleMapApiKey)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .timeout(10, TimeUnit.SECONDS)
+    }
+
+    fun getMapLocation(lat: String, lng: String): String{
+        return "${BASE_URL_MAP_API}staticmap?zoom=${MAP_ICON_ZOOM}&size=${MAP_ICON_SIZE}x${MAP_ICON_SIZE}&maptype=roadmap&markers=color:${MAP_ICON_MARKER_COLOR}%7C${lat},${lng}&key=${BuildConfig.GoogleMapApiKey}"
     }
 
     suspend fun getAllProperties(): List<Property>{

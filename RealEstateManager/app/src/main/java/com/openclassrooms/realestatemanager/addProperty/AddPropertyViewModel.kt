@@ -1,12 +1,8 @@
 package com.openclassrooms.realestatemanager.addProperty
 
-import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.os.AsyncTask
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import com.openclassrooms.realestatemanager.data.AgentRepository
 import com.openclassrooms.realestatemanager.data.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyRepository
@@ -17,16 +13,12 @@ import com.openclassrooms.realestatemanager.extensions.*
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
-import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.ImageDownloader
+import com.openclassrooms.realestatemanager.utils.BitmapDownloader
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.io.BufferedInputStream
-import java.io.IOException
-import java.net.HttpURLConnection
 import java.net.URL
 
 /**
@@ -37,7 +29,7 @@ class AddPropertyViewModel (
         private val propertyRepository: PropertyRepository,
         private val currencyRepository: CurrencyRepository)
     : BaseViewModel<AddPropertyViewState>(), REMViewModel<AddPropertyIntent, AddPropertyResult>,
-ImageDownloader.Listeners{
+BitmapDownloader.Listeners{
 
     private var currentViewState = AddPropertyViewState()
         set(value) {
@@ -96,8 +88,8 @@ ImageDownloader.Listeners{
                         intent.neighborhood, intent.onMarketSince,
                         intent.isSold, intent.sellDate,
                         intent.agent, intent.amenities,
-                        intent.pictures, intent.pictureDescription,
-                        intent.context)
+                        intent.pictures, intent.pictureDescription)
+                configureContext(intent.context)
 
             }
 
@@ -128,6 +120,7 @@ ImageDownloader.Listeners{
 
                     is AddPropertyResult.AddPropertyToDBResult -> {
                         currentViewState.copy(
+                                errors = null,
                                 isLoading = false,
                                 isSaved = true,
                                 openListAgents = false
@@ -175,6 +168,10 @@ ImageDownloader.Listeners{
     // ADD PROPERTY TO DB
     //--------------------
 
+    private fun configureContext(contextApp: Context){
+        context = contextApp
+    }
+
     private fun checkErrorsFromUserInput(type: String, price: String,
                                          surface: String, rooms: String,
                                          bedrooms: String, bathrooms: String,
@@ -182,15 +179,12 @@ ImageDownloader.Listeners{
                                          neighborhood: String, onMarketSince: String,
                                          isSold: Boolean, sellOn: String?,
                                          agent: Int?, amenities: List<TypeAmenity>,
-                                         pictures: List<String>?, pictureDescription: String?,
-                                         contextApp: Context){
+                                         pictures: List<String>?, pictureDescription: String?){
         resultToViewState(Lce.Loading())
 
         listErrorInputs.clear()
         val onMarketDate = onMarketSince.toDate()
         val sellDate = sellOn?.toDate()
-
-        context = contextApp
 
         if(onMarketDate == null ||
                 !onMarketDate.isCorrectOnMarketDate()) listErrorInputs.add(ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE)
@@ -252,7 +246,6 @@ ImageDownloader.Listeners{
         val results = geocodingApi.results
         if(results.size == 1 && results[0].locations.size == 1){
             val location = results[0].locations[0]
-            map = location.mapUrl
             latitude = location.latLng.lat
             longitude = location.latLng.lng
             neighborhood = if(neighborhood.isEmpty()){
@@ -276,7 +269,12 @@ ImageDownloader.Listeners{
     }
 
     private fun fetchBitmapMap(mapUrl: URL){
-        ImageDownloader(this).execute(mapUrl)
+        BitmapDownloader(this).execute(mapUrl)
+    }
+
+    override fun onBitmapDownloaded(bitmap: Bitmap) {
+        map = bitmap.saveToInternalStorage(context, propertyId.toString()).toString()
+        emitResultAddPropertyToView()
     }
 
     private fun emitResultAddPropertyToView(){
@@ -311,6 +309,8 @@ ImageDownloader.Listeners{
                         longitude!!, latitude!!, neighborhood, map!!
                 )
                 propertyRepository.createAddress(addressForDB)
+                Log.e("[address", propertyId.toString())
+                Log.e("[addressid", addressForDB.propertyId.toString())
 
             }
 
@@ -326,6 +326,7 @@ ImageDownloader.Listeners{
                         description, onMarketSince,
                         isSold, sellOn, agent!!)
                 propertyId = propertyRepository.createProperty(propertyForDB).toInt()
+                Log.e("[roperty", propertyId.toString())
 
                 if(pictures != null && pictures!!.isNotEmpty()){
                     createPicturesInDB()
@@ -389,8 +390,5 @@ ImageDownloader.Listeners{
 
     }
 
-    override fun onPostExecute(bitmap: Bitmap) {
-        map = bitmap.saveToInternalStorage(context, propertyId.toString()).toString()
-        emitResultAddPropertyToView()
-    }
+
 }

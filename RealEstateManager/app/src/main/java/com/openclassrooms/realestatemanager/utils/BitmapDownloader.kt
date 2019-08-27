@@ -12,11 +12,11 @@ import java.net.URL
 /**
  * Created by galou on 2019-08-26
  */
-class ImageDownloader(callback: Listeners)
+class BitmapDownloader(callback: Listeners)
     : AsyncTask<URL, Void, Bitmap>() {
 
     interface Listeners{
-        fun onPostExecute(bitmap: Bitmap)
+        fun onBitmapDownloaded(bitmap: Bitmap)
     }
 
     private val callBackWeakReference: WeakReference<Listeners> = WeakReference(callback)
@@ -43,6 +43,8 @@ class ImageDownloader(callback: Listeners)
 
     override fun onPostExecute(result: Bitmap?) {
         super.onPostExecute(result)
-        result?.let { callBackWeakReference.get()!!.onPostExecute(it) }
+        result?.let { callBackWeakReference.get()!!.onBitmapDownloaded(it) }
     }
+
+
 }

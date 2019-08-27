@@ -18,7 +18,7 @@ import retrofit2.http.Query
 
 interface GeocodingApiService{
 
-    @GET("geocoding/v1/address?key=$API_KEY_MAP_QUEST")
+    @GET("geocoding/v1/address?maxResults=1&key=$API_KEY_MAP_QUEST")
     fun getLocationFromAddress(@Query("location") location: String): Observable<GeocodingApi>
 
     companion object {

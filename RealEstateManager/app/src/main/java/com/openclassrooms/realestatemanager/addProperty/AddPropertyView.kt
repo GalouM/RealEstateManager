@@ -2,13 +2,14 @@ package com.openclassrooms.realestatemanager.addProperty
 
 
 import android.app.Activity.RESULT_OK
-import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.ContentFrameLayout
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -18,9 +19,8 @@ import butterknife.OnClick
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.Agent
-import com.openclassrooms.realestatemanager.extensions.toCalendar
-import com.openclassrooms.realestatemanager.extensions.toDate
-import com.openclassrooms.realestatemanager.extensions.toStringForDisplay
+import com.openclassrooms.realestatemanager.data.entity.Picture
+import com.openclassrooms.realestatemanager.extensions.*
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
@@ -76,15 +76,31 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         fun onClickCurrency(currency: Currency)
     }
 
+    companion object {
+
+        fun newInstance(actionType: String) = AddPropertyView().apply {
+            arguments = bundleOf(ACTION_TYPE to actionType)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_property_view, container, false)
         ButterKnife.bind(this, view)
-
         configureViewModel()
         configureTypeDropdownOptions()
+        configureActionType()
 
         return view
+
+    }
+
+    private fun configureActionType(){
+        val argument = arguments?.getString(ACTION_TYPE, "")
+        argument?.let{
+            val actionType = ActionType.valueOf(it)
+            viewModel.actionFromIntent(AddPropertyIntent.SetActionTypeIntent(actionType))
+        }
 
     }
 
@@ -200,6 +216,16 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
             renderAgentDialog(state.listAgents)
         }
 
+        if(state.isModifyProperty){
+            renderDataFetchedProperty(
+                    state.type, state.price!!, state.surface!!, state.rooms!!,
+                    state.bedrooms, state.bathrooms, state.description, state.address,
+                    state.neighborhood, state.onMarketSince, state.isSold, state.sellDate,
+                    state.agentId!!, state.amenities!!, state.pictures, state.agentFirstName,
+                    state.agentLastName, state.currency
+            )
+        }
+
 
     }
 
@@ -250,6 +276,51 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     private fun renderPropertyAddedToDB(){
         activity!!.setResult(RESULT_OK)
         activity!!.finish()
+    }
+
+    private fun renderDataFetchedProperty(type: String, price: Double,
+                                          surface: Double, rooms: Int,
+                                          bedrooms: Int?, bathrooms: Int?,
+                                          description: String?, address: String,
+                                          neighborhood: String?, onMarketSince: String,
+                                          isSold: Boolean, sellOn: String?,
+                                          agentId: Int, amenities: List<TypeAmenity>,
+                                          pictures: List<Picture>?, agentFirstName: String,
+                                          agentLastName: String, currency: Currency){
+        val priceToDisplay = when(currency){
+            Currency.EURO -> price.toString()
+            Currency.DOLLAR -> price.toDollar().toString()
+        }
+        val surfaceToDisplay = when(currency){
+            Currency.EURO -> surface.toString()
+            Currency.DOLLAR -> surface.toSqFt().toString()
+        }
+        priceText.setText(priceToDisplay)
+        surfaceText.setText(surfaceToDisplay)
+        roomText.setText(rooms.toString())
+        bedrooms?.let { bedroomText.setText(it.toString()) }
+        bathrooms?.let { bathroomText.setText(it.toString()) }
+        description?.let{ descriptionText.setText(it)}
+        addressText.setText(address)
+        neighborhood?.let { neighbourhoodText.setText(it) }
+        soldSwithch.isChecked = isSold
+        sellOn?.let{ soldOnText.setText(sellOn)}
+        onMarketSinceText.setText(onMarketSince)
+        dropdowPropertyType.setText(type)
+        agentSelectedId = agentId
+        val displayNameAgent = "$agentFirstName $agentLastName"
+        dropdowAgent.setText(displayNameAgent)
+        amenities.forEach {
+            when(it){
+                TypeAmenity.SCHOOL -> schoolBox.isChecked = true
+                TypeAmenity.PLAYGROUND -> playgroundBox.isChecked = true
+                TypeAmenity.SHOP -> shopBox.isChecked = true
+                TypeAmenity.BUSES -> busesBox.isChecked = true
+                TypeAmenity.SUBWAY -> subwayBox.isChecked = true
+                TypeAmenity.PARK -> parkBox.isChecked = true
+            }
+        }
+
     }
 
     private fun disableAllErrors(){

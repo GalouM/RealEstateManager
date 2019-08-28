@@ -1,6 +1,8 @@
 package com.openclassrooms.realestatemanager.detailsProperty
 
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,14 +17,18 @@ import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
-import com.neovisionaries.i18n.CountryCode
 
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.addProperty.ActionType
+import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Property
+import com.openclassrooms.realestatemanager.extensions.toSqFt
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
+import com.openclassrooms.realestatemanager.utils.ACTION_TYPE
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_PROPERTY
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
@@ -47,6 +53,8 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
     private lateinit var viewModel: DetailsPropertyViewModel
 
+    private var surfaceProperty: Double? = null
+
     interface OnCurrencyChangedListener{
         fun onClickCurrency(currency: Currency)
     }
@@ -61,8 +69,24 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         return view
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == RC_CODE_ADD_PROPERTY) onPropertyModified(resultCode)
+    }
+
     fun configureCurrentCurrency(){
         viewModel.actionFromIntent(DetailsPropertyIntent.GetCurrentCurrencyIntent)
+    }
+
+    private fun onPropertyModified(resultCode: Int){
+        when(resultCode){
+            RESULT_OK -> {
+                showSnackBarMessage(getString(R.string.property_modified))
+                viewModel.actionFromIntent(DetailsPropertyIntent.FetchDetailsIntent)
+            }
+            else -> showSnackBarMessage(getString(R.string.error_modification))
+        }
+
     }
 
     //--------------------
@@ -102,17 +126,36 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         if (state == null) return
 
         state.property?.let {
-            renderFetchedProperty(it, state.address!!)
+            renderFetchedProperty(it, state.address!!, state.currency)
         }
+
+        renderChangeCurrency(state.currency)
+
+        if(state.modifyProperty) renderModifyProperty()
+
+        renderIsLoading(state.isLoading)
     }
 
-    private fun renderIsLoading(){
+    private fun renderIsLoading(loading: Boolean){
 
     }
 
-    private fun renderFetchedProperty(property: Property, address: Address){
+    private fun renderModifyProperty(){
+        val intent = Intent(activity, AddPropertyActivity::class.java)
+        intent.putExtra(ACTION_TYPE, ActionType.MODIFY_PROPERTY.actionName)
+        startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
+    }
+
+    private fun renderChangeCurrency(currency: Currency){
+        callback.onClickCurrency(currency)
+        configureSurfaceUnitDisplay(currency)
+
+    }
+
+    private fun renderFetchedProperty(property: Property, address: Address, currency: Currency){
+        surfaceProperty = property.surface
+        configureSurfaceUnitDisplay(currency)
         description.text = property.description
-        surface.text = property.surface.toString()
         rooms.text = property.rooms.toString()
         property.bedrooms?.let{
             bedRooms.text = it.toString()
@@ -125,6 +168,21 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         zipCode.text = String.format("%s %s", address.state, address.postalCode)
         country.text = address.country
         Glide.with(this).load(address.mapIconUrl).into(map)
+    }
+
+    private fun configureSurfaceUnitDisplay(currency: Currency){
+        surfaceProperty?.let{
+            when(currency){
+                Currency.EURO -> surface.text = String.format(getString(R.string.surface_m2_details), surfaceProperty.toString())
+                Currency.DOLLAR -> surface.text = String.format(getString(R.string.ft_2_surface_details), surfaceProperty!!.toSqFt().toString())
+            }
+        }
+    }
+
+    private fun showSnackBarMessage(message: String){
+        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
+        showSnackBar(viewLayout, message)
+
     }
 
 

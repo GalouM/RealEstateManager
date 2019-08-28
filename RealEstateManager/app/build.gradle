@@ -48,6 +48,8 @@ dependencies {
     testImplementation "androidx.test.ext:junit:1.1.2-alpha02"
     testImplementation "androidx.test:runner:1.3.0-alpha02"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation "androidx.core:core-ktx:$rootProject.coreKtxVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.liveDataKtxVersion"
 
     //DESIGN
     implementation 'com.google.android.material:material:1.1.0-alpha09'
@@ -64,7 +66,7 @@ dependencies {
     kapt "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
 
     //RAPIDE FAB
-    implementation 'com.github.wangjiegulu:rfab:2.0.0'
+    implementation "com.github.wangjiegulu:rfab:$rootProject.rfabVersion"
 
     //ROOM
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
@@ -108,10 +110,7 @@ dependencies {
     implementation "com.mapbox.mapboxsdk:mapbox-android-sdk:$rootProject.mapBoxVersion"
     implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$rootProject.mapBoxPluginVersion"
 
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha03'
 
-    //COUNTRY CODE
-    implementation 'com.neovisionaries:nv-i18n:1.22'
 
 
 }

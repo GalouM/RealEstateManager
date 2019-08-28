@@ -2,7 +2,6 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
@@ -39,6 +38,13 @@ BitmapDownloader.Listeners{
 
     private lateinit var disposable: Disposable
 
+    private var actionType = ActionType.NEW_PROPERTY
+    private var context: Context? = null
+    private var propertyId: Int? = null
+    private var idFromApi = ""
+    private var amenitiesFetched: List<Amenity>? = null
+    private var picturesFetched: List<Picture>? = null
+
     // data
     private val listErrorInputs = mutableListOf<ErrorSourceAddProperty>()
     private lateinit var type: String
@@ -65,9 +71,7 @@ BitmapDownloader.Listeners{
     private var map = ""
     private var latitude: Double? = null
     private var longitude: Double? = null
-    private var context: Context? = null
-    private var propertyId: Int? = null
-    private var idFromApi = ""
+    private var addressForDisplay: String = ""
 
 
     //Coroutine job
@@ -76,6 +80,10 @@ BitmapDownloader.Listeners{
     private var addAmenitiesJob: Job? = null
     private var addPicturesJob: Job? = null
     private var searchAgentsJob: Job? = null
+    private var searchProperty: Job? = null
+    private var searchAddress: Job? = null
+    private var searchAmenities: Job? = null
+    private var searchPictures: Job? = null
 
 
     override fun actionFromIntent(intent: AddPropertyIntent) {
@@ -98,6 +106,8 @@ BitmapDownloader.Listeners{
             is AddPropertyIntent.OpenListAgentsIntent -> fetchAgentsFromDB()
 
             is AddPropertyIntent.GetCurrentCurrencyIntent -> emitCurrentCurrency()
+
+            is AddPropertyIntent.SetActionTypeIntent -> setActionType(intent.actionType)
         }
     }
 
@@ -124,6 +134,29 @@ BitmapDownloader.Listeners{
                                 isLoading = false,
                                 isSaved = true,
                                 openListAgents = false
+                        )
+                    }
+                    is AddPropertyResult.FetchedPropertyResult -> {
+                        currentViewState.copy(
+                                errors = null,
+                                isLoading = false,
+                                isModifyProperty = true,
+                                price = result.packet.property!!.price,
+                                surface = result.packet.property.surface,
+                                rooms = result.packet.property.rooms,
+                                bedrooms = result.packet.property.bedrooms,
+                                bathrooms = result.packet.property.bathrooms,
+                                description = result.packet.property.description,
+                                type = result.packet.property.type.typeName,
+                                onMarketSince = result.packet.property.onMarketSince,
+                                isSold = result.packet.property.sold,
+                                sellDate = result.packet.property.sellDate,
+                                address = result.packet.address!!.addressForDisplay,
+                                neighborhood = result.packet.address.neighbourhood,
+                                amenities = result.packet.amenities,
+                                agentId = result.packet.agent!!.id,
+                                agentFirstName = result.packet.agent.firstName,
+                                agentLastName = result.packet.agent.lastName
                         )
                     }
                 }
@@ -158,9 +191,23 @@ BitmapDownloader.Listeners{
                                 openListAgents = false
                         )
                     }
+                    is AddPropertyResult.FetchedPropertyResult -> {
+                        currentViewState.copy(
+                                isLoading = false,
+                                errors = result.packet.errorSource,
+                                openListAgents = false
+                        )
+                    }
                 }
 
             }
+        }
+    }
+
+    private fun setActionType(actionType: ActionType){
+        this.actionType = actionType
+        if(actionType == ActionType.MODIFY_PROPERTY){
+            fetchExistingPropertyFromDB()
         }
     }
 
@@ -274,6 +321,7 @@ BitmapDownloader.Listeners{
         val result = results[0]
         latitude = result.geometry.location.lat
         longitude = result.geometry.location.lng
+        addressForDisplay = result.formattedAddress
         var streetNumber = ""
         var streetName = ""
         result.addressComponents.forEach { component ->
@@ -335,9 +383,14 @@ BitmapDownloader.Listeners{
             addAddressJob = launch {
                 val addressForDB = Address(
                         propertyId!!, street, city, postalCode, country, state,
-                        longitude!!, latitude!!, neighborhood, map
+                        longitude!!, latitude!!, neighborhood, map, addressForDisplay
                 )
-                propertyRepository.createAddress(addressForDB)
+
+                when(actionType){
+                    ActionType.NEW_PROPERTY -> propertyRepository.createAddress(addressForDB)
+                    ActionType.MODIFY_PROPERTY -> propertyRepository.updateAddress(addressForDB)
+                }
+
             }
 
         }
@@ -346,12 +399,15 @@ BitmapDownloader.Listeners{
             addPropertyJob = launch {
                 val currency = currencyRepository.currency.value!!
                 val propertyForDB = Property(
-                        null, Converters.toTypeProperty(type), price.toDouble().toEuro(currency),
+                        propertyId, Converters.toTypeProperty(type), price.toDouble().toEuro(currency),
                         surface.toDouble().toSqMeter(currency), rooms.toInt(),
                         bedrooms.toIntOrNull(), bathrooms.toIntOrNull(),
                         description, onMarketSince,
                         isSold, sellOn, agent!!)
-                propertyId = propertyRepository.createProperty(propertyForDB).toInt()
+                when(actionType){
+                    ActionType.NEW_PROPERTY -> propertyId = propertyRepository.createProperty(propertyForDB).toInt()
+                    ActionType.MODIFY_PROPERTY -> propertyRepository.updateProperty(propertyForDB)
+                }
 
                 if(pictures != null && pictures!!.isNotEmpty()){
                     createPicturesInDB()
@@ -370,11 +426,31 @@ BitmapDownloader.Listeners{
 
         if(listErrorInputs.isEmpty()){
             createNewPropertyInDB()
+            if(actionType == ActionType.MODIFY_PROPERTY){
+                deletePreviousAmenities()
+                deletePreviousPictures()
+            }
         } else {
             val result: Lce<AddPropertyResult> = Lce.Error(AddPropertyResult.AddPropertyToDBResult(listErrorInputs))
             resultToViewState(result)
         }
 
+    }
+
+    private fun deletePreviousAmenities(){
+        amenitiesFetched?.forEach {
+            launch {
+                propertyRepository.deleteAmenity(it.id!!)
+            }
+        }
+    }
+
+    private fun deletePreviousPictures(){
+        picturesFetched?.forEach {
+            launch {
+                propertyRepository.deletePicture(it.url)
+            }
+        }
     }
 
     //--------------------
@@ -415,5 +491,79 @@ BitmapDownloader.Listeners{
 
     }
 
+    //--------------------
+    // MODIFY PROPERTY
+    //--------------------
+
+    private fun fetchExistingPropertyFromDB(){
+        propertyId = propertyRepository.getPropertyPickedId()
+        if(searchProperty?.isActive == true) searchProperty?.cancel()
+        if(searchAddress?.isActive == true) searchAddress?.cancel()
+        if(searchAmenities?.isActive == true) searchAmenities?.cancel()
+        if(searchPictures?.isActive == true) searchPictures?.cancel()
+        if(searchAgentsJob?.isActive == true) searchAgentsJob?.cancel()
+
+        var property: Property? = null
+        var address: Address? = null
+        val amenities = mutableListOf<TypeAmenity>()
+        var agent: Agent? = null
+
+        fun emitResult(){
+            val result: Lce<AddPropertyResult>
+            result = if(property == null || agent == null || address == null){
+                val errors = listOf(ErrorSourceAddProperty.ERROR_FETCHING_PROPERTY)
+                Lce.Error(AddPropertyResult.FetchedPropertyResult(
+                        null, null, null, null, null, errors
+                ))
+            } else {
+                Lce.Content(AddPropertyResult.FetchedPropertyResult(
+                        property, amenities, picturesFetched, agent, address, null
+                ))
+            }
+            resultToViewState(result)
+        }
+
+        fun fetchAddress(){
+            searchAddress = launch {
+                address = propertyRepository.getPropertyAddress(propertyId!!)[0]
+                emitResult()
+            }
+        }
+
+        fun fetchAmenities(){
+            searchAmenities = launch {
+                amenitiesFetched = propertyRepository.getPropertyAmenities(propertyId!!)
+                amenitiesFetched?.forEach {
+                    amenities.add(it.type)
+                }
+                fetchAddress()
+            }
+        }
+
+        fun fetchPicture(){
+            searchPictures = launch {
+                picturesFetched = propertyRepository.getPropertyPicture(propertyId!!)
+                fetchAmenities()
+            }
+        }
+
+        fun fetchAgent(){
+            searchAgentsJob = launch {
+                agent = agentRepository.getAgent(property!!.id!!)[0]
+                fetchPicture()
+            }
+        }
+
+        fun fetchProperty(){
+            searchProperty = launch {
+                property = propertyRepository.getProperty(propertyId!!)[0]
+                fetchAgent()
+            }
+        }
+
+        fetchProperty()
+
+
+    }
 
 }

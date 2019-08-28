@@ -20,13 +20,11 @@ import com.mapbox.mapboxsdk.Mapbox
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
+import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
-import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_AGENT
-import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_PROPERTY
-import com.openclassrooms.realestatemanager.utils.showSnackBar
+import com.openclassrooms.realestatemanager.utils.*
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
@@ -244,6 +242,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     private fun renderShowAddPropertyActivity(){
         val intent = Intent(this, AddPropertyActivity::class.java)
+        intent.putExtra(ACTION_TYPE, ActionType.NEW_PROPERTY.actionName)
         startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 

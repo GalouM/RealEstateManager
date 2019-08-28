@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.utils.ACTION_TYPE
 import com.openclassrooms.realestatemanager.utils.Currency
 
 class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChangedListener {
@@ -21,11 +22,14 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
 
     private var menuToolbar: Menu? = null
 
+    private lateinit var actionType: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_property)
         ButterKnife.bind(this)
 
+        configureActionType()
         configureToolbar()
         configureAndShowView()
     }
@@ -34,6 +38,10 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
         if(fragment is AddPropertyView){
             fragment.setOnCurrencyChangedListener(this)
         }
+    }
+
+    private fun configureActionType(){
+        actionType = intent.getStringExtra(ACTION_TYPE)
     }
 
     private fun configureToolbar() {
@@ -51,6 +59,7 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId == android.R.id.home) finish()
         addPropertyView!!.toolBarClickListener(item?.itemId)
         return super.onOptionsItemSelected(item)
     }
@@ -58,7 +67,7 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
     private fun configureAndShowView(){
         addPropertyView = supportFragmentManager.findFragmentById(R.id.add_property_activity_frame_layout) as AddPropertyView?
         if(addPropertyView == null){
-            addPropertyView = AddPropertyView()
+            addPropertyView = AddPropertyView.newInstance(actionType)
             supportFragmentManager
                     .beginTransaction()
                     .add(R.id.add_property_activity_frame_layout, addPropertyView!!)

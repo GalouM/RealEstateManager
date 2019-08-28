@@ -38,6 +38,11 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
 
         viewModel.viewState.observe(this, Observer { render(it) })
 
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
     }
 

@@ -23,3 +23,4 @@ const val ICON_MAP_FOLDER = "IconMap"
 const val MAP_ICON_SIZE = 300
 const val MAP_ICON_ZOOM = 14
 const val MAP_ICON_MARKER_COLOR = "0xff4081"
+const val ACTION_TYPE = "ActionType"

@@ -65,4 +65,8 @@
     <string name="number_of_bathrooms">Number of bathrooms</string>
     <string name="location">Location</string>
     <string name="number_of_bedrooms">Number of bedrooms</string>
+    <string name="surface_m2_details">%s m²</string>
+    <string name="ft_2_surface_details">%s ft²</string>
+    <string name="property_modified">This property has been modified</string>
+    <string name="error_modification">An error has occurred, the modifications were not saved</string>
 </resources>

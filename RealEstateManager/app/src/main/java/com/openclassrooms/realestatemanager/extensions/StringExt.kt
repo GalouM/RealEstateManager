@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.extensions
 
 import android.util.Log
+import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import java.net.URL
@@ -62,3 +63,4 @@ fun String.convertForApi(): String{
 fun String.toUrl(): URL?{
     return URL(this)
 }
+

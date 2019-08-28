@@ -36,16 +36,32 @@ class PropertyRepository(
         return propertyDao.createProperty(property)
     }
 
+    suspend fun updateProperty(property: Property){
+        propertyDao.updateProperty(property)
+    }
+
     suspend fun insertAmenity(amenity: Amenity){
         amenityDao.insertAmenity(amenity)
+    }
+
+    suspend fun deleteAmenity(id: Int){
+        amenityDao.deleteAmenity(id)
     }
 
     suspend fun insertPicture(picture: Picture){
         pictureDao.insertPicture(picture)
     }
 
+    suspend fun deletePicture(url: String){
+        pictureDao.deletePicture(url)
+    }
+
     suspend fun createAddress(address: Address): Long{
         return addressDao.createAddress(address)
+    }
+
+    suspend fun updateAddress(address: Address){
+        addressDao.updateAddress(address)
     }
 
     fun getLocationFromAddress(address: String): Observable<GeocodingApiResponse>{

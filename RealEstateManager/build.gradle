@@ -48,4 +48,7 @@ ext {
     multidexVersion = '2.0.1'
     mapBoxVersion = '8.2.1'
     mapBoxPluginVersion = '0.7.0'
+    coreKtxVersion = '1.0.0'
+    liveDataKtxVersion = '2.2.0-alpha03'
+    rfabVersion = '2.0.0'
 }

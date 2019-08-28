@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.detailsProperty
 
+import android.util.Log
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.data.entity.Address
@@ -96,6 +97,8 @@ class DetailsPropertyViewModel(
         if(searchAddressJob?.isActive == true) searchAddressJob?.cancel()
         if(searchAmenitiesJob?.isActive == true) searchAmenitiesJob?.cancel()
         if(searchPicturesJob?.isActive == true) searchPicturesJob?.cancel()
+        Log.e("repo", propertyRepository.toString())
+        Log.e("prop id", propertyRepository.getPropertyPickedId().toString())
 
         val propertyId = propertyRepository.getPropertyPickedId()!!
 

@@ -39,7 +39,6 @@ class DetailActivity : AppCompatActivity(), DetailsPropertyView.OnCurrencyChange
     private fun configureToolbar() {
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
-        actionBar?.setHomeAsUpIndicator(R.drawable.close_icon)
         actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -51,10 +50,11 @@ class DetailActivity : AppCompatActivity(), DetailsPropertyView.OnCurrencyChange
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId == android.R.id.home) finish()
         detailPropertyView!!.toolBarClickListener(item?.itemId)
-        Log.e("item", item.toString())
         return super.onOptionsItemSelected(item)
     }
+
 
     private fun configureAndShowView(){
         detailPropertyView = supportFragmentManager.findFragmentById(R.id.detail_property_activity_frame_layout) as DetailsPropertyView?

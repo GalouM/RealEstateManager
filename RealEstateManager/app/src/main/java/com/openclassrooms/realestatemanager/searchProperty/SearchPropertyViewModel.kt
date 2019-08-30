@@ -140,13 +140,21 @@ class SearchPropertyViewModel(
             Log.e("agents", manageBy.toString())
 
             searchAgentsJob = launch {
-                val propertiesQuery = propertyRepository.getPropertiesQuery(
-                        minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
-                        nbRoomQuery, nbBedroomQuery, nbBathroomQuery, neighborhoodQuery,
-                        manageBy!!, type
-                )
+                if(closeTo.isEmpty()){
+                    val propertiesQuery = propertyRepository.getPropertiesQuery(
+                            minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
+                            nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type
+                    )
+                    Log.e("properties", propertiesQuery.toString())
+                } else {
+                    val propertiesQuery = propertyRepository.getPropertiesQueryWithAmenities(
+                            minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
+                            nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type, closeTo
+                    )
+                    Log.e("properties", propertiesQuery.toString())
+                }
 
-                Log.e("properties", propertiesQuery.toString())
+
             }
         }
 

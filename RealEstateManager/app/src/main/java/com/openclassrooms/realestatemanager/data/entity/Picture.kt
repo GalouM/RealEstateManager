@@ -7,10 +7,19 @@ import androidx.room.PrimaryKey
 /**
  * Created by galou on 2019-07-03
  */
-@Entity(foreignKeys = [
+@Entity(
+        tableName = "pictures",
+        foreignKeys = [
     ForeignKey(
             entity = Property::class,
-            parentColumns = ["id"],
+            parentColumns = ["property_id"],
             childColumns = ["property"],
-            onDelete = ForeignKey.CASCADE)])
-data class Picture(@PrimaryKey val url: String, val property: Int, val description: String?)
+            onDelete = ForeignKey.CASCADE
+    )
+        ]
+)
+data class Picture(
+        @PrimaryKey val url: String,
+        val property: Int,
+        val description: String?
+)

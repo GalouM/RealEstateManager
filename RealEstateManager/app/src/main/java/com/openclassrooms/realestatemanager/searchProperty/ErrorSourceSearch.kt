@@ -6,5 +6,6 @@ package com.openclassrooms.realestatemanager.searchProperty
 enum class ErrorSourceSearch {
     ERROR_FETCHING_AGENTS,
     NO_TYPE_SELECTED,
-    NO_AGENT_SELECTED
+    NO_AGENT_SELECTED,
+    NO_PROPERTY_FOUND
 }

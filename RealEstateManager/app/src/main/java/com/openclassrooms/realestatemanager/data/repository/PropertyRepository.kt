@@ -29,6 +29,8 @@ class PropertyRepository(
 
     private var idPropertyPicked: Int? = null
 
+    var propertyFromSearch: List<Property>? = null
+
     suspend fun createProperty(property: Property): Long{
         return propertyDao.createProperty(property)
     }

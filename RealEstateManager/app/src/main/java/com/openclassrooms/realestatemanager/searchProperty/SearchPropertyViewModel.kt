@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.searchProperty
 
 import android.util.Log
 import com.openclassrooms.realestatemanager.data.entity.Agent
+import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
@@ -124,6 +125,7 @@ class SearchPropertyViewModel(
 
         if(listErrors.isNotEmpty()){
             val result: Lce<SearchPropertyResult> = Lce.Error(SearchPropertyResult.SearchResult(listErrors))
+            resultToViewState(result)
         } else{
             if(searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
 
@@ -137,28 +139,56 @@ class SearchPropertyViewModel(
             val neighborhoodQuery = if(neighborhood!!.isEmpty()) "%" else neighborhood
             val isSoldQuery = if(stillOnMarket!!) listOf(0) else listOf(0, 1)
 
-            Log.e("agents", manageBy.toString())
+            var propertiesQuery: List<Property> = listOf()
 
-            searchAgentsJob = launch {
-                if(closeTo.isEmpty()){
-                    val propertiesQuery = propertyRepository.getPropertiesQuery(
+            if(closeTo.isEmpty()){
+                searchAgentsJob = launch {
+                    propertiesQuery = propertyRepository.getPropertiesQuery(
                             minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                             nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type,
                             neighborhoodQuery, isSoldQuery
                     )
-                    Log.e("properties", propertiesQuery.toString())
-                } else {
-                    val propertiesQuery = propertyRepository.getPropertiesQuery(
+                }
+            } else {
+                searchAgentsJob = launch {
+                    val propertyFromDB = propertyRepository.getPropertiesQuery(
                             minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                             nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type, neighborhoodQuery,
                             isSoldQuery, closeTo
                     )
-                    Log.e("properties", propertiesQuery.toString())
+
+                    propertiesQuery = keepOnlyPropertyIfHasAllAmenities(closeTo.size, propertyFromDB)
                 }
+            }
 
+            if(propertiesQuery.isEmpty()){
+                val listErrors = listOf(ErrorSourceSearch.NO_PROPERTY_FOUND)
+                val result: Lce<SearchPropertyResult> = Lce.Error(SearchPropertyResult.SearchResult(listErrors))
+                resultToViewState(result)
+            } else{
+                val result: Lce<SearchPropertyResult> = Lce.Content(SearchPropertyResult.SearchResult(null))
+                resultToViewState(result)
+            }
 
+        }
+
+    }
+
+    private fun keepOnlyPropertyIfHasAllAmenities(nbAmenities: Int, properties: List<Property>): List<Property>{
+        if(nbAmenities == 1) return  properties
+        val idPropertyToKeep = properties
+                .groupingBy { it.id }
+                .eachCount()
+                .filterValues { it == nbAmenities }.keys
+
+        val propertyToDisplay = mutableListOf<Property>()
+        idPropertyToKeep.forEach { id ->
+            properties.find { it.id == id }?.let{
+                propertyToDisplay.add(it)
             }
         }
+
+        return propertyToDisplay
 
     }
 

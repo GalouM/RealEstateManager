@@ -93,10 +93,15 @@ class PropertyRepository(
     }
 
     suspend fun getPropertiesQuery(
-            minPrice: Double, maxPrice: Double,
-            minSurface: Double, maxSurface: Double,
-            minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            onMarketAfterDate: Int, neighborhood: String, listAgents: List<Int>,
+            minPrice: Double = 0.0,
+            maxPrice: Double = 9999999999.0,
+            minSurface: Double = 0.0,
+            maxSurface: Double = 999999999.0,
+            minNbRoom: Int = 0,
+            minNbBedrooms: Int = 0,
+            minNbBathrooms: Int = 0,
+            neighborhood: String = "%",
+            listAgents: List<Int>,
             listTypes: List<TypeProperty>
     ): List<Property>{
         return propertyDao.getPropertiesQuery(

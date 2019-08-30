@@ -22,7 +22,7 @@ data class SeachPropertyViewState(
 
 sealed class SearchPropertyIntent : REMIntent{
     data class SearchPropertyFromInputIntent(
-            val type: List<TypeProperty>?, val minPrice: Double?, val maxPrice: Double?,
+            val type: List<TypeProperty>, val minPrice: Double?, val maxPrice: Double?,
             val minSurface: Double?, val maxSurface: Double?, val minNbRooms: Int?,
             val minNbBedrooms: Int?, val minNbBathrooms: Int?, val neighborhood: String?,
             val stillOnMarket: Boolean?, val manageBy: List<Int>?, val closeTo: List<TypeAmenity>,

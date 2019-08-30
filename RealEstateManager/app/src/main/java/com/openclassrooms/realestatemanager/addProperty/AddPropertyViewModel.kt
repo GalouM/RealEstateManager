@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
@@ -549,7 +550,7 @@ BitmapDownloader.Listeners{
 
         fun fetchAgent(){
             searchAgentsJob = launch {
-                agent = agentRepository.getAgent(property!!.id!!)[0]
+                agent = agentRepository.getAgent(property!!.agent)[0]
                 fetchPicture()
             }
         }

@@ -97,8 +97,6 @@ class DetailsPropertyViewModel(
         if(searchAddressJob?.isActive == true) searchAddressJob?.cancel()
         if(searchAmenitiesJob?.isActive == true) searchAmenitiesJob?.cancel()
         if(searchPicturesJob?.isActive == true) searchPicturesJob?.cancel()
-        Log.e("repo", propertyRepository.toString())
-        Log.e("prop id", propertyRepository.getPropertyPickedId().toString())
 
         val propertyId = propertyRepository.getPropertyPickedId()!!
 

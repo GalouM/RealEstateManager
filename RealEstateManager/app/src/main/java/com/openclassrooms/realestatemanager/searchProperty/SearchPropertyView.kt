@@ -135,6 +135,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
         recyclerViewAgents.adapter = adapter
         recyclerViewAgents.layoutManager = LinearLayoutManager(activity)
         allAgents = agents.map{it.id!!}
+        agentsSelectedId.clear()
         agentsSelectedId.addAll(allAgents!!)
     }
 

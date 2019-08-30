@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.searchProperty
 
+import android.util.Log
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
@@ -29,7 +30,7 @@ class SearchPropertyViewModel(
         }
 
     private var searchAgentsJob: Job? = null
-    private var searchProperty: Job? = null
+    private var searchPropertyJob: Job? = null
 
     override fun actionFromIntent(intent: SearchPropertyIntent) {
         when(intent){
@@ -52,12 +53,14 @@ class SearchPropertyViewModel(
                 when(result.packet){
                     is SearchPropertyResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
+                                agents = null,
                                 currency = result.packet.currency,
                                 loading = false
                         )
                     }
                     is SearchPropertyResult.SearchResult -> {
                         currentViewState.copy(
+                                agents = null,
                                 error = null,
                                 loading = false,
                                 showProperty = true
@@ -74,6 +77,7 @@ class SearchPropertyViewModel(
             }
             is Lce.Loading -> {
                 currentViewState.copy(
+                        agents = null,
                         loading = true
                 )
             }
@@ -81,6 +85,7 @@ class SearchPropertyViewModel(
                 when(result.packet){
                     is SearchPropertyResult.SearchResult -> {
                         currentViewState.copy(
+                                agents = null,
                                 error = result.packet.error,
                                 loading = false
                         )
@@ -88,12 +93,14 @@ class SearchPropertyViewModel(
 
                     is SearchPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
+                                agents = null,
                                 error = result.packet.errorSource,
                                 loading = false
                         )
                     }
                     else -> {
                         currentViewState.copy(
+                                agents = null,
                                 loading = false
                         )
                     }
@@ -103,12 +110,45 @@ class SearchPropertyViewModel(
     }
 
     private fun searchProperties(
-            type: List<TypeProperty>?, minPrice: Double?, maxPrice: Double?,
+            type: List<TypeProperty>, minPrice: Double?, maxPrice: Double?,
             minSurface: Double?, maxSurface: Double?, minNbRooms: Int?,
             minNbBedrooms: Int?, minNbBathrooms: Int?, neighborhood: String?,
             stillOnMarket: Boolean?, manageBy: List<Int>?, closeTo: List<TypeAmenity>,
             maxDateOnMarket: String?
     ){
+        resultToViewState(Lce.Loading())
+
+        val listErrors = mutableListOf<ErrorSourceSearch>()
+        if (type.isEmpty()) listErrors.add(ErrorSourceSearch.NO_TYPE_SELECTED)
+        if (manageBy == null || manageBy.isEmpty()) listErrors.add(ErrorSourceSearch.NO_AGENT_SELECTED)
+
+        if(listErrors.isNotEmpty()){
+            val result: Lce<SearchPropertyResult> = Lce.Error(SearchPropertyResult.SearchResult(listErrors))
+        } else{
+            if(searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
+
+            val minPriceQuery = minPrice ?: 0.0
+            val maxPriceQuery = maxPrice ?: 99999999999999.0
+            val minSurfaceQuery = minSurface ?: 0.0
+            val maxSurfaceQuery = maxSurface ?: 99999999999999999.0
+            val nbRoomQuery = minNbRooms ?: 0
+            val nbBedroomQuery = minNbBedrooms ?: 0
+            val nbBathroomQuery = minNbBathrooms ?: 0
+            val neighborhoodQuery = if(neighborhood!!.isEmpty()) "%" else neighborhood
+            val isSoldQuery = !stillOnMarket!!
+
+            Log.e("agents", manageBy.toString())
+
+            searchAgentsJob = launch {
+                val propertiesQuery = propertyRepository.getPropertiesQuery(
+                        minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
+                        nbRoomQuery, nbBedroomQuery, nbBathroomQuery, neighborhoodQuery,
+                        manageBy!!, type
+                )
+
+                Log.e("properties", propertiesQuery.toString())
+            }
+        }
 
     }
 

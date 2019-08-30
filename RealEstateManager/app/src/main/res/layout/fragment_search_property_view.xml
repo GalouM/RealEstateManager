@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Type:"
+        android:text="Type"
         android:textSize="@dimen/text_title"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"
@@ -91,9 +91,9 @@
     </androidx.gridlayout.widget.GridLayout>
 
     <TextView
+        android:id="@+id/search_view_price_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Price:"
         android:textSize="@dimen/text_title"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"
@@ -135,9 +135,9 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/search_view_surface_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Surface:"
         android:textSize="@dimen/text_title"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"
@@ -181,7 +181,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rooms:"
+        android:text="Rooms"
         android:textSize="@dimen/text_title"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"
@@ -252,7 +252,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Near by:"
+        android:text="Near by"
         android:textSize="@dimen/text_title"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"
@@ -270,6 +270,15 @@
         android:layout_margin="@dimen/margin_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Extras"
+        android:textSize="@dimen/text_title"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -296,7 +305,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Manage by:"
+        android:text="Manage by"
         android:textSize="@dimen/text_title"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"

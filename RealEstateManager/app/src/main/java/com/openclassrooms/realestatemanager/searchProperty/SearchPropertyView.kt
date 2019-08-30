@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -58,6 +59,8 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
     @BindView(R.id.search_view_photo) lateinit var withPictures: CheckBox
     @BindView(R.id.search_view_select_all_amenities) lateinit var selectAllAmenities: CheckBox
     @BindView(R.id.search_view_select_all_type) lateinit var selectAllType: CheckBox
+    @BindView(R.id.search_view_price_title) lateinit var priceTitle: TextView
+    @BindView(R.id.search_view_surface_title) lateinit var surfaceTitle: TextView
 
     private lateinit var viewModel: SearchPropertyViewModel
 
@@ -137,19 +140,19 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
 
     private fun renderChangeCurrency(currency: Currency){
         callback.onClickCurrency(currency)
-        /*
+
         when(currency){
             Currency.EURO -> {
-                surfaceLayout.hint = getString(R.string.surface_m2)
-                priceLayout.hint = getString(R.string.price_euros)
+                surfaceTitle.text = getString(R.string.surface_m2)
+                priceTitle.text = getString(R.string.price_euros)
             }
             Currency.DOLLAR -> {
-                surfaceLayout.hint = getString(R.string.surface_ft2)
-                priceLayout.hint = getString(R.string.price_dollar)
+                surfaceTitle.text = getString(R.string.surface_ft2)
+                priceTitle.text = getString(R.string.price_dollar)
             }
         }
 
-         */
+
     }
 
     override fun onClickCheckBox(id: Int, isChecked: Boolean) {

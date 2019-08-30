@@ -337,8 +337,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         val typeProperty = dropdowPropertyType.text.toString()
 
         viewModel.actionFromIntent(AddPropertyIntent.AddPropertyToDBIntent(
-                typeProperty, priceText.text.toString(), surfaceText.text.toString(), roomText.text.toString(),
-                bedroomText.text.toString(), bathroomText.text.toString(), descriptionText.text.toString(),
+                typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
+                bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
                 addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
                 soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, getAmenitiesSelected(), null, null,
                 activity!!.applicationContext)

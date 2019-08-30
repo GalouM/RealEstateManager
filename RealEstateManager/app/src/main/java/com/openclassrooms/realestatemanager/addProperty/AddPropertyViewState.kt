@@ -38,9 +38,9 @@ data class AddPropertyViewState(
 
 sealed class AddPropertyIntent : REMIntent{
     data class AddPropertyToDBIntent(
-            val type: String, val price: String,
-            val surface: String, val rooms: String,
-            val bedrooms: String, val bathrooms: String,
+            val type: String, val price: Double?,
+            val surface: Double?, val rooms: Int?,
+            val bedrooms: Int?, val bathrooms: Int?,
             val description: String, val address: String,
             val neighborhood: String, val onMarketSince: String,
             val isSold: Boolean, val sellDate: String?,

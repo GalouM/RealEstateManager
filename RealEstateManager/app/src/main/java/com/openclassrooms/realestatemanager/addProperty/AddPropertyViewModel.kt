@@ -48,11 +48,11 @@ BitmapDownloader.Listeners{
     // data
     private val listErrorInputs = mutableListOf<ErrorSourceAddProperty>()
     private lateinit var type: String
-    private lateinit var price: String
-    private lateinit var surface: String
-    private lateinit var rooms: String
-    private lateinit var bedrooms: String
-    private lateinit var bathrooms: String
+    private var price: Double? = null
+    private var surface: Double? = null
+    private var rooms: Int? = null
+    private var bedrooms: Int? = null
+    private var bathrooms: Int? = null
     private lateinit var description: String
     private lateinit var address: String
     private lateinit var street: String
@@ -215,9 +215,9 @@ BitmapDownloader.Listeners{
     // ADD PROPERTY TO DB
     //--------------------
 
-    private fun receivePropertyData(type: String, price: String,
-                                    surface: String, rooms: String,
-                                    bedrooms: String, bathrooms: String,
+    private fun receivePropertyData(type: String, price: Double?,
+                                    surface: Double?, rooms: Int?,
+                                    bedrooms: Int?, bathrooms: Int?,
                                     description: String, address: String,
                                     neighborhood: String, onMarketSince: String,
                                     isSold: Boolean, sellOn: String?,
@@ -285,9 +285,9 @@ BitmapDownloader.Listeners{
             if (sellOn == null) listErrors.add(ErrorSourceAddProperty.NO_SOLD_DATE)
         }
         if(!type.isExistingPropertyType()) listErrors.add(ErrorSourceAddProperty.NO_TYPE_SELECTED)
-        if(price.isEmpty() || price.toDoubleOrNull() == null) listErrors.add(ErrorSourceAddProperty.NO_PRICE)
-        if(surface.isEmpty() || surface.toDoubleOrNull() == null) listErrors.add(ErrorSourceAddProperty.NO_SURFACE)
-        if(rooms.isEmpty() || rooms.toIntOrNull() == null) listErrors.add(ErrorSourceAddProperty.NO_ROOMS)
+        if(price == null) listErrors.add(ErrorSourceAddProperty.NO_PRICE)
+        if(surface == null) listErrors.add(ErrorSourceAddProperty.NO_SURFACE)
+        if(rooms == null) listErrors.add(ErrorSourceAddProperty.NO_ROOMS)
         if(address.isEmpty()) listErrors.add(ErrorSourceAddProperty.NO_ADDRESS)
         if(agent == null) listErrors.add(ErrorSourceAddProperty.NO_AGENT)
 
@@ -399,9 +399,9 @@ BitmapDownloader.Listeners{
             addPropertyJob = launch {
                 val currency = currencyRepository.currency.value!!
                 val propertyForDB = Property(
-                        propertyId, Converters.toTypeProperty(type), price.toDouble().toEuro(currency),
-                        surface.toDouble().toSqMeter(currency), rooms.toInt(),
-                        bedrooms.toIntOrNull(), bathrooms.toIntOrNull(),
+                        propertyId, Converters.toTypeProperty(type), price!!.toEuro(currency),
+                        surface!!.toSqMeter(currency), rooms!!,
+                        bedrooms, bathrooms,
                         description, onMarketSince,
                         isSold, sellOn, agent!!)
                 when(actionType){

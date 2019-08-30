@@ -135,7 +135,7 @@ class SearchPropertyViewModel(
             val nbBedroomQuery = minNbBedrooms ?: 0
             val nbBathroomQuery = minNbBathrooms ?: 0
             val neighborhoodQuery = if(neighborhood!!.isEmpty()) "%" else neighborhood
-            val isSoldQuery = !stillOnMarket!!
+            val isSoldQuery = if(stillOnMarket!!) listOf(0) else listOf(0, 1)
 
             Log.e("agents", manageBy.toString())
 
@@ -143,13 +143,15 @@ class SearchPropertyViewModel(
                 if(closeTo.isEmpty()){
                     val propertiesQuery = propertyRepository.getPropertiesQuery(
                             minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
-                            nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type
+                            nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type,
+                            neighborhoodQuery, isSoldQuery
                     )
                     Log.e("properties", propertiesQuery.toString())
                 } else {
-                    val propertiesQuery = propertyRepository.getPropertiesQueryWithAmenities(
+                    val propertiesQuery = propertyRepository.getPropertiesQuery(
                             minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
-                            nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type, closeTo
+                            nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type, neighborhoodQuery,
+                            isSoldQuery, closeTo
                     )
                     Log.e("properties", propertiesQuery.toString())
                 }

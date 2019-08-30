@@ -13,7 +13,3 @@ fun EditText.toDouble(): Double?{
 fun EditText.toInt(): Int?{
     return this.text.toString().toIntOrNull()
 }
-
-fun EditText.toString(): String{
-    return this.text.toString()
-}

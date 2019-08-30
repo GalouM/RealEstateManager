@@ -95,22 +95,26 @@ class PropertyRepository(
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>
+            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
+            isSold: List<Int>
     ): List<Property>{
         return propertyDao.getPropertiesQuery(
                 minPrice, maxPrice, minSurface, maxSurface,
                 minNbRoom, minNbBedrooms, minNbBathrooms,
-                listAgents, listTypes
+                listAgents, listTypes, neighborhood, isSold
         )
     }
 
-    suspend fun getPropertiesQueryWithAmenities(
+    suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>, listAmenities: List<TypeAmenity>
+            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
+            isSold: List<Int>, listAmenities: List<TypeAmenity>
     ): List<Property>{
-        return propertyDao.getPropertiesQueryWithAmenities(
-                listAmenities
+        return propertyDao.getPropertiesQuery(
+                minPrice, maxPrice, minSurface, maxSurface,
+                minNbRoom, minNbBedrooms, minNbBathrooms,
+                listAgents, listTypes, neighborhood, isSold, listAmenities
         )
     }
 

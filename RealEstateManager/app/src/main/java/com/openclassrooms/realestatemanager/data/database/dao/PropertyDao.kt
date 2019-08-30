@@ -24,23 +24,42 @@ interface PropertyDao {
     @Update
     suspend fun updateProperty(property: Property)
 
-    @Query("SELECT * FROM properties WHERE " +
-            "(price BETWEEN :minPrice AND :maxPrice) " +
-            "AND (surface BETWEEN :minSurface AND :maxSurface) " +
-            "AND (rooms >= :minNbRoom) " +
-            "AND (bedrooms >= :minNbBedrooms OR bedrooms IS NULL) " +
-            "AND (bathrooms >= :minNbBathrooms OR bathrooms IS NULL) " +
-            "AND (agent IN (:listAgents)) " +
-            "AND (type_property IN (:listTypes))")
+    @Query("SELECT * FROM properties " +
+            "INNER JOIN address ON address.address_id = properties.property_id WHERE " +
+            "address.neighbourhood LIKE :neighborhood " +
+            "AND (properties.price BETWEEN :minPrice AND :maxPrice) " +
+            "AND (properties.surface BETWEEN :minSurface AND :maxSurface) " +
+            "AND (properties.rooms >= :minNbRoom) " +
+            "AND (properties.bedrooms >= :minNbBedrooms OR bedrooms IS NULL) " +
+            "AND (properties.bathrooms >= :minNbBathrooms OR bathrooms IS NULL) " +
+            "AND (properties.agent IN (:listAgents)) " +
+            "AND (properties.type_property IN (:listTypes)) " +
+            "AND (properties.sold IN (:isSold))")
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double,
             minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>
+            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String, isSold: List<Int>
     ): List<Property>
 
-    @Query("SELECT * FROM properties INNER JOIN amenities ON amenities.property = properties.property_id WHERE amenities.type_amenity IN (:listAmenities)")
-    suspend fun getPropertiesQueryWithAmenities(
+    @Query("SELECT * FROM properties " +
+            "INNER JOIN amenities ON amenities.property = properties.property_id " +
+            "INNER JOIN address ON address.address_id = properties.property_id WHERE " +
+            "(amenities.type_amenity IN (:listAmenities)) " +
+            "AND (address.neighbourhood LIKE :neighborhood) " +
+            "AND (properties.price BETWEEN :minPrice AND :maxPrice)" +
+            "AND (properties.surface BETWEEN :minSurface AND :maxSurface) " +
+            "AND (properties.rooms >= :minNbRoom) " +
+            "AND (properties.bedrooms >= :minNbBedrooms OR bedrooms IS NULL) " +
+            "AND (properties.bathrooms >= :minNbBathrooms OR bathrooms IS NULL) " +
+            "AND (properties.agent IN (:listAgents)) " +
+            "AND (properties.type_property IN (:listTypes)) " +
+            "AND (properties.sold IN (:isSold))")
+    suspend fun getPropertiesQuery(
+            minPrice: Double, maxPrice: Double,
+            minSurface: Double, maxSurface: Double,
+            minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
+            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String, isSold: List<Int>,
             listAmenities: List<TypeAmenity>
     ): List<Property>
 }

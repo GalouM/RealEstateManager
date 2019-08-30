@@ -103,7 +103,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
             R.id.menu_validate_activity_check -> viewModel.actionFromIntent(SearchPropertyIntent.SearchPropertyFromInputIntent(
                     getTypePropertySelected(), minPrice.toDouble(), maxPrice.toDouble(),
                     minSurface.toDouble(), maxSurface.toDouble(), minRooms.toInt(),
-                    minBedrooms.toInt(), minBathrooms.toInt(), neighborhood.toString(), isAvailable.isChecked,
+                    minBedrooms.toInt(), minBathrooms.toInt(), neighborhood.text.toString(), isAvailable.isChecked,
                     agentsSelectedId, getAmenitiesSelected(), null, withPictures.isChecked
             ))
         }

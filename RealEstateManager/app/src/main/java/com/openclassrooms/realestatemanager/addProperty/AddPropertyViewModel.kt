@@ -38,12 +38,12 @@ BitmapDownloader.Listeners{
 
     private lateinit var disposable: Disposable
 
-    private var actionType = ActionType.NEW_PROPERTY
-    private var context: Context? = null
+    private lateinit var actionType: ActionType
+    private lateinit var context: Context
     private var propertyId: Int? = null
-    private var idFromApi = ""
-    private var amenitiesFetched: List<Amenity>? = null
-    private var picturesFetched: List<Picture>? = null
+    private lateinit var idFromApi: String
+    private lateinit var amenitiesFetched: List<Amenity>
+    private lateinit var picturesFetched: List<Picture>
 
     // data
     private val listErrorInputs = mutableListOf<ErrorSourceAddProperty>()
@@ -333,7 +333,7 @@ BitmapDownloader.Listeners{
                     "administrative_area_level_1" -> state = component.shortName
                     "country" -> country = component.longName
                     "postal_code" -> postalCode = component.longName
-                    "neighborhood" -> neighborhood.isEmpty().let { neighborhood = component.longName }
+                    "neighborhood" -> neighborhood = if(neighborhood.isEmpty()) component.longName else neighborhood
                 }
             }
         }
@@ -438,7 +438,7 @@ BitmapDownloader.Listeners{
     }
 
     private fun deletePreviousAmenities(){
-        amenitiesFetched?.forEach {
+        amenitiesFetched.forEach {
             launch {
                 propertyRepository.deleteAmenity(it.id!!)
             }
@@ -533,7 +533,7 @@ BitmapDownloader.Listeners{
         fun fetchAmenities(){
             searchAmenities = launch {
                 amenitiesFetched = propertyRepository.getPropertyAmenities(propertyId!!)
-                amenitiesFetched?.forEach {
+                amenitiesFetched.forEach {
                     amenities.add(it.type)
                 }
                 fetchAddress()

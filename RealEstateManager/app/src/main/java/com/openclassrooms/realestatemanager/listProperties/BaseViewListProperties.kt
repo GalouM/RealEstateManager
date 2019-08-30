@@ -18,7 +18,7 @@ import com.openclassrooms.realestatemanager.utils.showSnackBar
 abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewState> {
 
     protected lateinit var viewModel: ListPropertyViewModel
-    protected var currentCurrency: Currency = Currency.EURO
+    protected lateinit var currentCurrency: Currency
 
     protected abstract fun renderListProperties(properties: List<PropertyForListDisplay>)
     protected abstract fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty)

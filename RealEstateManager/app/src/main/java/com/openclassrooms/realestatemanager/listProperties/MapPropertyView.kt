@@ -23,10 +23,10 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
-import com.openclassrooms.realestatemanager.extensions.toBounds
-import com.openclassrooms.realestatemanager.extensions.toDollar
-import com.openclassrooms.realestatemanager.extensions.toDollarDisplay
-import com.openclassrooms.realestatemanager.extensions.toEuroDisplay
+import com.openclassrooms.realestatemanager.utils.extensions.toBounds
+import com.openclassrooms.realestatemanager.utils.extensions.toDollar
+import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
+import com.openclassrooms.realestatemanager.utils.extensions.toEuroDisplay
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.*
 import pub.devrel.easypermissions.AfterPermissionGranted

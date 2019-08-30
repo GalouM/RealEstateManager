@@ -1,7 +1,5 @@
-package com.openclassrooms.realestatemanager.extensions
+package com.openclassrooms.realestatemanager.utils.extensions
 
-import android.util.Log
-import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import java.net.URL

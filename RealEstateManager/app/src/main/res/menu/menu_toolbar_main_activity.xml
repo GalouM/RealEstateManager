@@ -10,7 +10,7 @@
     <item
         android:id="@+id/menu_main_activity_search"
         android:icon="@drawable/search_icon"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:title="@string/search"/>
 
 </menu>

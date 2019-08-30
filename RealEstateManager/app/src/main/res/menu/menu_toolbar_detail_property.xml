@@ -5,7 +5,7 @@
     <item
         android:id="@+id/menu_details_property_currency"
         android:icon="@drawable/euro_icon"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:title="@string/currency"/>
     <item
         android:id="@+id/menu_details_property_modify"

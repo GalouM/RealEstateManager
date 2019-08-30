@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.extensions
+package com.openclassrooms.realestatemanager.utils.extensions
 
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds

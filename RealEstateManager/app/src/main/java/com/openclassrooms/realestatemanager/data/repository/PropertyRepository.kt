@@ -11,10 +11,7 @@ import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Amenity
 import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.data.entity.Property
-import com.openclassrooms.realestatemanager.utils.BASE_URL_MAP_API
-import com.openclassrooms.realestatemanager.utils.MAP_ICON_MARKER_COLOR
-import com.openclassrooms.realestatemanager.utils.MAP_ICON_SIZE
-import com.openclassrooms.realestatemanager.utils.MAP_ICON_ZOOM
+import com.openclassrooms.realestatemanager.utils.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -93,6 +90,20 @@ class PropertyRepository(
 
     suspend fun getPropertyAmenities(idProperty: Int): List<Amenity>{
         return amenityDao.getAmenities(idProperty)
+    }
+
+    suspend fun getPropertiesQuery(
+            minPrice: Double, maxPrice: Double,
+            minSurface: Double, maxSurface: Double,
+            minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
+            onMarketAfterDate: Int, neighborhood: String, listAgents: List<Int>,
+            listTypes: List<TypeProperty>
+    ): List<Property>{
+        return propertyDao.getPropertiesQuery(
+                minPrice, maxPrice, minSurface, maxSurface,
+                minNbRoom, minNbBedrooms, minNbBathrooms,
+                listAgents, listTypes
+        )
     }
 
     fun setIdPropertyPicked(id: Int){

@@ -1,11 +1,10 @@
 package com.openclassrooms.realestatemanager
 
-import com.openclassrooms.realestatemanager.extensions.isCorrectOnMarketDate
-import com.openclassrooms.realestatemanager.extensions.isCorrectSoldDate
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectOnMarketDate
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectSoldDate
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.junit.Test
-import java.time.DayOfWeek
 import java.util.*
 
 /**

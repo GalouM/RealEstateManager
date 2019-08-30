@@ -1,7 +1,7 @@
 package com.openclassrooms.realestatemanager
 
-import com.openclassrooms.realestatemanager.extensions.dollarToEuro
-import com.openclassrooms.realestatemanager.extensions.sqFeetToSqMeter
+import com.openclassrooms.realestatemanager.utils.extensions.dollarToEuro
+import com.openclassrooms.realestatemanager.utils.extensions.sqFeetToSqMeter
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 

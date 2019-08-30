@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
-        android:id="@+id/menu_add_property_activity_currency"
+        android:id="@+id/menu_validate_activity_currency"
         android:icon="@drawable/euro_icon"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:title="@string/currency"/>
     <item
-        android:id="@+id/menu_add_property_activity_check"
+        android:id="@+id/menu_validate_activity_check"
         android:icon="@drawable/check_icon"
         app:showAsAction="always"
         android:title="@string/validate_menu"/>

@@ -12,7 +12,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.tabs.TabLayout
@@ -24,6 +23,7 @@ import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
+import com.openclassrooms.realestatemanager.searchProperty.SearchActivity
 import com.openclassrooms.realestatemanager.utils.*
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
@@ -118,12 +118,18 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
                 viewModel.actionFromIntent(MainActivityIntent.ChangeCurrencyIntent)
                 return true
             }
+            R.id.menu_main_activity_search -> openSearchActivity()
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun configureToolbar(){
         setSupportActionBar(toolbar)
+    }
+
+    private fun openSearchActivity(){
+        val intent = Intent(this, SearchActivity::class.java)
+        startActivity(intent)
     }
 
     //------View Pager and tablayout---------
@@ -229,14 +235,14 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     // STATE AND INTENT
     //--------------------
 
-    override fun render(viewState: MainActivityViewState?) {
-        if (viewState == null) return
-        if(viewState.isOpenAddProperty){
+    override fun render(state: MainActivityViewState?) {
+        if (state == null) return
+        if(state.isOpenAddProperty){
             renderShowAddPropertyActivity()
         } else{
-            viewState.errorSource?.let { renderErrorOpeningActivity(it) }
+            state.errorSource?.let { renderErrorOpeningActivity(it) }
         }
-        renderChangeCurrency(viewState.currency)
+        renderChangeCurrency(state.currency)
 
     }
 

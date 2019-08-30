@@ -2,9 +2,9 @@ package com.openclassrooms.realestatemanager.addAgent
 
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.entity.Agent
-import com.openclassrooms.realestatemanager.extensions.isCorrectEmail
-import com.openclassrooms.realestatemanager.extensions.isCorrectName
-import com.openclassrooms.realestatemanager.extensions.isCorrectPhoneNumber
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectEmail
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectName
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectPhoneNumber
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel

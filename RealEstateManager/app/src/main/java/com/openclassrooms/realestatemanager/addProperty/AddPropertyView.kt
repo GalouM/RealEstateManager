@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,12 +19,11 @@ import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Picture
-import com.openclassrooms.realestatemanager.extensions.*
+import com.openclassrooms.realestatemanager.utils.extensions.*
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
-import java.net.URL
 import java.util.*
 
 /**
@@ -48,12 +46,12 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     @BindView(R.id.add_property_view_sold_on) lateinit var soldOnText: EditText
     @BindView(R.id.add_property_view_sold_switch) lateinit var soldSwithch: Switch
     @BindView(R.id.add_property_view_dropdown_agent) lateinit var dropdowAgent: EditText
-    @BindView(R.id.add_property_view_nearby_school) lateinit var schoolBox: CheckBox
-    @BindView(R.id.add_property_view_nearby_buses) lateinit var busesBox: CheckBox
-    @BindView(R.id.add_property_view_nearby_park) lateinit var parkBox: CheckBox
-    @BindView(R.id.add_property_view_nearby_playground) lateinit var playgroundBox: CheckBox
-    @BindView(R.id.add_property_view_nearby_subway) lateinit var subwayBox: CheckBox
-    @BindView(R.id.add_property_view_nearby_shop) lateinit var shopBox: CheckBox
+    @BindView(R.id.checkbox_nearby_school) lateinit var schoolBox: CheckBox
+    @BindView(R.id.checkbox_nearby_buses) lateinit var busesBox: CheckBox
+    @BindView(R.id.checkbox_nearby_park) lateinit var parkBox: CheckBox
+    @BindView(R.id.checkbox_nearby_playground) lateinit var playgroundBox: CheckBox
+    @BindView(R.id.checkbox_nearby_subway) lateinit var subwayBox: CheckBox
+    @BindView(R.id.checkbox_nearby_shop) lateinit var shopBox: CheckBox
     @BindView(R.id.add_property_view_soldon_inputlayout) lateinit var soldOnLayout: TextInputLayout
     @BindView(R.id.add_property_view_surface_layout) lateinit var surfaceLayout: TextInputLayout
     @BindView(R.id.add_property_view_price_layout) lateinit var priceLayout: TextInputLayout
@@ -114,8 +112,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     fun toolBarClickListener(buttonId: Int?){
         when(buttonId){
-            R.id.menu_add_property_activity_currency -> viewModel.actionFromIntent(AddPropertyIntent.ChangeCurrencyIntent)
-            R.id.menu_add_property_activity_check -> fetchInfoPropertyFromUI()
+            R.id.menu_validate_activity_currency -> viewModel.actionFromIntent(AddPropertyIntent.ChangeCurrencyIntent)
+            R.id.menu_validate_activity_check -> fetchInfoPropertyFromUI()
         }
     }
 
@@ -335,6 +333,19 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private fun fetchInfoPropertyFromUI(){
         disableAllErrors()
+
+        val typeProperty = dropdowPropertyType.text.toString()
+
+        viewModel.actionFromIntent(AddPropertyIntent.AddPropertyToDBIntent(
+                typeProperty, priceText.text.toString(), surfaceText.text.toString(), roomText.text.toString(),
+                bedroomText.text.toString(), bathroomText.text.toString(), descriptionText.text.toString(),
+                addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
+                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, getAmenitiesSelected(), null, null,
+                activity!!.applicationContext)
+        )
+    }
+
+    private fun getAmenitiesSelected(): List<TypeAmenity>{
         val listAmenities = mutableListOf<TypeAmenity>()
         if(schoolBox.isChecked) listAmenities.add(TypeAmenity.SCHOOL)
         if(parkBox.isChecked) listAmenities.add(TypeAmenity.PARK)
@@ -343,15 +354,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         if(shopBox.isChecked) listAmenities.add(TypeAmenity.SHOP)
         if(playgroundBox.isChecked) listAmenities.add(TypeAmenity.PLAYGROUND)
 
-        val typeProperty = dropdowPropertyType.text.toString()
-
-        viewModel.actionFromIntent(AddPropertyIntent.AddPropertyToDBIntent(
-                typeProperty, priceText.text.toString(), surfaceText.text.toString(), roomText.text.toString(),
-                bedroomText.text.toString(), bathroomText.text.toString(), descriptionText.text.toString(),
-                addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, listAmenities, null, null,
-                activity!!.applicationContext)
-        )
+        return listAmenities
     }
 
     private fun showSnackBarMessage(message: String){

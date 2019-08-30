@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.extensions
+package com.openclassrooms.realestatemanager.utils.extensions
 
 import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
 import java.text.SimpleDateFormat

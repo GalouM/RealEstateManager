@@ -111,8 +111,6 @@ dependencies {
     implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$rootProject.mapBoxPluginVersion"
 
 
-
-
 }
 
 kapt {

@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.extensions
+package com.openclassrooms.realestatemanager.utils.extensions
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE

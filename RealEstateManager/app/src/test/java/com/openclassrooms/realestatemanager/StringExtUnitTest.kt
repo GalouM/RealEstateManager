@@ -1,12 +1,11 @@
 package com.openclassrooms.realestatemanager
 
-import com.openclassrooms.realestatemanager.extensions.isCorrectEmail
-import com.openclassrooms.realestatemanager.extensions.isCorrectName
-import com.openclassrooms.realestatemanager.extensions.isCorrectPhoneNumber
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectEmail
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectName
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectPhoneNumber
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Created by galou on 2019-07-26

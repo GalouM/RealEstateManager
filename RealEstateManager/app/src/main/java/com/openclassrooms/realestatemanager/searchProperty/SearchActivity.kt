@@ -1,75 +1,65 @@
-package com.openclassrooms.realestatemanager.addProperty
+package com.openclassrooms.realestatemanager.searchProperty
 
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.utils.ACTION_TYPE
 import com.openclassrooms.realestatemanager.utils.Currency
 
-class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChangedListener {
+class SearchActivity : AppCompatActivity(), SearchPropertyView.OnCurrencyChangedListener {
 
-    @BindView(R.id.add_property_activity_toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.search_property_activity_toolbar) lateinit var toolbar: Toolbar
 
-    private var addPropertyView: AddPropertyView? = null
+    private var searchPropertyView: SearchPropertyView? = null
 
     private var menuToolbar: Menu? = null
 
-    private lateinit var actionType: String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_property)
+        setContentView(R.layout.activity_search)
         ButterKnife.bind(this)
-
-        configureActionType()
         configureToolbar()
         configureAndShowView()
     }
 
     override fun onAttachFragment(fragment: Fragment) {
-        if(fragment is AddPropertyView){
+        if(fragment is SearchPropertyView){
             fragment.setOnCurrencyChangedListener(this)
         }
-    }
-
-    private fun configureActionType(){
-        actionType = intent.getStringExtra(ACTION_TYPE)
     }
 
     private fun configureToolbar() {
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
-        actionBar?.setHomeAsUpIndicator(R.drawable.close_icon)
         actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar_validate_button, menu)
         menuToolbar = menu
-        addPropertyView?.configureCurrentCurrency()
+        searchPropertyView?.configureCurrentCurrency()
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == android.R.id.home) finish()
-        addPropertyView!!.toolBarClickListener(item?.itemId)
+        searchPropertyView!!.toolBarClickListener(item?.itemId)
         return super.onOptionsItemSelected(item)
     }
 
     private fun configureAndShowView(){
-        addPropertyView = supportFragmentManager.findFragmentById(R.id.add_property_activity_frame_layout) as AddPropertyView?
-        if(addPropertyView == null){
-            addPropertyView = AddPropertyView.newInstance(actionType)
+        searchPropertyView = supportFragmentManager.findFragmentById(R.id.search_property_activity_frame_layout) as SearchPropertyView?
+        if(searchPropertyView == null){
+            searchPropertyView = SearchPropertyView()
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.add_property_activity_frame_layout, addPropertyView!!)
+                    .add(R.id.search_property_activity_frame_layout, searchPropertyView!!)
                     .commit()
         }
     }

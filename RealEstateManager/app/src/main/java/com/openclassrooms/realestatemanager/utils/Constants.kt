@@ -24,3 +24,5 @@ const val MAP_ICON_SIZE = 300
 const val MAP_ICON_ZOOM = 14
 const val MAP_ICON_MARKER_COLOR = "0xff4081"
 const val ACTION_TYPE = "ActionType"
+const val MAX_VALUE = 999999999999.99
+const val MIN_VALUE = 0.0

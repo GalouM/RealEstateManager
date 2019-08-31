@@ -9,6 +9,8 @@ import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
+import com.openclassrooms.realestatemanager.utils.MAX_VALUE
+import com.openclassrooms.realestatemanager.utils.MIN_VALUE
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import kotlinx.coroutines.Job
@@ -32,6 +34,20 @@ class SearchPropertyViewModel(
 
     private var searchAgentsJob: Job? = null
     private var searchPropertyJob: Job? = null
+
+    //data
+    private var minPriceQuery = MIN_VALUE
+    private var maxPriceQuery = MAX_VALUE
+    private var minSurfaceQuery = MIN_VALUE
+    private var maxSurfaceQuery = MAX_VALUE
+    private var nbRoomQuery = MIN_VALUE.toInt()
+    private var nbBedroomQuery = MIN_VALUE.toInt()
+    private var nbBathroomQuery = MIN_VALUE.toInt()
+    private var neighborhoodQuery = "%"
+    private var isSoldQuery = listOf(0, 1)
+    private lateinit var typeQuery: List<TypeProperty>
+    private lateinit var agentsQuery: List<Int>
+    private lateinit var amenitiesQuery: List<TypeAmenity>
 
     override fun actionFromIntent(intent: SearchPropertyIntent) {
         when(intent){
@@ -114,67 +130,87 @@ class SearchPropertyViewModel(
             type: List<TypeProperty>, minPrice: Double?, maxPrice: Double?,
             minSurface: Double?, maxSurface: Double?, minNbRooms: Int?,
             minNbBedrooms: Int?, minNbBathrooms: Int?, neighborhood: String?,
-            stillOnMarket: Boolean?, manageBy: List<Int>?, closeTo: List<TypeAmenity>,
+            stillOnMarket: Boolean?, manageBy: List<Int>?, amenitiesSelected: List<TypeAmenity>,
             maxDateOnMarket: String?
     ){
         resultToViewState(Lce.Loading())
-
+        val result: Lce<SearchPropertyResult>
         val listErrors = mutableListOf<ErrorSourceSearch>()
-        if (type.isEmpty()) listErrors.add(ErrorSourceSearch.NO_TYPE_SELECTED)
-        if (manageBy == null || manageBy.isEmpty()) listErrors.add(ErrorSourceSearch.NO_AGENT_SELECTED)
+
+        fun checkErrorsInputUser(){
+            if (type.isEmpty()) listErrors.add(ErrorSourceSearch.NO_TYPE_SELECTED)
+            if (manageBy == null || manageBy.isEmpty()) listErrors.add(ErrorSourceSearch.NO_AGENT_SELECTED)
+        }
+
+        fun setQueryInput(){
+            minPrice?.let { minPriceQuery = it }
+            maxPrice?.let { maxPriceQuery = it }
+            minSurface?.let { minSurfaceQuery = it }
+            maxSurface?.let { maxSurfaceQuery = it }
+            minNbRooms?.let { nbRoomQuery = it }
+            minNbBedrooms?.let { nbBedroomQuery = it }
+            minNbBathrooms?.let { nbBathroomQuery = it }
+            if(neighborhood!!.isNotEmpty())  neighborhoodQuery = neighborhood
+            if(stillOnMarket!!) isSoldQuery = listOf(0)
+            typeQuery = type
+            agentsQuery = manageBy!!
+            amenitiesQuery = amenitiesSelected
+
+        }
+
+        checkErrorsInputUser()
+
 
         if(listErrors.isNotEmpty()){
-            val result: Lce<SearchPropertyResult> = Lce.Error(SearchPropertyResult.SearchResult(listErrors))
+            result = Lce.Error(SearchPropertyResult.SearchResult(listErrors))
             resultToViewState(result)
-        } else{
-            if(searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
+        } else {
+            if (searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
 
-            val minPriceQuery = minPrice ?: 0.0
-            val maxPriceQuery = maxPrice ?: 99999999999999.0
-            val minSurfaceQuery = minSurface ?: 0.0
-            val maxSurfaceQuery = maxSurface ?: 99999999999999999.0
-            val nbRoomQuery = minNbRooms ?: 0
-            val nbBedroomQuery = minNbBedrooms ?: 0
-            val nbBathroomQuery = minNbBathrooms ?: 0
-            val neighborhoodQuery = if(neighborhood!!.isEmpty()) "%" else neighborhood
-            val isSoldQuery = if(stillOnMarket!!) listOf(0) else listOf(0, 1)
+            setQueryInput()
+            fetchQueryPropertiesFromDB()
+        }
+    }
 
-            var propertiesQuery: List<Property> = listOf()
-
-            if(closeTo.isEmpty()){
-                searchAgentsJob = launch {
-                    propertiesQuery = propertyRepository.getPropertiesQuery(
-                            minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
-                            nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type,
-                            neighborhoodQuery, isSoldQuery
-                    )
-                }
-            } else {
-                searchAgentsJob = launch {
-                    val propertyFromDB = propertyRepository.getPropertiesQuery(
-                            minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
-                            nbRoomQuery, nbBedroomQuery, nbBathroomQuery, manageBy!!, type, neighborhoodQuery,
-                            isSoldQuery, closeTo
-                    )
-
-                    propertiesQuery = keepOnlyPropertyIfHasAllAmenities(closeTo.size, propertyFromDB)
+    private fun fetchQueryPropertiesFromDB(){
+        if (amenitiesQuery.isEmpty()) {
+            searchAgentsJob = launch {
+                val propertiesQuery = propertyRepository.getPropertiesQuery(
+                        minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
+                        nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery,
+                        neighborhoodQuery, isSoldQuery
+                )
+                emitResultPropertyFetched(propertiesQuery)
+            }
+        } else {
+            searchAgentsJob = launch {
+                val propertyFromDB = propertyRepository.getPropertiesQuery(
+                        minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
+                        nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery, neighborhoodQuery,
+                        isSoldQuery, amenitiesQuery
+                )
+                if(propertyFromDB.isNotEmpty()) {
+                    val propertiesQuery = getOnlyPropertiesWithAllAmenities(amenitiesQuery.size, propertyFromDB)
+                    emitResultPropertyFetched(propertiesQuery)
                 }
             }
-
-            if(propertiesQuery.isEmpty()){
-                val listErrors = listOf(ErrorSourceSearch.NO_PROPERTY_FOUND)
-                val result: Lce<SearchPropertyResult> = Lce.Error(SearchPropertyResult.SearchResult(listErrors))
-                resultToViewState(result)
-            } else{
-                val result: Lce<SearchPropertyResult> = Lce.Content(SearchPropertyResult.SearchResult(null))
-                resultToViewState(result)
-            }
-
         }
 
     }
 
-    private fun keepOnlyPropertyIfHasAllAmenities(nbAmenities: Int, properties: List<Property>): List<Property>{
+    private fun emitResultPropertyFetched(properties: List<Property>){
+        val result: Lce<SearchPropertyResult> = if (properties.isEmpty()) {
+            val listErrors = listOf(ErrorSourceSearch.NO_PROPERTY_FOUND)
+            Lce.Error(SearchPropertyResult.SearchResult(listErrors))
+        } else {
+            propertyRepository.propertyFromSearch = properties
+            Lce.Content(SearchPropertyResult.SearchResult(null))
+
+        }
+        resultToViewState(result)
+    }
+
+    private fun getOnlyPropertiesWithAllAmenities(nbAmenities: Int, properties: List<Property>): List<Property>{
         if(nbAmenities == 1) return  properties
         val idPropertyToKeep = properties
                 .groupingBy { it.id }
@@ -189,7 +225,6 @@ class SearchPropertyViewModel(
         }
 
         return propertyToDisplay
-
     }
 
     //--------------------

@@ -1,82 +1,52 @@
 package com.openclassrooms.realestatemanager.searchProperty
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyActivity
+import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyIntent
 
-class SearchActivity : AppCompatActivity(), SearchPropertyView.OnCurrencyChangedListener {
+class SearchActivity : BaseCurrencyActivity<SearchPropertyView>(){
 
-    @BindView(R.id.activity_toolbar) lateinit var toolbar: Toolbar
-
-    private var searchPropertyView: SearchPropertyView? = null
-
-    private var menuToolbar: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
         ButterKnife.bind(this)
-        configureToolbar()
+        configureViewModel()
+        configureToolbar(null)
         configureAndShowView()
-    }
-
-    override fun onAttachFragment(fragment: Fragment) {
-        if(fragment is SearchPropertyView){
-            fragment.setOnCurrencyChangedListener(this)
-        }
-    }
-
-    private fun configureToolbar() {
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar_validate_button, menu)
         menuToolbar = menu
-        searchPropertyView?.configureCurrentCurrency()
+        viewModel.actionFromIntent(BaseCurrencyIntent.GetCurrentCurrencyIntent)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if(item?.itemId == android.R.id.home) finish()
-        searchPropertyView!!.toolBarClickListener(item?.itemId)
+        when(item?.itemId){
+            R.id.menu_toolbar_currency -> {
+                viewModel.actionFromIntent(BaseCurrencyIntent.ChangeCurrencyIntent)
+                return true
+            }
+            R.id.menu_validate_activity_check -> {
+                view!!.toolBarValidateClickListener()
+                return true
+            }
+
+        }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun configureAndShowView(){
-        searchPropertyView = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as SearchPropertyView?
-        if(searchPropertyView == null){
-            searchPropertyView = SearchPropertyView()
-            supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.activity_frame_layout, searchPropertyView!!)
-                    .commit()
+    override fun configureAndShowView(){
+        view = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as SearchPropertyView?
+        if(view == null){
+            view = SearchPropertyView()
+            addFragmentToManager()
         }
-    }
-
-    override fun onClickCurrency(currency: Currency) {
-        menuToolbar?.let{
-            when(currency){
-                Currency.EURO -> {
-                    val currencyItem = menuToolbar!!.findItem(R.id.menu_validate_activity_currency)
-                    currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
-                }
-                Currency.DOLLAR -> {
-                    val currencyItem = menuToolbar!!.findItem(R.id.menu_validate_activity_currency)
-                    currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
-                }
-            }
-        }
-
     }
 }

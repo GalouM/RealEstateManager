@@ -10,16 +10,12 @@ import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyActivity
+import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyIntent
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_ADD_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 
-class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChangedListener {
-
-    @BindView(R.id.activity_toolbar) lateinit var toolbar: Toolbar
-
-    private var addPropertyView: AddPropertyView? = null
-
-    private var menuToolbar: Menu? = null
+class AddPropertyActivity : BaseCurrencyActivity<AddPropertyView>() {
 
     private lateinit var actionType: String
 
@@ -27,66 +23,44 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
         ButterKnife.bind(this)
-
         configureActionType()
-        configureToolbar()
+        configureViewModel()
+        configureToolbar(R.drawable.close_icon)
         configureAndShowView()
-    }
-
-    override fun onAttachFragment(fragment: Fragment) {
-        if(fragment is AddPropertyView){
-            fragment.setOnCurrencyChangedListener(this)
-        }
     }
 
     private fun configureActionType(){
         actionType = intent.getStringExtra(ACTION_TYPE_ADD_PROPERTY)
     }
 
-    private fun configureToolbar() {
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-        actionBar?.setHomeAsUpIndicator(R.drawable.close_icon)
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar_validate_button, menu)
         menuToolbar = menu
-        addPropertyView?.configureCurrentCurrency()
+        viewModel.actionFromIntent(BaseCurrencyIntent.GetCurrentCurrencyIntent)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if(item?.itemId == android.R.id.home) finish()
-        addPropertyView!!.toolBarClickListener(item?.itemId)
+        when(item?.itemId){
+            R.id.menu_toolbar_currency -> {
+                viewModel.actionFromIntent(BaseCurrencyIntent.ChangeCurrencyIntent)
+                return true
+            }
+            R.id.menu_validate_activity_check -> {
+                view!!.toolBarValidateClickListener()
+                return true
+            }
+
+        }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun configureAndShowView(){
-        addPropertyView = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as AddPropertyView?
-        if(addPropertyView == null){
-            addPropertyView = AddPropertyView.newInstance(actionType)
-            supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.activity_frame_layout, addPropertyView!!)
-                    .commit()
+    override fun configureAndShowView(){
+        view = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as AddPropertyView?
+        if(view == null){
+            view = AddPropertyView.newInstance(actionType)
+            addFragmentToManager()
         }
-    }
-
-    override fun onClickCurrency(currency: Currency) {
-        menuToolbar?.let{
-            when(currency){
-                Currency.EURO -> {
-                    val currencyItem = menuToolbar!!.findItem(R.id.menu_validate_activity_currency)
-                    currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
-                }
-                Currency.DOLLAR -> {
-                    val currencyItem = menuToolbar!!.findItem(R.id.menu_validate_activity_currency)
-                    currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
-                }
-            }
-        }
-
     }
 }

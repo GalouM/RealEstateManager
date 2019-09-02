@@ -67,12 +67,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private lateinit var viewModel: AddPropertyViewModel
     private var agentSelectedId: Int? = null
-
-    private lateinit var callback: OnCurrencyChangedListener
-
-    interface OnCurrencyChangedListener{
-        fun onClickCurrency(currency: Currency)
-    }
+    private lateinit var currentCurrency: Currency
 
     companion object {
 
@@ -86,6 +81,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         val view = inflater.inflate(R.layout.fragment_add_property_view, container, false)
         ButterKnife.bind(this, view)
         configureViewModel()
+        currencyObserver()
         configureTypeDropdownOptions()
         configureActionType()
 
@@ -102,19 +98,12 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     }
 
-    fun setOnCurrencyChangedListener(callback: OnCurrencyChangedListener){
-        this.callback = callback
-    }
-
     //--------------------
     // CLICK LISTENER
     //--------------------
 
-    fun toolBarClickListener(buttonId: Int?){
-        when(buttonId){
-            R.id.menu_validate_activity_currency -> viewModel.actionFromIntent(AddPropertyIntent.ChangeCurrencyIntent)
-            R.id.menu_validate_activity_check -> fetchInfoPropertyFromUI()
-        }
+    fun toolBarValidateClickListener(){
+        fetchInfoPropertyFromUI()
     }
 
     override fun onOkButtonListener(calendar: Calendar, view: View) {
@@ -177,10 +166,6 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                     dropdowPropertyType.setAdapter(adapter) }
     }
 
-    fun configureCurrentCurrency(){
-        viewModel.actionFromIntent(AddPropertyIntent.GetCurrentCurrencyIntent)
-    }
-
     //--------------------
     // VIEW MODEL CONNECTION
     //--------------------
@@ -193,6 +178,13 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         ).get(AddPropertyViewModel::class.java)
 
         viewModel.viewState.observe(this, Observer { render(it) })
+    }
+
+    private fun currencyObserver(){
+        viewModel.currency.observe(this, Observer {currency ->
+            currentCurrency = currency
+            renderChangeCurrency(currentCurrency)
+        })
     }
 
     //--------------------
@@ -208,7 +200,6 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         if(state.errors != null){
             renderErrors(state.errors)
         }
-        changeCurrency(state.currency)
 
         if(state.openListAgents && state.listAgents != null){
             renderAgentDialog(state.listAgents)
@@ -220,15 +211,14 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                     state.bedrooms, state.bathrooms, state.description, state.address,
                     state.neighborhood, state.onMarketSince, state.isSold, state.sellDate,
                     state.agentId!!, state.amenities!!, state.pictures, state.agentFirstName,
-                    state.agentLastName, state.currency
+                    state.agentLastName
             )
         }
 
 
     }
 
-    private fun changeCurrency(currency: Currency){
-        callback.onClickCurrency(currency)
+    private fun renderChangeCurrency(currency: Currency){
         when(currency){
             Currency.EURO -> {
                 surfaceLayout.hint = getString(R.string.surface_m2)
@@ -260,6 +250,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 ErrorSourceAddProperty.TOO_MANY_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
                 ErrorSourceAddProperty.INCORECT_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
                 ErrorSourceAddProperty.UNKNOW_ERROR -> showSnackBarMessage(getString(R.string.unknow_error))
+                ErrorSourceAddProperty.ERROR_FETCHING_PROPERTY -> showSnackBarMessage(getString(R.string.unknow_error))
             }
         }
     }
@@ -284,12 +275,12 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                                           isSold: Boolean, sellOn: String?,
                                           agentId: Int, amenities: List<TypeAmenity>,
                                           pictures: List<Picture>?, agentFirstName: String,
-                                          agentLastName: String, currency: Currency){
-        val priceToDisplay = when(currency){
+                                          agentLastName: String){
+        val priceToDisplay = when(currentCurrency){
             Currency.EURO -> price.toString()
             Currency.DOLLAR -> price.toDollar().toString()
         }
-        val surfaceToDisplay = when(currency){
+        val surfaceToDisplay = when(currentCurrency){
             Currency.EURO -> surface.toString()
             Currency.DOLLAR -> surface.toSqFt().toString()
         }

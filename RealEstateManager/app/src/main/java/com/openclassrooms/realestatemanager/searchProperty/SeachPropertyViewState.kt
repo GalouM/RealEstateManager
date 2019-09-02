@@ -16,7 +16,6 @@ data class SeachPropertyViewState(
         val error: List<ErrorSourceSearch>? = null,
         val showProperty: Boolean = false,
         val agents: List<Agent>? = null,
-        val currency: Currency = Currency.EURO,
         val loading: Boolean = false
 ) : REMViewState
 
@@ -29,15 +28,10 @@ sealed class SearchPropertyIntent : REMIntent{
             val maxDateOnMarket: String?, val hasPhotos: Boolean?
     ) : SearchPropertyIntent()
 
-    object ChangeCurrencyIntent : SearchPropertyIntent()
-
     object GetListAgentsIntent : SearchPropertyIntent()
-
-    object GetCurrentCurrencyIntent : SearchPropertyIntent()
 }
 
 sealed class SearchPropertyResult : REMResult{
     data class SearchResult(val error: List<ErrorSourceSearch>?) : SearchPropertyResult()
     data class ListAgentsResult(val listAgents: List<Agent>?, val errorSource: List<ErrorSourceSearch>?) : SearchPropertyResult()
-    data class ChangeCurrencyResult(val currency: Currency) : SearchPropertyResult()
 }

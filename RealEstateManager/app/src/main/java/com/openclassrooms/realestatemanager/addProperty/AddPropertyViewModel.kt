@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.addProperty
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
@@ -14,6 +15,7 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.BitmapDownloader
+import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
@@ -36,6 +38,9 @@ BitmapDownloader.Listeners{
             field = value
             viewStateLD.value = value
         }
+
+    val currency: LiveData<Currency>
+        get() = currencyRepository.currency
 
     private lateinit var disposable: Disposable
 
@@ -102,11 +107,7 @@ BitmapDownloader.Listeners{
 
             }
 
-            is AddPropertyIntent.ChangeCurrencyIntent -> changeCurrency()
-
             is AddPropertyIntent.OpenListAgentsIntent -> fetchAgentsFromDB()
-
-            is AddPropertyIntent.GetCurrentCurrencyIntent -> emitCurrentCurrency()
 
             is AddPropertyIntent.SetActionTypeIntent -> setActionType(intent.actionType)
         }
@@ -116,12 +117,6 @@ BitmapDownloader.Listeners{
         currentViewState = when (result){
             is Lce.Content ->{
                 when(result.packet){
-                    is AddPropertyResult.ChangeCurrencyResult -> {
-                        currentViewState.copy(
-                                currency = result.packet.currency,
-                                openListAgents = false)
-                    }
-
                     is AddPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
                                 openListAgents = true,
@@ -183,12 +178,6 @@ BitmapDownloader.Listeners{
                         currentViewState.copy(
                                 isLoading = false,
                                 errors = result.packet.errorSource,
-                                openListAgents = false
-                        )
-                    }
-                    is AddPropertyResult.ChangeCurrencyResult -> {
-                        currentViewState.copy(
-                                isLoading = false,
                                 openListAgents = false
                         )
                     }
@@ -452,22 +441,6 @@ BitmapDownloader.Listeners{
                 propertyRepository.deletePicture(it.url)
             }
         }
-    }
-
-    //--------------------
-    // CURRENCY
-    //--------------------
-
-    private fun changeCurrency(){
-        currencyRepository.setCurrency()
-        emitCurrentCurrency()
-    }
-
-    private fun emitCurrentCurrency(){
-        val currency = currencyRepository.currency.value!!
-        val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.ChangeCurrencyResult(currency))
-
-        resultToViewState(result)
     }
 
     //--------------------

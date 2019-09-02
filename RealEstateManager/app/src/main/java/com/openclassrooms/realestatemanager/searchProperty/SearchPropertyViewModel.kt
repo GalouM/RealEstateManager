@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.searchProperty
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
@@ -9,10 +10,7 @@ import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
-import com.openclassrooms.realestatemanager.utils.MAX_VALUE
-import com.openclassrooms.realestatemanager.utils.MIN_VALUE
-import com.openclassrooms.realestatemanager.utils.TypeAmenity
-import com.openclassrooms.realestatemanager.utils.TypeProperty
+import com.openclassrooms.realestatemanager.utils.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -31,6 +29,9 @@ class SearchPropertyViewModel(
             field = value
             viewStateLD.value = value
         }
+
+    val currency: LiveData<Currency>
+        get() = currencyRepository.currency
 
     private var searchAgentsJob: Job? = null
     private var searchPropertyJob: Job? = null
@@ -58,9 +59,7 @@ class SearchPropertyViewModel(
                         intent.stillOnMarket, intent.manageBy, intent.closeTo, intent.maxDateOnMarket
                 )
             }
-            is SearchPropertyIntent.ChangeCurrencyIntent -> changeCurrency()
             is SearchPropertyIntent.GetListAgentsIntent -> fetchAgentsFromDB()
-            is SearchPropertyIntent.GetCurrentCurrencyIntent -> emitCurrentCurrency()
         }
     }
 
@@ -68,14 +67,6 @@ class SearchPropertyViewModel(
         currentViewState = when(result){
             is Lce.Content -> {
                 when(result.packet){
-                    is SearchPropertyResult.ChangeCurrencyResult -> {
-                        currentViewState.copy(
-                                showProperty = false,
-                                agents = null,
-                                currency = result.packet.currency,
-                                loading = false
-                        )
-                    }
                     is SearchPropertyResult.SearchResult -> {
                         currentViewState.copy(
                                 agents = null,
@@ -117,13 +108,6 @@ class SearchPropertyViewModel(
                                 showProperty = false,
                                 agents = null,
                                 error = result.packet.errorSource,
-                                loading = false
-                        )
-                    }
-                    else -> {
-                        currentViewState.copy(
-                                showProperty = false,
-                                agents = null,
                                 loading = false
                         )
                     }
@@ -231,22 +215,6 @@ class SearchPropertyViewModel(
         }
 
         return propertyToDisplay
-    }
-
-    //--------------------
-    // CURRENCY
-    //--------------------
-
-    private fun changeCurrency(){
-        currencyRepository.setCurrency()
-        emitCurrentCurrency()
-    }
-
-    private fun emitCurrentCurrency(){
-        val currency = currencyRepository.currency.value!!
-        val result: Lce<SearchPropertyResult> = Lce.Content(SearchPropertyResult.ChangeCurrencyResult(currency))
-
-        resultToViewState(result)
     }
 
     //--------------------

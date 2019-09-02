@@ -19,7 +19,6 @@ data class DetailsPropertyViewState(
         val address: Address? = null,
         val pictures: List<Picture>? = null,
         val amenities: List<Amenity>? = null,
-        val currency: Currency = Currency.EURO,
         val modifyProperty: Boolean = false
 ) : REMViewState
 
@@ -27,10 +26,6 @@ sealed class DetailsPropertyIntent : REMIntent{
     object FetchDetailsIntent : DetailsPropertyIntent()
 
     object ModifyPropertyIntent : DetailsPropertyIntent()
-
-    object ChangeCurrencyIntent : DetailsPropertyIntent()
-
-    object GetCurrentCurrencyIntent : DetailsPropertyIntent()
 }
 
 sealed class DetailsPropertyResult : REMResult {
@@ -39,5 +34,4 @@ sealed class DetailsPropertyResult : REMResult {
             val amenities: List<Amenity>?, val pictures: List<Picture>?
     ) : DetailsPropertyResult()
     object ModifyPropertyResult : DetailsPropertyResult()
-    data class ChangeCurrencyResult(val currency: Currency) : DetailsPropertyResult()
 }

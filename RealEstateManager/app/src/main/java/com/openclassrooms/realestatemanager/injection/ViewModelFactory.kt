@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.openclassrooms.realestatemanager.addAgent.AddAgentViewModel
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyViewModel
+import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyViewModel
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
@@ -11,7 +12,6 @@ import com.openclassrooms.realestatemanager.detailsProperty.DetailsPropertyViewM
 import com.openclassrooms.realestatemanager.listProperties.ListPropertyViewModel
 import com.openclassrooms.realestatemanager.mainActivity.MainActivityViewModel
 import com.openclassrooms.realestatemanager.searchProperty.SearchPropertyViewModel
-import com.openclassrooms.realestatemanager.searchResult.SearchResultViewModel
 
 /**
  * Created by galou on 2019-07-09
@@ -28,7 +28,7 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(ListPropertyViewModel::class.java) -> ListPropertyViewModel(propertyRepository, currencyRepository) as T
             modelClass.isAssignableFrom(DetailsPropertyViewModel::class.java) -> DetailsPropertyViewModel(propertyRepository, currencyRepository) as T
             modelClass.isAssignableFrom(SearchPropertyViewModel::class.java) -> SearchPropertyViewModel(agentRepository, propertyRepository, currencyRepository) as T
-            modelClass.isAssignableFrom(SearchResultViewModel::class.java) -> SearchResultViewModel(currencyRepository) as T
+            modelClass.isAssignableFrom(BaseCurrencyViewModel::class.java) -> BaseCurrencyViewModel(currencyRepository) as T
 
             else -> throw Exception("Unknown ViewModel class")
 

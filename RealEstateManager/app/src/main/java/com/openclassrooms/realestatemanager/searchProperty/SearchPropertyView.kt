@@ -72,11 +72,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
     private val agentsSelectedId = mutableListOf<Int>()
     private var allAgents: List<Int>? = null
     private var adapter: ListAgentSearchAdapter?= null
-    private lateinit var callback: OnCurrencyChangedListener
-
-    interface OnCurrencyChangedListener{
-        fun onClickCurrency(currency: Currency)
-    }
+    private lateinit var currentCurrency: Currency
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -84,36 +80,24 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
         ButterKnife.bind(this, view)
 
         configureViewModel()
-        configureCurrentCurrency()
+        currencyObserver()
 
         viewModel.actionFromIntent(SearchPropertyIntent.GetListAgentsIntent)
 
         return view
     }
 
-    fun setOnCurrencyChangedListener(callback: OnCurrencyChangedListener){
-        this.callback = callback
-    }
-
-    fun configureCurrentCurrency(){
-        viewModel.actionFromIntent(SearchPropertyIntent.GetCurrentCurrencyIntent)
-    }
-
     //--------------------
     // CLICK LISTENER
     //--------------------
 
-    fun toolBarClickListener(buttonId: Int?){
-        when(buttonId){
-            R.id.menu_validate_activity_currency -> viewModel.actionFromIntent(SearchPropertyIntent.ChangeCurrencyIntent)
-            R.id.menu_validate_activity_check -> {
-                viewModel.actionFromIntent(SearchPropertyIntent.SearchPropertyFromInputIntent(
-                    getTypePropertySelected(), minPrice.toDouble(), maxPrice.toDouble(),
-                    minSurface.toDouble(), maxSurface.toDouble(), minRooms.toInt(),
-                    minBedrooms.toInt(), minBathrooms.toInt(), neighborhood.text.toString(), isAvailable.isChecked,
-                    agentsSelectedId, getAmenitiesSelected(), null, withPictures.isChecked
-            ))}
-        }
+    fun toolBarValidateClickListener(){
+        viewModel.actionFromIntent(SearchPropertyIntent.SearchPropertyFromInputIntent(
+                getTypePropertySelected(), minPrice.toDouble(), maxPrice.toDouble(),
+                minSurface.toDouble(), maxSurface.toDouble(), minRooms.toInt(),
+                minBedrooms.toInt(), minBathrooms.toInt(), neighborhood.text.toString(), isAvailable.isChecked,
+                agentsSelectedId, getAmenitiesSelected(), null, withPictures.isChecked
+        ))
     }
 
     //--------------------
@@ -130,13 +114,18 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
         viewModel.viewState.observe(this, Observer { render(it) })
     }
 
+    private fun currencyObserver(){
+        viewModel.currency.observe(this, Observer {currency ->
+            currentCurrency = currency
+            renderChangeCurrency(currentCurrency)
+        })
+    }
+
     override fun render(state: SeachPropertyViewState?) {
         if (state == null) return
         state.agents?.let{renderAgentsList(it)}
 
         if(state.showProperty) renderShowResults()
-
-        renderChangeCurrency(state.currency)
 
         state.error?.let { renderErrors(it) }
     }
@@ -151,8 +140,6 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
     }
 
     private fun renderChangeCurrency(currency: Currency){
-        callback.onClickCurrency(currency)
-
         when(currency){
             Currency.EURO -> {
                 surfaceTitle.text = getString(R.string.surface_m2)

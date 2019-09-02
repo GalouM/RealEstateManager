@@ -23,7 +23,6 @@ data class AddPropertyViewState(
         val errors: List<ErrorSourceAddProperty>? = null,
         val openListAgents: Boolean = false,
         val listAgents: List<Agent>? = null,
-        val currency: Currency = Currency.EURO,
         val type: String = "",
         val price: Double? = null, val surface: Double? = null,
         val bedrooms: Int? = null, val rooms: Int? = null,
@@ -51,11 +50,7 @@ sealed class AddPropertyIntent : REMIntent{
 
     data class SetActionTypeIntent(val actionType: ActionType) : AddPropertyIntent()
 
-    object ChangeCurrencyIntent : AddPropertyIntent()
-
     object OpenListAgentsIntent : AddPropertyIntent()
-
-    object GetCurrentCurrencyIntent : AddPropertyIntent()
 
 }
 
@@ -67,5 +62,4 @@ sealed class AddPropertyResult : REMResult{
             val errorSource: List<ErrorSourceAddProperty>?
     ) : AddPropertyResult()
     data class ListAgentsResult(val listAgents: List<Agent>?, val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
-    data class ChangeCurrencyResult(val currency: Currency) : AddPropertyResult()
 }

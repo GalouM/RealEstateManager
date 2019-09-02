@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
-            R.id.menu_main_activity_currency -> {
+            R.id.menu_toolbar_currency -> {
                 viewModel.actionFromIntent(MainActivityIntent.ChangeCurrencyIntent)
                 return true
             }
@@ -268,11 +268,11 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         menuToolbar?.let {
             when(currency){
                 Currency.EURO -> {
-                    val currencyItem = menuToolbar!!.findItem(R.id.menu_main_activity_currency)
+                    val currencyItem = menuToolbar!!.findItem(R.id.menu_toolbar_currency)
                     currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.euro_icon)
                 }
                 Currency.DOLLAR -> {
-                    val currencyItem = menuToolbar!!.findItem(R.id.menu_main_activity_currency)
+                    val currencyItem = menuToolbar!!.findItem(R.id.menu_toolbar_currency)
                     currencyItem.icon = ContextCompat.getDrawable(applicationContext, R.drawable.dollar_icon)
                 }
             }

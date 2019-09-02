@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.detailsProperty
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.data.entity.Address
@@ -10,6 +11,7 @@ import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
+import com.openclassrooms.realestatemanager.utils.Currency
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -29,6 +31,9 @@ class DetailsPropertyViewModel(
             viewStateLD.value = value
         }
 
+    val currency: LiveData<Currency>
+        get() = currencyRepository.currency
+
     private var searchPropertyJob: Job? = null
     private var searchAddressJob: Job? = null
     private var searchAmenitiesJob: Job? = null
@@ -38,8 +43,6 @@ class DetailsPropertyViewModel(
         when(intent){
             is DetailsPropertyIntent.FetchDetailsIntent -> fetchDetailsProperty()
             is DetailsPropertyIntent.ModifyPropertyIntent -> modifyProperty()
-            is DetailsPropertyIntent.ChangeCurrencyIntent -> changeCurrency()
-            is DetailsPropertyIntent.GetCurrentCurrencyIntent -> emitCurrentCurrency()
         }
     }
 
@@ -62,14 +65,6 @@ class DetailsPropertyViewModel(
                         currentViewState.copy(
                                 modifyProperty = true,
                                 isLoading = false
-                        )
-                    }
-
-                    is DetailsPropertyResult.ChangeCurrencyResult -> {
-                        currentViewState.copy(
-                                modifyProperty = false,
-                                isLoading = false,
-                                currency = result.packet.currency
                         )
                     }
                 }
@@ -147,23 +142,6 @@ class DetailsPropertyViewModel(
     private fun modifyProperty(){
         resultToViewState(Lce.Loading())
         val result: Lce<DetailsPropertyResult> = Lce.Content(DetailsPropertyResult.ModifyPropertyResult)
-        resultToViewState(result)
-    }
-
-    //--------------------
-    // CURRENCY
-    //--------------------
-
-    private fun changeCurrency(){
-        resultToViewState(Lce.Loading())
-        currencyRepository.setCurrency()
-        emitCurrentCurrency()
-    }
-
-    private fun emitCurrentCurrency(){
-        val currency = currencyRepository.currency.value!!
-        val result: Lce<DetailsPropertyResult> = Lce.Content(DetailsPropertyResult.ChangeCurrencyResult(currency))
-
         resultToViewState(result)
     }
 }

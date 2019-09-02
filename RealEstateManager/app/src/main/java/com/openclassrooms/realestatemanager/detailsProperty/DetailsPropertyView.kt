@@ -48,15 +48,11 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     @BindView(R.id.details_view_location_country) lateinit var country: TextView
     @BindView(R.id.details_view_map) lateinit var map: ImageView
 
-    private lateinit var callback: OnCurrencyChangedListener
-
     private lateinit var viewModel: DetailsPropertyViewModel
 
     private var surfaceProperty: Double? = null
 
-    interface OnCurrencyChangedListener{
-        fun onClickCurrency(currency: Currency)
-    }
+    private lateinit var currentCurrency: Currency
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -64,6 +60,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         ButterKnife.bind(this, view)
 
         configureViewModel()
+        currencyObserver()
         viewModel.actionFromIntent(DetailsPropertyIntent.FetchDetailsIntent)
         return view
     }
@@ -71,10 +68,6 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == RC_CODE_ADD_PROPERTY) onPropertyModified(resultCode)
-    }
-
-    fun configureCurrentCurrency(){
-        viewModel.actionFromIntent(DetailsPropertyIntent.GetCurrentCurrencyIntent)
     }
 
     private fun onPropertyModified(resultCode: Int){
@@ -92,15 +85,8 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     // CLICK LISTENER
     //--------------------
 
-    fun toolBarClickListener(buttonId: Int?){
-        when(buttonId){
-            R.id.menu_details_property_currency -> viewModel.actionFromIntent(DetailsPropertyIntent.ChangeCurrencyIntent)
-            R.id.menu_details_property_modify -> viewModel.actionFromIntent(DetailsPropertyIntent.ModifyPropertyIntent)
-        }
-    }
-
-    fun setOnCurrencyChangedListener(callback: OnCurrencyChangedListener){
-        this.callback = callback
+    fun toolBarModifyClickListener(){
+        viewModel.actionFromIntent(DetailsPropertyIntent.ModifyPropertyIntent)
     }
 
     //--------------------
@@ -117,6 +103,13 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         viewModel.viewState.observe(this, Observer { render(it) })
     }
 
+    private fun currencyObserver(){
+        viewModel.currency.observe(this, Observer {currency ->
+            currentCurrency = currency
+            renderChangeCurrency(currentCurrency)
+        })
+    }
+
     //--------------------
     // STATE AND INTENT
     //--------------------
@@ -125,10 +118,8 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         if (state == null) return
 
         state.property?.let {
-            renderFetchedProperty(it, state.address!!, state.currency)
+            renderFetchedProperty(it, state.address!!)
         }
-
-        renderChangeCurrency(state.currency)
 
         if(state.modifyProperty) renderModifyProperty()
 
@@ -145,15 +136,9 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 
-    private fun renderChangeCurrency(currency: Currency){
-        callback.onClickCurrency(currency)
-        configureSurfaceUnitDisplay(currency)
-
-    }
-
-    private fun renderFetchedProperty(property: Property, address: Address, currency: Currency){
+    private fun renderFetchedProperty(property: Property, address: Address){
         surfaceProperty = property.surface
-        configureSurfaceUnitDisplay(currency)
+        configureSurfaceUnitDisplay(currentCurrency)
         description.text = property.description
         rooms.text = property.rooms.toString()
         property.bedrooms?.let{
@@ -167,6 +152,10 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         zipCode.text = String.format("%s %s", address.state, address.postalCode)
         country.text = address.country
         Glide.with(this).load(address.mapIconUrl).into(map)
+    }
+
+    private fun renderChangeCurrency(currency: Currency){
+        configureSurfaceUnitDisplay(currency)
     }
 
     private fun configureSurfaceUnitDisplay(currency: Currency){

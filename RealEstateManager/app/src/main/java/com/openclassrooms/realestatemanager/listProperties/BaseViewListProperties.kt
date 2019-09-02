@@ -5,10 +5,12 @@ import androidx.appcompat.widget.ContentFrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.openclassrooms.realestatemanager.addProperty.AddPropertyIntent
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
+import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
@@ -38,6 +40,15 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
 
         viewModel.viewState.observe(this, Observer { render(it) })
 
+
+    }
+
+    protected fun configureActionType(){
+        val argument = arguments?.getString(ACTION_TYPE_LIST_PROPERTY, ActionTypeList.ALL_PROPERTIES.actionName)
+        argument?.let{
+            val actionType = ActionTypeList.valueOf(it)
+            viewModel.actionFromIntent(PropertyListIntent.SetActionTypeIntent(actionType))
+        }
 
     }
 

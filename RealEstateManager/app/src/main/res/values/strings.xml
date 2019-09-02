@@ -69,4 +69,9 @@
     <string name="ft_2_surface_details">%s ft²</string>
     <string name="property_modified">This property has been modified</string>
     <string name="error_modification">An error has occurred, the modifications were not saved</string>
+    <string name="no_property_found">No property found</string>
+    <string name="select_one_agent">Select at least one agent</string>
+    <string name="select_one_type">Select at least one type</string>
+    <string name="no_agent_found">Error finding agents please try again</string>
+    <string name="select_agent_n_type">Select at least one type and one agent</string>
 </resources>

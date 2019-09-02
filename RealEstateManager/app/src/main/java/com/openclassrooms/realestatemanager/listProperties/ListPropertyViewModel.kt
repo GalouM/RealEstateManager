@@ -30,12 +30,15 @@ class ListPropertyViewModel(
     val currency: LiveData<Currency>
         get() = currencyRepository.currency
 
+    private var actionType = ActionTypeList.ALL_PROPERTIES
+
     private var searchPropertiesJob: Job? = null
 
     override fun actionFromIntent(intent: PropertyListIntent){
         when(intent){
             is PropertyListIntent.DisplayPropertiesIntent -> fetchPropertiesFromDB()
             is PropertyListIntent.OpenPropertyDetailIntent -> setPropertySelected(intent.idProperty)
+            is PropertyListIntent.SetActionTypeIntent -> setActionType(intent.actionType)
         }
 
     }
@@ -79,6 +82,10 @@ class ListPropertyViewModel(
                 }
             }
         }
+    }
+
+    private fun setActionType(actionType: ActionTypeList){
+        this.actionType = actionType
     }
 
     private fun setPropertySelected(id: Int){
@@ -136,13 +143,25 @@ class ListPropertyViewModel(
             }
         }
 
-        searchPropertiesJob = launch {
-            val properties: List<Property>? = propertyRepository.getAllProperties()
-            properties?.forEach {
-                fetchPicture(it.id!!, it)
-            }
+        when(actionType){
+            ActionTypeList.ALL_PROPERTIES -> {
+                searchPropertiesJob = launch {
+                    val properties: List<Property>? = propertyRepository.getAllProperties()
+                    properties?.forEach {
+                        fetchPicture(it.id!!, it)
+                    }
+                }
 
+            }
+            ActionTypeList.SEARCH_RESULT -> {
+                val properties: List<Property>? = propertyRepository.propertyFromSearch
+                properties?.forEach {
+                    fetchPicture(it.id!!, it)
+                }
+            }
         }
+
+
     }
 
 }

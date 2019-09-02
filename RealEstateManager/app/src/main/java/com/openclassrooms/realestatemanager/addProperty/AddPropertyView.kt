@@ -77,7 +77,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     companion object {
 
         fun newInstance(actionType: String) = AddPropertyView().apply {
-            arguments = bundleOf(ACTION_TYPE to actionType)
+            arguments = bundleOf(ACTION_TYPE_ADD_PROPERTY to actionType)
         }
     }
 
@@ -94,7 +94,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     }
 
     private fun configureActionType(){
-        val argument = arguments?.getString(ACTION_TYPE, "")
+        val argument = arguments?.getString(ACTION_TYPE_ADD_PROPERTY, "")
         argument?.let{
             val actionType = ActionType.valueOf(it)
             viewModel.actionFromIntent(AddPropertyIntent.SetActionTypeIntent(actionType))

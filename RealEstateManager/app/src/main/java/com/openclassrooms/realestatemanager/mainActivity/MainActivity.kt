@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     private fun renderShowAddPropertyActivity(){
         val intent = Intent(this, AddPropertyActivity::class.java)
-        intent.putExtra(ACTION_TYPE, ActionType.NEW_PROPERTY.actionName)
+        intent.putExtra(ACTION_TYPE_ADD_PROPERTY, ActionType.NEW_PROPERTY.actionName)
         startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 

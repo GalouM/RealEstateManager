@@ -23,4 +23,5 @@ sealed class PropertyListResult : REMResult{
 sealed class PropertyListIntent : REMIntent{
     object DisplayPropertiesIntent : PropertyListIntent()
     data class OpenPropertyDetailIntent(val idProperty: Int) : PropertyListIntent()
+    data class SetActionTypeIntent(val actionType: ActionTypeList) : PropertyListIntent()
 }

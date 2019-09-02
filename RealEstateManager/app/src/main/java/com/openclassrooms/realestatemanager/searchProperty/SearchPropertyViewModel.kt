@@ -70,6 +70,7 @@ class SearchPropertyViewModel(
                 when(result.packet){
                     is SearchPropertyResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
+                                showProperty = false,
                                 agents = null,
                                 currency = result.packet.currency,
                                 loading = false
@@ -85,6 +86,7 @@ class SearchPropertyViewModel(
                     }
                     is SearchPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
+                                showProperty = false,
                                 error = null,
                                 loading = false,
                                 agents = result.packet.listAgents
@@ -94,6 +96,7 @@ class SearchPropertyViewModel(
             }
             is Lce.Loading -> {
                 currentViewState.copy(
+                        showProperty = false,
                         agents = null,
                         loading = true
                 )
@@ -102,6 +105,7 @@ class SearchPropertyViewModel(
                 when(result.packet){
                     is SearchPropertyResult.SearchResult -> {
                         currentViewState.copy(
+                                showProperty = false,
                                 agents = null,
                                 error = result.packet.error,
                                 loading = false
@@ -110,6 +114,7 @@ class SearchPropertyViewModel(
 
                     is SearchPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
+                                showProperty = false,
                                 agents = null,
                                 error = result.packet.errorSource,
                                 loading = false
@@ -117,6 +122,7 @@ class SearchPropertyViewModel(
                     }
                     else -> {
                         currentViewState.copy(
+                                showProperty = false,
                                 agents = null,
                                 loading = false
                         )

@@ -25,7 +25,7 @@ import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.utils.extensions.toSqFt
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
-import com.openclassrooms.realestatemanager.utils.ACTION_TYPE
+import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_ADD_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_PROPERTY
 import com.openclassrooms.realestatemanager.utils.showSnackBar
@@ -141,7 +141,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
     private fun renderModifyProperty(){
         val intent = Intent(activity, AddPropertyActivity::class.java)
-        intent.putExtra(ACTION_TYPE, ActionType.MODIFY_PROPERTY.actionName)
+        intent.putExtra(ACTION_TYPE_ADD_PROPERTY, ActionType.MODIFY_PROPERTY.actionName)
         startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 

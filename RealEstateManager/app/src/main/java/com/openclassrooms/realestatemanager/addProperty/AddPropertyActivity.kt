@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.utils.ACTION_TYPE
+import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_ADD_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 
 class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChangedListener {
@@ -40,7 +40,7 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
     }
 
     private fun configureActionType(){
-        actionType = intent.getStringExtra(ACTION_TYPE)
+        actionType = intent.getStringExtra(ACTION_TYPE_ADD_PROPERTY)
     }
 
     private fun configureToolbar() {

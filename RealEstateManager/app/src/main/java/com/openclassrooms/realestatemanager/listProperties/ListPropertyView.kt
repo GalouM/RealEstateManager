@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
+import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.ItemClickSupport
 
@@ -34,6 +36,13 @@ class ListPropertyView : BaseViewListProperties(),
 
     private var adapter: ListPropertyAdapter? = null
 
+    companion object {
+
+        fun newInstance(actionType: String) = ListPropertyView().apply {
+            arguments = bundleOf(ACTION_TYPE_LIST_PROPERTY to actionType)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -42,6 +51,7 @@ class ListPropertyView : BaseViewListProperties(),
         configureRefreshLayout()
         configureForeground()
         configureViewModel()
+        configureActionType()
         currencyObserver()
         setupRefreshPropertiesListener()
 

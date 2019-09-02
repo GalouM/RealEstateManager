@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -48,12 +49,20 @@ class MapPropertyView : BaseViewListProperties(),
 
     private var propertiesNearBy = mutableListOf<PropertyForListDisplay>()
 
+    companion object {
+
+        fun newInstance(actionType: String) = MapPropertyView().apply {
+            arguments = bundleOf(ACTION_TYPE_LIST_PROPERTY to actionType)
+        }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_map_property_view, container, false)
         ButterKnife.bind(this, view)
         configureViewModel()
+        configureActionType()
         currencyObserver()
         mapView.onCreate(savedInstanceState)
         fetchUserLocation()

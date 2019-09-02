@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,18 +9,17 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".searchProperty.SearchPropertyView"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Type"
-        android:textSize="@dimen/text_title"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Type"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"/>
 
     <androidx.gridlayout.widget.GridLayout
         android:layout_width="match_parent"
@@ -302,14 +302,14 @@
             android:text="has pictures"/>
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Manage by"
-        android:textSize="@dimen/text_title"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Manage by"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"/>
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/search_select_all_agents"

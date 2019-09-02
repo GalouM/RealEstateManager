@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.searchProperty
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.widget.ContentFrameLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,16 +20,19 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.bumptech.glide.Glide
+import com.google.android.material.textfield.TextInputLayout
 
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
+import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import com.openclassrooms.realestatemanager.utils.extensions.toDouble
 import com.openclassrooms.realestatemanager.utils.extensions.toInt
+import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
  * A simple [Fragment] subclass.
@@ -82,6 +87,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
         configureCurrentCurrency()
 
         viewModel.actionFromIntent(SearchPropertyIntent.GetListAgentsIntent)
+
         return view
     }
 
@@ -100,12 +106,13 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
     fun toolBarClickListener(buttonId: Int?){
         when(buttonId){
             R.id.menu_validate_activity_currency -> viewModel.actionFromIntent(SearchPropertyIntent.ChangeCurrencyIntent)
-            R.id.menu_validate_activity_check -> viewModel.actionFromIntent(SearchPropertyIntent.SearchPropertyFromInputIntent(
+            R.id.menu_validate_activity_check -> {
+                viewModel.actionFromIntent(SearchPropertyIntent.SearchPropertyFromInputIntent(
                     getTypePropertySelected(), minPrice.toDouble(), maxPrice.toDouble(),
                     minSurface.toDouble(), maxSurface.toDouble(), minRooms.toInt(),
                     minBedrooms.toInt(), minBathrooms.toInt(), neighborhood.text.toString(), isAvailable.isChecked,
                     agentsSelectedId, getAmenitiesSelected(), null, withPictures.isChecked
-            ))
+            ))}
         }
     }
 
@@ -127,7 +134,11 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
         if (state == null) return
         state.agents?.let{renderAgentsList(it)}
 
+        if(state.showProperty) renderShowResults()
+
         renderChangeCurrency(state.currency)
+
+        state.error?.let { renderErrors(it) }
     }
 
     private fun renderAgentsList(agents: List<Agent>){
@@ -153,6 +164,41 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
             }
         }
 
+
+    }
+
+    private fun renderShowResults(){
+        val intent = Intent(activity, SearchResultActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun renderErrors(errors: List<ErrorSourceSearch>){
+        var missingAgent = false
+        var missingType = false
+        var missingTypeAndAgent = false
+        errors.forEach {
+            when(it){
+                ErrorSourceSearch.ERROR_FETCHING_AGENTS -> showSnackBarMessage(getString(R.string.no_agent_found))
+                ErrorSourceSearch.NO_TYPE_SELECTED -> {
+                    if(missingAgent) missingTypeAndAgent = true
+                    missingType = true
+                }
+
+                ErrorSourceSearch.NO_AGENT_SELECTED -> {
+                    if(missingType) missingTypeAndAgent = true
+                    missingAgent = true
+                }
+                ErrorSourceSearch.NO_PROPERTY_FOUND -> showSnackBarMessage(getString(R.string.no_property_found))
+            }
+
+            if(missingTypeAndAgent){
+                showSnackBarMessage(getString(R.string.select_agent_n_type))
+            } else {
+                if(missingType) showSnackBarMessage(getString(R.string.select_one_type))
+                if(missingAgent) showSnackBarMessage(getString(R.string.select_one_agent))
+            }
+
+        }
 
     }
 
@@ -255,5 +301,11 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
         if(duplexBox.isChecked) listType.add(TypeProperty.DUPLEX)
 
         return listType
+    }
+
+    private fun showSnackBarMessage(message: String){
+        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
+        showSnackBar(viewLayout, message)
+
     }
 }

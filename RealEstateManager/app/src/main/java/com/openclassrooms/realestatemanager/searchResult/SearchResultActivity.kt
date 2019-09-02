@@ -20,7 +20,7 @@ import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 class SearchResultActivity : AppCompatActivity(), REMView<SearchResultViewState> {
 
-    @BindView(R.id.search_result_activity_toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.activity_toolbar) lateinit var toolbar: Toolbar
 
     private var menuToolbar: Menu? = null
 
@@ -29,7 +29,7 @@ class SearchResultActivity : AppCompatActivity(), REMView<SearchResultViewState>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search_result)
+        setContentView(R.layout.activity_base)
         ButterKnife.bind(this)
         configureViewModel()
         configureToolbar()
@@ -67,12 +67,12 @@ class SearchResultActivity : AppCompatActivity(), REMView<SearchResultViewState>
     }
 
     private fun configureAndShowView(){
-        listPropertyView = supportFragmentManager.findFragmentById(R.id.search_result_activity_frame_layout) as ListPropertyView?
+        listPropertyView = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as ListPropertyView?
         if(listPropertyView == null){
             listPropertyView = ListPropertyView.newInstance(ActionTypeList.SEARCH_RESULT.actionName)
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.search_result_activity_frame_layout, listPropertyView!!)
+                    .add(R.id.activity_frame_layout, listPropertyView!!)
                     .commit()
         }
     }

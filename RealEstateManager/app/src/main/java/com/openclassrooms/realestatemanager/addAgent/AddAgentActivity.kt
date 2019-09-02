@@ -12,13 +12,13 @@ import com.openclassrooms.realestatemanager.R
 
 class AddAgentActivity : AppCompatActivity() {
 
-    @BindView(R.id.add_agent_activity_toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.activity_toolbar) lateinit var toolbar: Toolbar
 
     private var addAgentView: AddAgentView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_agent)
+        setContentView(R.layout.activity_base)
         ButterKnife.bind(this)
 
         configureToolbar()
@@ -38,12 +38,12 @@ class AddAgentActivity : AppCompatActivity() {
     }
 
     private fun configureAndShowView(){
-        addAgentView = supportFragmentManager.findFragmentById(R.id.add_agent_activity_frame_layout) as AddAgentView?
+        addAgentView = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as AddAgentView?
         if(addAgentView == null){
             addAgentView = AddAgentView()
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.add_agent_activity_frame_layout, addAgentView!!)
+                    .add(R.id.activity_frame_layout, addAgentView!!)
                     .commit()
         }
     }

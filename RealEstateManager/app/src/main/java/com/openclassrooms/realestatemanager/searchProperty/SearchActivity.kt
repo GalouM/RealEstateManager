@@ -14,7 +14,7 @@ import com.openclassrooms.realestatemanager.utils.Currency
 
 class SearchActivity : AppCompatActivity(), SearchPropertyView.OnCurrencyChangedListener {
 
-    @BindView(R.id.search_property_activity_toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.activity_toolbar) lateinit var toolbar: Toolbar
 
     private var searchPropertyView: SearchPropertyView? = null
 
@@ -22,7 +22,7 @@ class SearchActivity : AppCompatActivity(), SearchPropertyView.OnCurrencyChanged
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        setContentView(R.layout.activity_base)
         ButterKnife.bind(this)
         configureToolbar()
         configureAndShowView()
@@ -54,12 +54,12 @@ class SearchActivity : AppCompatActivity(), SearchPropertyView.OnCurrencyChanged
     }
 
     private fun configureAndShowView(){
-        searchPropertyView = supportFragmentManager.findFragmentById(R.id.search_property_activity_frame_layout) as SearchPropertyView?
+        searchPropertyView = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as SearchPropertyView?
         if(searchPropertyView == null){
             searchPropertyView = SearchPropertyView()
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.search_property_activity_frame_layout, searchPropertyView!!)
+                    .add(R.id.activity_frame_layout, searchPropertyView!!)
                     .commit()
         }
     }

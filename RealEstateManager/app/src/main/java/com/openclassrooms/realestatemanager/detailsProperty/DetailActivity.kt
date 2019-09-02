@@ -15,7 +15,7 @@ import com.openclassrooms.realestatemanager.utils.Currency
 
 class DetailActivity : AppCompatActivity(), DetailsPropertyView.OnCurrencyChangedListener {
 
-    @BindView(R.id.detail_property_activity_toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.activity_toolbar) lateinit var toolbar: Toolbar
 
     private var detailPropertyView: DetailsPropertyView? = null
 
@@ -23,7 +23,7 @@ class DetailActivity : AppCompatActivity(), DetailsPropertyView.OnCurrencyChange
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+        setContentView(R.layout.activity_base)
         ButterKnife.bind(this)
 
         configureToolbar()
@@ -57,12 +57,12 @@ class DetailActivity : AppCompatActivity(), DetailsPropertyView.OnCurrencyChange
 
 
     private fun configureAndShowView(){
-        detailPropertyView = supportFragmentManager.findFragmentById(R.id.detail_property_activity_frame_layout) as DetailsPropertyView?
+        detailPropertyView = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as DetailsPropertyView?
         if(detailPropertyView == null){
             detailPropertyView = DetailsPropertyView()
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.detail_property_activity_frame_layout, detailPropertyView!!)
+                    .add(R.id.activity_frame_layout, detailPropertyView!!)
                     .commit()
         }
     }

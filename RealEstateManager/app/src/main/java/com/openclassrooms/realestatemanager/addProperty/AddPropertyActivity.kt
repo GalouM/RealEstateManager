@@ -15,7 +15,7 @@ import com.openclassrooms.realestatemanager.utils.Currency
 
 class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChangedListener {
 
-    @BindView(R.id.add_property_activity_toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.activity_toolbar) lateinit var toolbar: Toolbar
 
     private var addPropertyView: AddPropertyView? = null
 
@@ -25,7 +25,7 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_property)
+        setContentView(R.layout.activity_base)
         ButterKnife.bind(this)
 
         configureActionType()
@@ -64,12 +64,12 @@ class AddPropertyActivity : AppCompatActivity(), AddPropertyView.OnCurrencyChang
     }
 
     private fun configureAndShowView(){
-        addPropertyView = supportFragmentManager.findFragmentById(R.id.add_property_activity_frame_layout) as AddPropertyView?
+        addPropertyView = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as AddPropertyView?
         if(addPropertyView == null){
             addPropertyView = AddPropertyView.newInstance(actionType)
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.add_property_activity_frame_layout, addPropertyView!!)
+                    .add(R.id.activity_frame_layout, addPropertyView!!)
                     .commit()
         }
     }

@@ -21,8 +21,7 @@ class AddPropertyActivity : BaseCurrencyActivity<AddPropertyView>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_base)
-        ButterKnife.bind(this)
+        setAndBindLayout()
         configureActionType()
         configureViewModel()
         configureToolbar(R.drawable.close_icon)
@@ -56,11 +55,7 @@ class AddPropertyActivity : BaseCurrencyActivity<AddPropertyView>() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun configureAndShowView(){
-        view = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as AddPropertyView?
-        if(view == null){
-            view = AddPropertyView.newInstance(actionType)
-            addFragmentToManager()
-        }
+    override fun createNewView(): AddPropertyView {
+        return AddPropertyView.newInstance(actionType)
     }
 }

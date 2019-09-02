@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
+import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.addProperty.AddPropertyView
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.Currency
@@ -26,7 +28,7 @@ abstract class BaseCurrencyActivity<F : Fragment> : AppCompatActivity(), REMView
     protected var view: F? = null
     protected lateinit var viewModel: BaseCurrencyViewModel
 
-    abstract fun configureAndShowView()
+    abstract fun createNewView(): F
 
     protected fun configureToolbar(homeIcon: Int?) {
         setSupportActionBar(toolbar)
@@ -36,11 +38,20 @@ abstract class BaseCurrencyActivity<F : Fragment> : AppCompatActivity(), REMView
         actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    protected fun addFragmentToManager(){
-        supportFragmentManager
-                .beginTransaction()
-                .add(R.id.activity_frame_layout, view!!)
-                .commit()
+    protected fun configureAndShowView(){
+        view = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as F?
+        if(view == null){
+            view = createNewView()
+            supportFragmentManager
+                    .beginTransaction()
+                    .add(R.id.activity_frame_layout, view!!)
+                    .commit()
+        }
+    }
+
+    protected fun setAndBindLayout(){
+        setContentView(R.layout.activity_base)
+        ButterKnife.bind(this)
     }
 
     //--------------------

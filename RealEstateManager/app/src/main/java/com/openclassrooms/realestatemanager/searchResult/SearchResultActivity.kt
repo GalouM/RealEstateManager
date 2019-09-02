@@ -14,8 +14,7 @@ class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_base)
-        ButterKnife.bind(this)
+        setAndBindLayout()
         configureViewModel()
         configureToolbar(R.drawable.close_icon)
         configureAndShowView()
@@ -44,11 +43,7 @@ class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
         return super.onOptionsItemSelected(item)
     }
 
-    override fun configureAndShowView(){
-        view = supportFragmentManager.findFragmentById(R.id.activity_frame_layout) as ListPropertyView?
-        if(view == null){
-            view = ListPropertyView.newInstance(ActionTypeList.SEARCH_RESULT.actionName)
-            addFragmentToManager()
-        }
+    override fun createNewView(): ListPropertyView {
+        return ListPropertyView.newInstance(ActionTypeList.SEARCH_RESULT.actionName)
     }
 }

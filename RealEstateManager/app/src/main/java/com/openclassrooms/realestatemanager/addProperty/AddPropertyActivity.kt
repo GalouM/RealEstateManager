@@ -50,6 +50,7 @@ class AddPropertyActivity : BaseCurrencyActivity<AddPropertyView>() {
                 view!!.toolBarValidateClickListener()
                 return true
             }
+            android.R.id.home -> finish()
 
         }
         return super.onOptionsItemSelected(item)

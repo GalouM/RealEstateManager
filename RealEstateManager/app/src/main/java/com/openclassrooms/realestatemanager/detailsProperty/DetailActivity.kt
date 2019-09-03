@@ -35,6 +35,7 @@ class DetailActivity : BaseCurrencyActivity<DetailsPropertyView>(){
                 view!!.toolBarModifyClickListener()
                 return true
             }
+            android.R.id.home -> finish()
 
         }
         return super.onOptionsItemSelected(item)

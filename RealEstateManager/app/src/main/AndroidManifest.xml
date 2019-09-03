@@ -9,18 +9,24 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".searchResult.SearchResultActivity"></activity>
-        <activity android:name=".searchProperty.SearchActivity" />
-        <activity android:name=".detailsProperty.DetailActivity" />
+        android:theme="@style/REMTheme">
+        <activity android:name=".searchResult.SearchResultActivity"
+            android:label="Results"
+            android:parentActivityName=".searchProperty.SearchActivity"></activity>
+        <activity
+            android:name=".searchProperty.SearchActivity"
+            android:label="@string/search_activity_name"
+            android:parentActivityName=".mainActivity.MainActivity"/>
+        <activity
+            android:name=".detailsProperty.DetailActivity"
+            android:label="@string/details_activity_name"/>
         <activity
             android:name=".addAgent.AddAgentActivity"
             android:label="@string/add_agent"
             android:parentActivityName=".mainActivity.MainActivity" />
         <activity
             android:name=".addProperty.AddPropertyActivity"
-            android:label="@string/add_property_title"
-            android:parentActivityName=".mainActivity.MainActivity" />
+            android:label="@string/add_property_title" />
         <activity android:name=".mainActivity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +34,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SecondActivity" />
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />

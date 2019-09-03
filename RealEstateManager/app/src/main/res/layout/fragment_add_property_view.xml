@@ -51,8 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="numberDecimal"
-                android:background="@android:color/transparent"/>
+                android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -69,8 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="numberDecimal"
-                android:background="@android:color/transparent"/>
+                android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.gridlayout.widget.GridLayout>
 
@@ -97,8 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="number"
-                android:background="@android:color/transparent"/>
+                android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -116,7 +113,6 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="number"
-                android:background="@android:color/transparent"
                 android:layout_marginEnd="@dimen/margin_small"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -135,7 +131,6 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="number"
-                android:background="@android:color/transparent"
                 android:layout_marginEnd="@dimen/margin_small"/>
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.gridlayout.widget.GridLayout>
@@ -171,8 +166,7 @@
             android:id="@+id/add_property_view_description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textMultiLine"
-            android:background="@android:color/transparent"/>
+            android:inputType="textMultiLine"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -186,8 +180,7 @@
         <EditText
             android:id="@+id/add_property_view_address"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"/>
+            android:layout_height="match_parent"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -201,8 +194,7 @@
         <EditText
             android:id="@+id/add_property_view_neighbourhood"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"/>
+            android:layout_height="match_parent"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.listProperties
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay

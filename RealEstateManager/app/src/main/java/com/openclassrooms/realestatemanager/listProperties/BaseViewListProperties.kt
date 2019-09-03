@@ -10,6 +10,7 @@ import com.openclassrooms.realestatemanager.addProperty.AddPropertyIntent
 import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
@@ -21,7 +22,7 @@ import com.openclassrooms.realestatemanager.utils.showSnackBar
 abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewState> {
 
     protected lateinit var viewModel: ListPropertyViewModel
-    protected lateinit var currentCurrency: Currency
+    protected var currentCurrency: Currency? = null
 
     protected abstract fun renderListProperties(properties: List<PropertyForListDisplay>)
     protected abstract fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty)
@@ -61,9 +62,9 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
     override fun render(state: PropertyListViewState?) {
         if (state == null) return
 
-        state.listProperties?.let {
-            renderListProperties(it)
-
+        if(state.listProperties != null && currentCurrency != null){
+            Log.e("render properties", "here")
+            renderListProperties(state.listProperties)
         }
 
         state.errorSource?.let { renderErrorFetchingProperty(it) }
@@ -75,14 +76,15 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
     }
 
     private fun renderOpenPropertyDetails(){
-        val intent = Intent(activity!!, DetailActivity::class.java)
-        startActivity(intent)
+        if(activity is MainActivity){
+            (activity as MainActivity).openDetailsProperty()
+        }
     }
 
     protected fun currencyObserver(){
         viewModel.currency.observe(this, Observer {currency ->
             currentCurrency = currency
-            renderChangeCurrency(currentCurrency)
+            renderChangeCurrency(currentCurrency!!)
         })
     }
 

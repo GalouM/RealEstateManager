@@ -52,7 +52,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
     private var surfaceProperty: Double? = null
 
-    private lateinit var currentCurrency: Currency
+    private var currentCurrency: Currency? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -106,7 +106,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     private fun currencyObserver(){
         viewModel.currency.observe(this, Observer {currency ->
             currentCurrency = currency
-            renderChangeCurrency(currentCurrency)
+            renderChangeCurrency(currentCurrency!!)
         })
     }
 
@@ -117,8 +117,8 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     override fun render(state: DetailsPropertyViewState?) {
         if (state == null) return
 
-        state.property?.let {
-            renderFetchedProperty(it, state.address!!)
+        if(state.property != null && currentCurrency != null){
+            renderFetchedProperty(state.property, state.address!!)
         }
 
         if(state.modifyProperty) renderModifyProperty()
@@ -138,7 +138,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
     private fun renderFetchedProperty(property: Property, address: Address){
         surfaceProperty = property.surface
-        configureSurfaceUnitDisplay(currentCurrency)
+        configureSurfaceUnitDisplay(currentCurrency!!)
         description.text = property.description
         rooms.text = property.rooms.toString()
         property.bedrooms?.let{

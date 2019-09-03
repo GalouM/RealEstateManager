@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".mainActivity.MainActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/main_activity_toolbar"
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/main_activity_tablayout"
+            app:layout_constraintTop_toBottomOf="@id/main_activity_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:tabIndicatorColor="@color/colorTextPrimary"
+            app:tabTextColor="@color/colorTextUnactive"
+            app:tabSelectedTextColor="@color/colorTextPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:elevation="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintTop_toBottomOf="@id/main_activity_tablayout">
+
+
+            <com.openclassrooms.realestatemanager.mainActivity.MainActivityViewPager
+                android:id="@+id/main_activity_tablayout_viewpager"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <FrameLayout
+                android:id="@+id/main_activity_frame_layout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+
+
+    </LinearLayout>
+    </LinearLayout>
+
+    <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
+        xmlns:rfal="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/activity_main_rfal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        rfal:rfal_frame_color="#ffffff"
+        rfal:rfal_frame_alpha="0.7"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
+            xmlns:rfab="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/activity_main_rfab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginBottom="@dimen/margin_big"
+            android:padding="@dimen/padding_small"
+            rfab:rfab_size="normal"
+            rfab:rfab_drawable="@drawable/add_icon"
+            rfab:rfab_color_normal="@color/colorAccent"
+            rfab:rfab_color_pressed="@color/colorAccentDark"
+            rfab:rfab_shadow_radius="@dimen/radius_medium"
+            rfab:rfab_shadow_color="@color/colorPrimary"
+            rfab:rfab_shadow_dx="@dimen/shadow_dx"
+            rfab:rfab_shadow_dy="@dimen/shadow_dy"
+            />
+    </com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

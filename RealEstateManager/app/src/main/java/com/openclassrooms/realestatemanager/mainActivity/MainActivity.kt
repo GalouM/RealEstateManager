@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.appcompat.widget.Toolbar
@@ -21,6 +23,8 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addAgent.AddAgentActivity
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
+import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
+import com.openclassrooms.realestatemanager.detailsProperty.DetailsPropertyView
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.searchProperty.SearchActivity
@@ -53,6 +57,8 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     private lateinit var rfabHelper: RapidFloatingActionHelper
 
     private var menuToolbar: Menu? = null
+
+    private var detailsView: DetailsPropertyView? = null
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
@@ -215,6 +221,26 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     override fun onRFACItemLabelClick(position: Int, item: RFACLabelItem<RFACLabelItem<Int>>?) {
         onRFACItemIconClick(position, item)
+    }
+
+    //------2 views mode---------
+    private fun showDetailsView(){
+        detailsView = DetailsPropertyView()
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_activity_frame_layout, detailsView!!)
+                .commit()
+
+
+    }
+
+    fun openDetailsProperty(){
+        if(findViewById<FrameLayout>(R.id.main_activity_frame_layout) == null){
+            val intent = Intent(this, DetailActivity::class.java)
+            startActivity(intent)
+        } else{
+            showDetailsView()
+        }
     }
 
     //--------------------

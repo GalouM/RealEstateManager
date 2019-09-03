@@ -67,7 +67,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private lateinit var viewModel: AddPropertyViewModel
     private var agentSelectedId: Int? = null
-    private lateinit var currentCurrency: Currency
+    private var currentCurrency: Currency? = null
 
     companion object {
 
@@ -183,7 +183,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     private fun currencyObserver(){
         viewModel.currency.observe(this, Observer {currency ->
             currentCurrency = currency
-            renderChangeCurrency(currentCurrency)
+            renderChangeCurrency(currentCurrency!!)
         })
     }
 
@@ -205,7 +205,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
             renderAgentDialog(state.listAgents)
         }
 
-        if(state.isModifyProperty){
+        if(state.isModifyProperty && currentCurrency != null){
             renderDataFetchedProperty(
                     state.type, state.price!!, state.surface!!, state.rooms!!,
                     state.bedrooms, state.bathrooms, state.description, state.address,
@@ -276,11 +276,11 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                                           agentId: Int, amenities: List<TypeAmenity>,
                                           pictures: List<Picture>?, agentFirstName: String,
                                           agentLastName: String){
-        val priceToDisplay = when(currentCurrency){
+        val priceToDisplay = when(currentCurrency!!){
             Currency.EURO -> price.toString()
             Currency.DOLLAR -> price.toDollar().toString()
         }
-        val surfaceToDisplay = when(currentCurrency){
+        val surfaceToDisplay = when(currentCurrency!!){
             Currency.EURO -> surface.toString()
             Currency.DOLLAR -> surface.toSqFt().toString()
         }

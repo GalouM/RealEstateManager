@@ -4,6 +4,7 @@ package com.openclassrooms.realestatemanager.listProperties
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,7 +95,7 @@ class ListPropertyView : BaseViewListProperties(),
     //--------------------
 
     private fun configureRecyclerView(properties: List<PropertyForListDisplay>){
-        adapter = ListPropertyAdapter(properties, currentCurrency, Glide.with(this))
+        adapter = ListPropertyAdapter(properties, currentCurrency!!, Glide.with(this))
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
     }

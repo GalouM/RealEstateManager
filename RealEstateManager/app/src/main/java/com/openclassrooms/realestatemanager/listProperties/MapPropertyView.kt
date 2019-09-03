@@ -96,7 +96,7 @@ class MapPropertyView : BaseViewListProperties(),
             val position = LatLng(property.lat, property.lng)
             if(userLocationBounds!!.contains(position)){
                     propertiesNearBy.add(property)
-                displayPropertiesAround(currentCurrency)
+                displayPropertiesAround(currentCurrency!!)
             }
         }
     }

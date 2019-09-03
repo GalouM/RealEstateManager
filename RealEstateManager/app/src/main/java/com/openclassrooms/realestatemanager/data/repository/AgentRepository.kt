@@ -20,4 +20,17 @@ class AgentRepository (private val agentDao: AgentDao){
     suspend fun createAgent(agent: Agent){
         agentDao.createAgent(agent)
     }
+
+    companion object{
+        @Volatile
+        private var INSTANCE: AgentRepository? = null
+        fun getAgentRepository(agentDao: AgentDao): AgentRepository {
+            return INSTANCE
+                    ?: synchronized(this){
+                        val instance = AgentRepository(agentDao)
+                        INSTANCE = instance
+                        return instance
+                    }
+        }
+    }
 }

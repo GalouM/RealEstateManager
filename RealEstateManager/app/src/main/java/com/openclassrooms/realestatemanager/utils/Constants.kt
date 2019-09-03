@@ -27,3 +27,5 @@ const val ACTION_TYPE_ADD_PROPERTY = "ActionTypeAddProperty"
 const val ACTION_TYPE_LIST_PROPERTY = "ActionTypeListProperty"
 const val MAX_VALUE = 999999999999.99
 const val MIN_VALUE = 0.0
+const val KEY_PREF_CURRENCY = "prefCurrencyKey"
+const val KEY_PREF = "prefKey"

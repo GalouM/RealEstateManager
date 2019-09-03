@@ -91,7 +91,6 @@ class MapPropertyView : BaseViewListProperties(),
     // VIEW MODEL CONNECTION
     //--------------------
     override fun renderListProperties(properties: List<PropertyForListDisplay>){
-        Log.e("render list on map", "here")
         propertiesNearBy.clear()
         properties.forEach { property ->
             val position = LatLng(property.lat, property.lng)
@@ -123,7 +122,6 @@ class MapPropertyView : BaseViewListProperties(),
     //--------------------
 
     private fun displayPropertiesAround(currency: Currency) {
-        Log.e("display properties", "here")
         mapBoxMap?.clear()
         mapBoxMap?.onInfoWindowClickListener = this
         val iconFactory = IconFactory.getInstance(activity!!.applicationContext)
@@ -157,7 +155,6 @@ class MapPropertyView : BaseViewListProperties(),
 
     }
 
-    @SuppressLint("MissingPermission")
     private fun displayUserLocation(){
         mapView.getMapAsync {
             mapBoxMap = it

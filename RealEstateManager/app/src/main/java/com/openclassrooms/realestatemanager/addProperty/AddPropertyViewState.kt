@@ -21,7 +21,6 @@ data class AddPropertyViewState(
         val isLoading: Boolean = false,
         val isSaved: Boolean = false,
         val errors: List<ErrorSourceAddProperty>? = null,
-        val openListAgents: Boolean = false,
         val listAgents: List<Agent>? = null,
         val type: String = "",
         val price: Double? = null, val surface: Double? = null,

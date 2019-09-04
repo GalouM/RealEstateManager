@@ -119,17 +119,16 @@ BitmapDownloader.Listeners{
                 when(result.packet){
                     is AddPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
-                                openListAgents = true,
                                 listAgents = result.packet.listAgents,
                                 isLoading = false)
                     }
 
                     is AddPropertyResult.AddPropertyToDBResult -> {
                         currentViewState.copy(
+                                listAgents = null,
                                 errors = null,
                                 isLoading = false,
-                                isSaved = true,
-                                openListAgents = false
+                                isSaved = true
                         )
                     }
                     is AddPropertyResult.FetchedPropertyResult -> {
@@ -160,8 +159,8 @@ BitmapDownloader.Listeners{
 
             is Lce.Loading ->{
                 currentViewState.copy(
-                        isLoading = true,
-                        openListAgents = false)
+                        listAgents = null,
+                        isLoading = true)
 
             }
 
@@ -169,23 +168,23 @@ BitmapDownloader.Listeners{
                 when(result.packet){
                     is AddPropertyResult.AddPropertyToDBResult -> {
                         currentViewState.copy(
+                                listAgents = null,
                                 errors = result.packet.errorSource,
-                                isLoading = false,
-                                openListAgents = false)
+                                isLoading = false)
                     }
 
                     is AddPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
+                                listAgents = null,
                                 isLoading = false,
-                                errors = result.packet.errorSource,
-                                openListAgents = false
+                                errors = result.packet.errorSource
                         )
                     }
                     is AddPropertyResult.FetchedPropertyResult -> {
                         currentViewState.copy(
+                                listAgents = null,
                                 isLoading = false,
-                                errors = result.packet.errorSource,
-                                openListAgents = false
+                                errors = result.packet.errorSource
                         )
                     }
                 }

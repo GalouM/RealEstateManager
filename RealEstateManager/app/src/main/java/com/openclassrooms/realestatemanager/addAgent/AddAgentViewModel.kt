@@ -46,8 +46,8 @@ class AddAgentViewModel (
                 when(result.packet){
                     is AddAgentResult.AddAgentToDBResult -> {
                         currentViewState.copy(
-                                isSaved = true,
                                 errors = null,
+                                isSaved = true,
                                 isLoading = false)
                     }
                 }
@@ -63,8 +63,7 @@ class AddAgentViewModel (
                     is AddAgentResult.AddAgentToDBResult -> {
                         currentViewState.copy(
                                 errors = result.packet.errorSource,
-                                isLoading = false,
-                                isSaved = false)
+                                isLoading = false)
                     }
                 }
 

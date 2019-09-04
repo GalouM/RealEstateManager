@@ -201,8 +201,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
             renderErrors(state.errors)
         }
 
-        if(state.openListAgents && state.listAgents != null){
-            renderAgentDialog(state.listAgents)
+        state.listAgents?.let{
+            renderAgentDialog(it)
         }
 
         if(state.isModifyProperty && currentCurrency != null){

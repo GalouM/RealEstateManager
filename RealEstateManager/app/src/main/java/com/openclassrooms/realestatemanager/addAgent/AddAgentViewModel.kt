@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.addAgent
 
+import android.util.Log
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectEmail
@@ -91,6 +92,7 @@ class AddAgentViewModel (
         }
 
         val listErrors = checkErrors()
+        Log.e("errors", listErrors.toString())
 
         if (listErrors.isEmpty()) {
             addAgentsJob = launch {

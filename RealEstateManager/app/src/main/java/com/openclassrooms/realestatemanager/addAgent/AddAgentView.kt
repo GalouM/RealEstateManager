@@ -85,7 +85,6 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
     //--------------------
 
     fun clickListenerToolbar(){
-        disableAllErrors()
         viewModel.actionFromIntent(AddAgentIntent.AddAgentToDBIntent(
                 uriProfileImage,
                 firstName.text.toString(),
@@ -134,6 +133,7 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
     }
 
     private fun renderErrors(errors: List<ErrorSourceAddAgent>){
+        disableAllErrors()
         errors.forEach{
             when(it){
                 ErrorSourceAddAgent.FIRST_NAME_INCORRECT -> firstNameLayout.error = getString(R.string.error_message_first_name)

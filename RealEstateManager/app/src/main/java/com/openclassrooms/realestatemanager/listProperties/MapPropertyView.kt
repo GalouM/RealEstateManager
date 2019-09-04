@@ -94,9 +94,11 @@ class MapPropertyView : BaseViewListProperties(),
         propertiesNearBy.clear()
         properties.forEach { property ->
             val position = LatLng(property.lat, property.lng)
-            if(userLocationBounds!!.contains(position)){
+            userLocationBounds?.let{
+                if(it.contains(position)){
                     propertiesNearBy.add(property)
-                displayPropertiesAround(currentCurrency!!)
+                    displayPropertiesAround(currentCurrency!!)
+                }
             }
         }
     }
@@ -217,6 +219,7 @@ class MapPropertyView : BaseViewListProperties(),
 
     override fun onInfoWindowClick(marker: Marker): Boolean {
         val markerREM = marker as MarkerREM
+        Log.e("marker click", markerREM.idRem.toString())
         setPropertyPicked(markerREM.idRem)
         return false
     }

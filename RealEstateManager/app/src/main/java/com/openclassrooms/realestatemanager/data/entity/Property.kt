@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.openclassrooms.realestatemanager.utils.TypeProperty
+import java.util.*
 
 /**
  * Created by galou on 2019-07-03
@@ -26,7 +27,8 @@ data class Property (
         var bedrooms: Int?,
         var bathrooms: Int?,
         var description: String?,
-        @ColumnInfo(name = "on_market_since") var onMarketSince: String,
+        @ColumnInfo(name = "on_market_since") var onMarketSince: Date,
         var sold: Boolean,
-        @ColumnInfo(name = "sell_date") var sellDate: String?,
-        var agent: Int)
+        @ColumnInfo(name = "sell_date") var sellDate: Date?,
+        var agent: Int,
+        @ColumnInfo(name = "has_picture")var hasPictures: Boolean)

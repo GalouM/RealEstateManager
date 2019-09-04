@@ -63,7 +63,6 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
         if (state == null) return
 
         if(state.listProperties != null && currentCurrency != null){
-            Log.e("render properties", "here")
             renderListProperties(state.listProperties)
         }
 
@@ -78,6 +77,9 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
     private fun renderOpenPropertyDetails(){
         if(activity is MainActivity){
             (activity as MainActivity).openDetailsProperty()
+        } else {
+            val intent = Intent(activity!!, DetailActivity::class.java)
+            startActivity(intent)
         }
     }
 

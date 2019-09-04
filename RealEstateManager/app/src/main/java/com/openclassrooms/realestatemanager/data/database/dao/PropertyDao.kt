@@ -12,7 +12,7 @@ import com.openclassrooms.realestatemanager.utils.TypeProperty
 
 @Dao
 interface PropertyDao {
-    @Query("SELECT * FROM properties")
+    @Query("SELECT * FROM properties ORDER BY on_market_since")
     suspend fun getAllProperties(): List<Property>
 
     @Query("SELECT * FROM properties WHERE property_id = :propertyId")
@@ -34,7 +34,8 @@ interface PropertyDao {
             "AND (properties.bathrooms >= :minNbBathrooms OR bathrooms IS NULL) " +
             "AND (properties.agent IN (:listAgents)) " +
             "AND (properties.type_property IN (:listTypes)) " +
-            "AND (properties.sold IN (:isSold))")
+            "AND (properties.sold IN (:isSold)) " +
+            "ORDER BY on_market_since")
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double,
             minSurface: Double, maxSurface: Double,
@@ -54,7 +55,8 @@ interface PropertyDao {
             "AND (properties.bathrooms >= :minNbBathrooms OR bathrooms IS NULL) " +
             "AND (properties.agent IN (:listAgents)) " +
             "AND (properties.type_property IN (:listTypes)) " +
-            "AND (properties.sold IN (:isSold))")
+            "AND (properties.sold IN (:isSold)) " +
+            "ORDER BY on_market_since")
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double,
             minSurface: Double, maxSurface: Double,

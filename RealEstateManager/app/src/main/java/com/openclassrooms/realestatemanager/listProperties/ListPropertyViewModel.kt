@@ -91,8 +91,12 @@ class ListPropertyViewModel(
 
     private fun setPropertySelected(id: Int){
         propertyRepository.setIdPropertyPicked(id)
-        val result: Lce<PropertyListResult> = Lce.Content(PropertyListResult.OpenPropertyDetailResult)
-        resultToViewState(result)
+        Log.e("vm set", propertyRepository.getPropertyPickedId().toString())
+        propertyRepository.getPropertyPickedId()?.let {
+            val result: Lce<PropertyListResult> = Lce.Content(PropertyListResult.OpenPropertyDetailResult)
+            resultToViewState(result)
+        }
+
     }
 
     private fun fetchPropertiesFromDB() {

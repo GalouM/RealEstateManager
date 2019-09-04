@@ -143,9 +143,9 @@ BitmapDownloader.Listeners{
                                 bathrooms = result.packet.property.bathrooms,
                                 description = result.packet.property.description,
                                 type = result.packet.property.type.typeName,
-                                onMarketSince = result.packet.property.onMarketSince,
+                                onMarketSince = result.packet.property.onMarketSince.toStringForDisplay(),
                                 isSold = result.packet.property.sold,
-                                sellDate = result.packet.property.sellDate,
+                                sellDate = result.packet.property.sellDate?.toStringForDisplay(),
                                 address = result.packet.address!!.addressForDisplay,
                                 neighborhood = result.packet.address.neighbourhood,
                                 amenities = result.packet.amenities,
@@ -387,12 +387,13 @@ BitmapDownloader.Listeners{
         fun createNewPropertyInDB(){
             addPropertyJob = launch {
                 val currency = currencyRepository.currency.value!!
+                val hasPicture = !pictures!!.isEmpty()
                 val propertyForDB = Property(
                         propertyId, Converters.toTypeProperty(type), price!!.toEuro(currency),
                         surface!!.toSqMeter(currency), rooms!!,
                         bedrooms, bathrooms,
-                        description, onMarketSince,
-                        isSold, sellOn, agent!!)
+                        description, onMarketSince.toDate()!!,
+                        isSold, sellOn?.toDate(), agent!!, hasPicture)
                 when(actionType){
                     ActionType.NEW_PROPERTY -> propertyId = propertyRepository.createProperty(propertyForDB).toInt()
                     ActionType.MODIFY_PROPERTY -> propertyRepository.updateProperty(propertyForDB)

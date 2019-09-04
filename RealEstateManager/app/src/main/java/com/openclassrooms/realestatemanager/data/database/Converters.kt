@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.room.TypeConverter
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import com.openclassrooms.realestatemanager.utils.TypeProperty
+import java.util.*
 
 /**
  * Created by galou on 2019-07-04
@@ -37,6 +38,26 @@ class Converters {
             }
 
             throw Exception("Type of Amenity not recognize")
+        }
+
+        @TypeConverter
+        @JvmStatic
+        fun fromTimeStamp(value: Long?): Date? {
+            value?.let{
+                return Date(value)
+            }
+            return null
+
+        }
+
+        @TypeConverter
+        @JvmStatic
+        fun dateToTimeStamp(date: Date?): Long? {
+            date?.let{
+                return date.time
+            }
+
+            return null
         }
     }
 }

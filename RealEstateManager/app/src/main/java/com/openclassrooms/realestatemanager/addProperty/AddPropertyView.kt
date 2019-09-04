@@ -69,6 +69,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     private var agentSelectedId: Int? = null
     private var currentCurrency: Currency? = null
 
+    private var openAgentWindowHandled = true
+
     companion object {
 
         fun newInstance(actionType: String) = AddPropertyView().apply {
@@ -130,6 +132,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     @OnClick(R.id.add_property_view_dropdown_agent)
     fun onClickAgentDropdown(){
+        openAgentWindowHandled = false
         viewModel.actionFromIntent(AddPropertyIntent.OpenListAgentsIntent)
     }
 
@@ -137,6 +140,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         val displayNameAgent = "${agent.firstName} ${agent.lastName}"
         dropdowAgent.setText(displayNameAgent)
         agentSelectedId = agent.id
+        openAgentWindowHandled = true
     }
 
     @OnClick(R.id.add_property_view_sold_switch)
@@ -256,9 +260,11 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     }
 
     private fun renderAgentDialog(agents: List<Agent>){
-        val listAgentDialog = ListAgentsDialogView(agents)
-        listAgentDialog.setTargetFragment(this, AGENT_LIST_DIALOG_CODE)
-        listAgentDialog.show(fragmentManager!!.beginTransaction(), AGENT_LIST_TAG)
+        if(!openAgentWindowHandled) {
+            val listAgentDialog = ListAgentsDialogView(agents)
+            listAgentDialog.setTargetFragment(this, AGENT_LIST_DIALOG_CODE)
+            listAgentDialog.show(fragmentManager!!.beginTransaction(), AGENT_LIST_TAG)
+        }
 
     }
 
@@ -326,12 +332,13 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         disableAllErrors()
 
         val typeProperty = dropdowPropertyType.text.toString()
+        val pictures = listOf<String>()
 
         viewModel.actionFromIntent(AddPropertyIntent.AddPropertyToDBIntent(
                 typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
                 bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
                 addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, getAmenitiesSelected(), null, null,
+                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, getAmenitiesSelected(), pictures, null,
                 activity!!.applicationContext)
         )
     }

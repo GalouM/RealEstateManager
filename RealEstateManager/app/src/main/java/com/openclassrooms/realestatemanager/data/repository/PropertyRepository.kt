@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.data.repository
 
+import android.util.Log
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
@@ -122,9 +123,11 @@ class PropertyRepository(
 
     fun setIdPropertyPicked(id: Int){
         idPropertyPicked = id
+        Log.e("set from repo", id.toString())
     }
 
     fun getPropertyPickedId(): Int?{
+        Log.e("get from repo", idPropertyPicked.toString())
         return idPropertyPicked
     }
 

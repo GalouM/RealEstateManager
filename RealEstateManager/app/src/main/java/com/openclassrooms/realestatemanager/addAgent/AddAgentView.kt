@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.Intent.*
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,10 +24,8 @@ import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
-import com.openclassrooms.realestatemanager.utils.PERMS_EXT_STORAGE
-import com.openclassrooms.realestatemanager.utils.RC_CHOOSE_PHOTO
-import com.openclassrooms.realestatemanager.utils.RC_IMAGE_PERMS
-import com.openclassrooms.realestatemanager.utils.showSnackBar
+import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.extensions.saveToInternalStorage
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -69,12 +68,8 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == RC_CHOOSE_PHOTO){
             if(resultCode == RESULT_OK){
-                uriProfileImage = data?.data.toString()
-                if(uriProfileImage != null){
-                    Glide.with(context!!)
-                            .load(uriProfileImage)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(profilePicture)
+                data?.let{
+                    savePicturePicked(it)
                 }
             }
         }
@@ -160,13 +155,25 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
             return
         }
 
-        val photoIntent = Intent(ACTION_OPEN_DOCUMENT).apply {
-            addCategory(CATEGORY_OPENABLE)
-            type = "image/*"
+        val photoIntent = Intent().apply {
+            action = ACTION_PICK
+            type = IMAGE_ONLY_TYPE
+            putExtra(EXTRA_ALLOW_MULTIPLE, true)
         }
-        photoIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
-        photoIntent.addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         startActivityForResult(photoIntent, RC_CHOOSE_PHOTO)
+
+    }
+
+    private fun savePicturePicked(data: Intent){
+        val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, data.data)
+        val uriInternal = bitmap.saveToInternalStorage(
+                activity!!.applicationContext, generateName(), TypeImage.AGENT
+        )
+        uriProfileImage = uriInternal.toString()
+        Glide.with(context!!)
+                .load(uriProfileImage)
+                .apply(RequestOptions.circleCropTransform())
+                .into(profilePicture)
 
     }
 

@@ -2,7 +2,11 @@ package com.openclassrooms.realestatemanager.addProperty
 
 
 import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +19,7 @@ import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.Agent
@@ -24,6 +29,9 @@ import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
+import kotlinx.android.synthetic.main.dialog_photo_source.view.*
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 
 /**
@@ -71,6 +79,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private var openAgentWindowHandled = true
 
+    private val listUrlPictures = mutableListOf<String>()
+
     companion object {
 
         fun newInstance(actionType: String) = AddPropertyView().apply {
@@ -89,6 +99,17 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
         return view
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode){
+            RC_CHOOSE_PHOTO -> {
+                if(resultCode == RESULT_OK){
+                    data?.let{addPicturePickedToList(it)}
+                }
+            }
+        }
     }
 
     private fun configureActionType(){
@@ -153,6 +174,11 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
             soldOnLayout.visibility = View.INVISIBLE
         }
 
+    }
+
+    @OnClick(value = [R.id.add_property_view_add_picture_button, R.id.add_property_view_add_picture_text])
+    fun onClickAddPicture(){
+        openChoosePhotoSourceDialog()
     }
 
     //--------------------
@@ -360,4 +386,81 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         showSnackBar(viewLayout, message)
 
     }
+
+    //--------------------
+    // PICK PICTURE
+    //--------------------
+
+    private fun openChoosePhotoSourceDialog(){
+        val dialog = BottomSheetDialog(activity!!)
+        val bottomSheet = layoutInflater.inflate(R.layout.dialog_photo_source, null)
+        dialog.setContentView(bottomSheet)
+        dialog.show()
+        bottomSheet.dialog_photo_pick_icon.setOnClickListener {
+            requestPermissionStorage()
+            dialog.dismiss()
+        }
+        bottomSheet.dialog_photo_take_icon.setOnClickListener {
+            Log.e("click", "take")
+            dialog.dismiss()
+        }
+    }
+
+    @AfterPermissionGranted(RC_IMAGE_PERMS)
+    fun requestPermissionStorage() {
+        if (!EasyPermissions.hasPermissions(context!!, PERMS_EXT_STORAGE)) {
+            EasyPermissions.requestPermissions(
+                    this, getString(R.string.storage_perm_request), RC_IMAGE_PERMS, PERMS_EXT_STORAGE)
+            return
+        }
+
+        pickPhotoFromLibrary()
+    }
+
+    private fun pickPhotoFromLibrary(){
+        val intent = Intent().apply {
+            action = Intent.ACTION_PICK
+            type = IMAGE_ONLY_TYPE
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            /*
+            type = IMAGE_ONLY_TYPE
+            action = Intent.ACTION_OPEN_DOCUMENT
+            addCategory(Intent.CATEGORY_OPENABLE)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+
+             */
+        }
+        startActivityForResult(intent, RC_CHOOSE_PHOTO)
+    }
+
+    private fun addPicturePickedToList(data: Intent){
+        val uris = data.clipData
+        if(uris != null) {
+            for(i in 0 until uris.itemCount){
+                val uri = uris.getItemAt(i).uri
+                val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, uri)
+                val uriInternal = bitmap.saveToInternalStorage(
+                        activity!!.applicationContext, generateName(), TypeImage.PROPERTY
+                )
+                listUrlPictures.add(uriInternal.toString())
+
+            }
+        } else {
+            val uri = data.data
+            uri?.let{
+                val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, it)
+                val uriInternal = bitmap.saveToInternalStorage(
+                        activity!!.applicationContext, generateName(), TypeImage.PROPERTY
+                )
+                listUrlPictures.add(uriInternal.toString())
+            }
+        }
+
+        Log.e("list uri", listUrlPictures.toString())
+
+    }
+
+
+
 }

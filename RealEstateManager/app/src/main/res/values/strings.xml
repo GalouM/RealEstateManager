@@ -76,4 +76,7 @@
     <string name="select_agent_n_type">Select at least one type and one agent</string>
     <string name="search_activity_name">Search</string>
     <string name="details_activity_name">Details</string>
+    <string name="add_pictures">Add pictures</string>
+    <string name="take_new_picture">Take new picture</string>
+    <string name="pick_from_library">Pick from library</string>
 </resources>

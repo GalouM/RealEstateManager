@@ -17,6 +17,7 @@ import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.BitmapDownloader
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
+import com.openclassrooms.realestatemanager.utils.TypeImage
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
@@ -255,7 +256,7 @@ BitmapDownloader.Listeners{
     }
 
     override fun onBitmapDownloaded(bitmap: Bitmap) {
-        map = bitmap.saveToInternalStorage(context, idFromApi).toString()
+        map = bitmap.saveToInternalStorage(context, idFromApi, TypeImage.ICON_MAP).toString()
         emitResultAddPropertyToView()
     }
 

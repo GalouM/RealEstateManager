@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/size_item_rv_pic_added">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/pictures_added_rv_picture"
+            android:layout_width="@dimen/size_item_rv_pic_added"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/pictures_added_rv_input_layout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/pictures_added_rv_picture"
+            app:layout_constraintEnd_toStartOf="@id/pictures_added_rv_delete"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:hint="@string/description"
+            android:layout_margin="@dimen/margin_small">
+        <EditText
+            android:id="@+id/pictures_added_rv_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/pictures_added_rv_drag"
+            android:id="@+id/pictures_added_rv_delete"
+            android:layout_width="@dimen/small_picture"
+            android:layout_height="@dimen/small_picture"
+            android:background="@drawable/delete_icon"
+            android:layout_gravity="center_vertical"/>
+
+        <ImageButton
+            android:layout_margin="@dimen/margin_small"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/pictures_added_rv_drag"
+            android:layout_width="@dimen/small_picture"
+            android:layout_height="@dimen/small_picture"
+            android:background="@drawable/drag_icon"
+            android:layout_gravity="end"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

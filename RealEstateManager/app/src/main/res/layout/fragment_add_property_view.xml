@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,7 +10,6 @@
     android:layout_marginStart="@dimen/margin_small"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".addProperty.AddPropertyView">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -143,6 +143,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/add_property_view_rooms_gridlayout"
         android:text="@string/near_by"
+        android:textSize="@dimen/text_title"
         android:layout_marginTop="@dimen/margin_small"/>
 
     <include
@@ -212,29 +213,35 @@
             android:inputType="date"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/add_property_view_sold_layout"
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_since_inputlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small">
         <Switch
             android:id="@+id/add_property_view_sold_switch"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/add_property_view_since_inputlayout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="@dimen/margin_small"/>
         <TextView
+            android:id="@+id/add_property_view_sold_text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/sold"/>
+            android:text="@string/sold"
+            app:layout_constraintTop_toTopOf="@id/add_property_view_sold_switch"
+            app:layout_constraintBottom_toBottomOf="@id/add_property_view_sold_switch"
+            app:layout_constraintStart_toEndOf="@id/add_property_view_sold_switch"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_big"/>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/add_property_view_soldon_inputlayout"
             app:layout_constraintTop_toBottomOf="@id/add_property_view_neighbourhood_inputlayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/sold_on"
-            android:visibility="invisible">
+            android:visibility="invisible"
+            android:layout_marginStart="@dimen/margin_big"
+            app:layout_constraintStart_toEndOf="@id/add_property_view_sold_text"
+            app:layout_constraintTop_toTopOf="@id/add_property_view_sold_switch"
+            app:layout_constraintBottom_toBottomOf="@id/add_property_view_sold_switch"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <EditText
                 android:id="@+id/add_property_view_sold_on"
@@ -244,11 +251,10 @@
                 android:inputType="date"
                 android:visibility="invisible"/>
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_property_view_dropdown_agent_inputlayout"
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_sold_layout"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_sold_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/manage_by"
@@ -265,6 +271,33 @@
             android:inputType="none"/>
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageButton
+        android:id="@+id/add_property_view_add_picture_button"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_dropdown_agent_inputlayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/add_property_view_picture_rv"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_width="@dimen/small_picture"
+        android:layout_height="@dimen/small_picture"
+        android:background="@drawable/add_circle_icon"/>
+
+    <TextView
+        android:id="@+id/add_property_view_add_picture_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_pictures"
+        android:textSize="@dimen/text_title"
+        app:layout_constraintTop_toTopOf="@id/add_property_view_add_picture_button"
+        app:layout_constraintStart_toEndOf="@id/add_property_view_add_picture_button"
+        app:layout_constraintBottom_toBottomOf="@id/add_property_view_add_picture_button" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/add_property_view_picture_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_add_picture_text" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

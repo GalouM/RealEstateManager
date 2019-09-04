@@ -22,4 +22,7 @@
     <dimen name="title_details_size">20sp</dimen>
     <dimen name="details_size">15sp</dimen>
     <dimen name="icon_details_size">20dip</dimen>
+    <dimen name="size_item_rv_pic_added">120dp</dimen>
+    <dimen name="small_picture">30dip</dimen>
+    <dimen name="add_pictue_button_size">20dip</dimen>
 </resources>

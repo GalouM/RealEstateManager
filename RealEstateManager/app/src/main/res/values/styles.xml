@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="editTextStyle">@style/EditTextREM</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.REM.LargeComponent</item>
     </style>
 
     <!-- TOOLBAR THEME -->
@@ -25,6 +26,11 @@
         <item name="android:layout_marginBottom">50dip</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="ShapeAppearance.REM.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">4dp</item>
     </style>
 
     <style name="ButtonCenterREM" parent="Widget.AppCompat.Button">

@@ -35,12 +35,14 @@ interface PropertyDao {
             "AND (properties.agent IN (:listAgents)) " +
             "AND (properties.type_property IN (:listTypes)) " +
             "AND (properties.sold IN (:isSold)) " +
+            "AND (properties.has_picture IN (:hasPicture)) " +
             "ORDER BY on_market_since")
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double,
             minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String, isSold: List<Int>
+            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
+            isSold: List<Int>, hasPicture: List<Int>
     ): List<Property>
 
     @Query("SELECT * FROM properties " +
@@ -56,12 +58,13 @@ interface PropertyDao {
             "AND (properties.agent IN (:listAgents)) " +
             "AND (properties.type_property IN (:listTypes)) " +
             "AND (properties.sold IN (:isSold)) " +
+            "AND (properties.has_picture IN (:hasPicture)) " +
             "ORDER BY on_market_since")
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double,
             minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String, isSold: List<Int>,
-            listAmenities: List<TypeAmenity>
+            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
+            isSold: List<Int>, hasPicture: List<Int>, listAmenities: List<TypeAmenity>
     ): List<Property>
 }

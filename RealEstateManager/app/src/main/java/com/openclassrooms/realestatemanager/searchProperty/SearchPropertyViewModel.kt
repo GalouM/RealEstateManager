@@ -46,6 +46,7 @@ class SearchPropertyViewModel(
     private var nbBathroomQuery = MIN_VALUE.toInt()
     private var neighborhoodQuery = "%"
     private var isSoldQuery = listOf(0, 1)
+    private var hasPictureQuery = listOf(0, 1)
     private lateinit var typeQuery: List<TypeProperty>
     private lateinit var agentsQuery: List<Int>
     private lateinit var amenitiesQuery: List<TypeAmenity>
@@ -56,7 +57,7 @@ class SearchPropertyViewModel(
                 searchProperties(
                         intent.type, intent.minPrice, intent.maxPrice, intent.minSurface, intent.maxSurface,
                         intent.minNbRooms, intent.minNbBedrooms, intent.minNbBathrooms, intent.neighborhood,
-                        intent.stillOnMarket, intent.manageBy, intent.closeTo, intent.maxDateOnMarket
+                        intent.stillOnMarket, intent.manageBy, intent.closeTo, intent.maxDateOnMarket, intent.hasPhotos
                 )
             }
             is SearchPropertyIntent.GetListAgentsIntent -> fetchAgentsFromDB()
@@ -121,7 +122,7 @@ class SearchPropertyViewModel(
             minSurface: Double?, maxSurface: Double?, minNbRooms: Int?,
             minNbBedrooms: Int?, minNbBathrooms: Int?, neighborhood: String?,
             stillOnMarket: Boolean?, manageBy: List<Int>?, amenitiesSelected: List<TypeAmenity>,
-            maxDateOnMarket: String?
+            maxDateOnMarket: String?, hasPicture: Boolean?
     ){
         resultToViewState(Lce.Loading())
         val result: Lce<SearchPropertyResult>
@@ -142,6 +143,7 @@ class SearchPropertyViewModel(
             minNbBathrooms?.let { nbBathroomQuery = it }
             if(neighborhood!!.isNotEmpty())  neighborhoodQuery = neighborhood
             if(stillOnMarket!!) isSoldQuery = listOf(0)
+            if(hasPicture!!) hasPictureQuery = listOf(1)
             typeQuery = type
             agentsQuery = manageBy!!
             amenitiesQuery = amenitiesSelected
@@ -157,6 +159,7 @@ class SearchPropertyViewModel(
         } else {
             if (searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
 
+            resetQueryToDefaultValues()
             setQueryInput()
             fetchQueryPropertiesFromDB()
         }
@@ -168,7 +171,7 @@ class SearchPropertyViewModel(
                 val propertiesQuery = propertyRepository.getPropertiesQuery(
                         minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery,
-                        neighborhoodQuery, isSoldQuery
+                        neighborhoodQuery, isSoldQuery, hasPictureQuery
                 )
                 emitResultPropertyFetched(propertiesQuery)
             }
@@ -177,7 +180,7 @@ class SearchPropertyViewModel(
                 val propertyFromDB = propertyRepository.getPropertiesQuery(
                         minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery, neighborhoodQuery,
-                        isSoldQuery, amenitiesQuery
+                        isSoldQuery, hasPictureQuery, amenitiesQuery
                 )
                 if(propertyFromDB.isNotEmpty()) {
                     val propertiesQuery = getOnlyPropertiesWithAllAmenities(amenitiesQuery.size, propertyFromDB)
@@ -236,6 +239,23 @@ class SearchPropertyViewModel(
             }
             resultToViewState(result)
         }
+
+    }
+
+    //--------------------
+    // UTILS
+    //--------------------
+    private fun resetQueryToDefaultValues(){
+        minPriceQuery = MIN_VALUE
+        maxPriceQuery = MAX_VALUE
+        minSurfaceQuery = MIN_VALUE
+        maxSurfaceQuery = MAX_VALUE
+        nbRoomQuery = MIN_VALUE.toInt()
+        nbBedroomQuery = MIN_VALUE.toInt()
+        nbBathroomQuery = MIN_VALUE.toInt()
+        neighborhoodQuery = "%"
+        isSoldQuery = listOf(0, 1)
+        hasPictureQuery = listOf(0, 1)
 
     }
 }

@@ -99,12 +99,12 @@ class PropertyRepository(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
-            isSold: List<Int>
+            isSold: List<Int>, hasPictures: List<Int>
     ): List<Property>{
         return propertyDao.getPropertiesQuery(
                 minPrice, maxPrice, minSurface, maxSurface,
                 minNbRoom, minNbBedrooms, minNbBathrooms,
-                listAgents, listTypes, neighborhood, isSold
+                listAgents, listTypes, neighborhood, isSold, hasPictures
         )
     }
 
@@ -112,12 +112,12 @@ class PropertyRepository(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
-            isSold: List<Int>, listAmenities: List<TypeAmenity>
+            isSold: List<Int>, hasPictures: List<Int>, listAmenities: List<TypeAmenity>
     ): List<Property>{
         return propertyDao.getPropertiesQuery(
                 minPrice, maxPrice, minSurface, maxSurface,
                 minNbRoom, minNbBedrooms, minNbBathrooms,
-                listAgents, listTypes, neighborhood, isSold, listAmenities
+                listAgents, listTypes, neighborhood, isSold, hasPictures, listAmenities
         )
     }
 

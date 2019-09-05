@@ -3,10 +3,13 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.Intent.*
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
+import android.os.Environment.DIRECTORY_PICTURES
+import android.os.Environment.getExternalStoragePublicDirectory
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -238,7 +241,18 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     @OnClick(value = [R.id.add_property_view_add_picture_button, R.id.add_property_view_add_picture_text])
     fun onClickAddPicture(){
-        openChoosePhotoSourceDialog()
+        if(requestPermissionStorage(this)){
+            openChoosePhotoSourceDialog()
+        }
+    }
+
+    override fun onClickDeleteButton(photo: PhotoForDisplay) {
+        picturesPicked.remove(photo)
+        adapter.update(picturesPicked)
+    }
+
+    override fun onDrag(viewHolder: ListPictureViewHolder) {
+        itemTouchHelper.startDrag(viewHolder)
     }
 
     //--------------------
@@ -254,6 +268,14 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         ArrayAdapter(activity!!, android.R.layout.simple_spinner_item, propertyType)
                 .also { adapter -> adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     dropdowPropertyType.setAdapter(adapter) }
+    }
+
+    private fun configureRecyclerViewPictures(){
+        adapter = ListPictureAdapter(picturesPicked, Glide.with(this), this, this)
+        recyclerViewPictures.adapter = adapter
+        recyclerViewPictures.layoutManager = LinearLayoutManager(activity)
+        itemTouchHelper.attachToRecyclerView(recyclerViewPictures)
+
     }
 
     //--------------------
@@ -455,12 +477,13 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         packageManager = activity!!.packageManager
         val hasCamera = packageManager!!.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
         if(hasCamera) {
-            val dialog = BottomSheetDialog(activity!!)
             val bottomSheet = layoutInflater.inflate(R.layout.dialog_photo_source, null)
-            dialog.setContentView(bottomSheet)
-            dialog.show()
+            val dialog = BottomSheetDialog(activity!!).apply {
+                setContentView(bottomSheet)
+                show()
+            }
             bottomSheet.dialog_photo_pick_icon.setOnClickListener {
-                requestPermissionStorage()
+                pickPhotoFromLibrary()
                 dialog.dismiss()
             }
             bottomSheet.dialog_photo_take_icon.setOnClickListener {
@@ -468,36 +491,23 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 dialog.dismiss()
             }
         } else {
-            requestPermissionStorage()
+            pickPhotoFromLibrary()
         }
-    }
-
-    @AfterPermissionGranted(RC_IMAGE_PERMS)
-    fun requestPermissionStorage() {
-        if (!EasyPermissions.hasPermissions(context!!, PERMS_EXT_STORAGE)) {
-            EasyPermissions.requestPermissions(
-                    this, getString(R.string.storage_perm_request), RC_IMAGE_PERMS, PERMS_EXT_STORAGE)
-            return
-        }
-
-        pickPhotoFromLibrary()
     }
 
     private fun pickPhotoFromLibrary(){
-        val intent = Intent().apply {
-            action = Intent.ACTION_PICK
-            type = IMAGE_ONLY_TYPE
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
-        startActivityForResult(intent, RC_CHOOSE_PHOTO)
+        startActivityForResult(intentSeveralPicture(), RC_CHOOSE_PHOTO)
     }
 
     private fun takePictureWithCamera(){
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
             intent.resolveActivity(packageManager!!)?.also {
                 val photoFile: File? = try {
-                    createImageFileFromCamera()
+                    createImageFileFromCamera().apply {
+                        lastPhotoTakenPath = absolutePath
+                    }
                 } catch (e: IOException){
+                    Log.e("error", e.toString())
                     null
                 }
                 photoFile?.also {
@@ -508,61 +518,23 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                     startActivityForResult(intent, RC_CODE_TAKE_PHOTO)
                 }
 
-
             }
         }
-    }
-
-    @Throws(IOException::class)
-    private fun createImageFileFromCamera(): File{
-        val name = generateName()
-        val directory = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("JPEG_${TypeImage.PROPERTY}_$name",".jpeg", directory)
-                .apply {
-                    lastPhotoTakenPath = absolutePath
-                }
-
     }
 
     private fun addPicturePickedToList(data: Intent){
-        val uris = data.clipData
-        if(uris != null) {
-            for(i in 0 until uris.itemCount){
-                val uri = uris.getItemAt(i).uri
-                val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, uri)
-                val uriInternal = bitmap.saveToInternalStorage(
-                        activity!!.applicationContext, generateName(), TypeImage.PROPERTY
-                )
-                addPictureToList(uriInternal.toString())
-
-            }
-        } else {
-            val uri = data.data
-            uri?.let{
-                val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, it)
-                val uriInternal = bitmap.saveToInternalStorage(
-                        activity!!.applicationContext, generateName(), TypeImage.PROPERTY
-                )
-                addPictureToList(uriInternal.toString())
-            }
+        getPicturesPathFromData(data).forEach {
+            picturesPicked.add(PhotoForDisplay(it, null, null))
         }
-
-        Log.e("list uri", picturesPicked.map { it.uri }.toString())
-
+        adapter.update(picturesPicked)
     }
 
     private fun addPictureTakenToList(){
-        lastPhotoTakenPath?.let { addPictureToList(it) }
-        Log.e("url photo", picturesPicked.map { it.uri }.toString())
-
-    }
-
-    private fun configureRecyclerViewPictures(){
-        adapter = ListPictureAdapter(picturesPicked, Glide.with(this), this, this)
-        recyclerViewPictures.adapter = adapter
-        recyclerViewPictures.layoutManager = LinearLayoutManager(activity)
-        itemTouchHelper.attachToRecyclerView(recyclerViewPictures)
-
+        lastPhotoTakenPath?.let {
+            picturesPicked.add(PhotoForDisplay(it, null, getThumbnailFromPicture(it, activity!!)))
+            adapter.update(picturesPicked)
+            addPictureToGallery(activity!!, it)
+        }
     }
 
     private fun moveItem(from: Int, to: Int){
@@ -573,23 +545,5 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         } else {
             picturesPicked.add(to -1, fromPhoto)
         }
-    }
-
-    override fun onDrag(viewHolder: ListPictureViewHolder) {
-        itemTouchHelper.startDrag(viewHolder)
-    }
-
-    private fun addPictureToList(uri: String){
-        picturesPicked.add(createPictureFromUri(uri))
-        adapter.update(picturesPicked)
-    }
-
-    private fun createPictureFromUri(uri: String): PhotoForDisplay{
-        return PhotoForDisplay(uri, null)
-    }
-
-    override fun onClickDeleteButton(photo: PhotoForDisplay) {
-        picturesPicked.remove(photo)
-        adapter.update(picturesPicked)
     }
 }

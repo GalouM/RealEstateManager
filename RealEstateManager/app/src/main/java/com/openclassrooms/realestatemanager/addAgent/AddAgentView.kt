@@ -147,20 +147,10 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
         phoneNumberLayout.isErrorEnabled = false
     }
 
-    @AfterPermissionGranted(RC_IMAGE_PERMS)
-    fun chooseProfilePictureFromPhone(){
-        if(! EasyPermissions.hasPermissions(context!!, PERMS_EXT_STORAGE)){
-            EasyPermissions.requestPermissions(
-                    this, getString(R.string.storage_perm_request), RC_IMAGE_PERMS, PERMS_EXT_STORAGE)
-            return
+    private fun chooseProfilePictureFromPhone(){
+        if(requestPermissionStorage(this)) {
+            startActivityForResult(intentSinglePicture(), RC_CHOOSE_PHOTO)
         }
-
-        val photoIntent = Intent().apply {
-            action = ACTION_PICK
-            type = IMAGE_ONLY_TYPE
-            putExtra(EXTRA_ALLOW_MULTIPLE, true)
-        }
-        startActivityForResult(photoIntent, RC_CHOOSE_PHOTO)
 
     }
 

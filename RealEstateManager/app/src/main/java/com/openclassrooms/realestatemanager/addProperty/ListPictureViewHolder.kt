@@ -16,7 +16,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.PhotoForDisplay
-import kotlinx.android.synthetic.main.list_pictures_added_item.view.*
 import java.lang.ref.WeakReference
 
 /**
@@ -41,7 +40,8 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
     fun updateWithPicture(photo: PhotoForDisplay, glide: RequestManager, callback: ListPictureAdapter.Listener){
         this.photo = photo
         callbackWeakRef = WeakReference(callback)
-        glide.load(photo.uri).apply(RequestOptions.centerCropTransform()).into(pictureImage)
+        val pictureToDisplay = photo.uriThumbnail ?: photo.uriPicture
+        glide.load(pictureToDisplay).apply(RequestOptions.centerCropTransform()).into(pictureImage)
         photo.description?.let {
             description.setText(it)
         }

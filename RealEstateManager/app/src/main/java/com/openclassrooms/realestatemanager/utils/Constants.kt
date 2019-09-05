@@ -7,7 +7,7 @@ import android.Manifest
  */
 
 const val DATE_FORMAT = "dd/MM/yyyy"
-const val PERMS_EXT_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE
+const val PERMS_EXT_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE
 const val RC_IMAGE_PERMS = 100
 const val RC_CHOOSE_PHOTO = 200
 const val PICK_DATE_TAG = "PickDateView"

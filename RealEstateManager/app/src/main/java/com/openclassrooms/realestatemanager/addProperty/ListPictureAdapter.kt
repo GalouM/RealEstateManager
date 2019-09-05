@@ -5,31 +5,47 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.data.PhotoForDisplay
 
 /**
  * Created by galou on 2019-09-04
  */
 class ListPictureAdapter(
-        var urlPictures: List<String>, private val glide: RequestManager, private val callback: Listener
+        var photos: List<PhotoForDisplay>, private val glide: RequestManager, private val callback: Listener,
+        val fragment: AddPropertyView
 ) : RecyclerView.Adapter<ListPictureViewHolder>() {
 
+    private val listViewHolder = mutableListOf<ListPictureViewHolder>()
+
     interface Listener{
-        fun onClickDeleteButton(position: Int)
+        fun onClickDeleteButton(photo: PhotoForDisplay)
+        fun onDrag(viewHolder: ListPictureViewHolder)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListPictureViewHolder {
         val context = parent.context
         val layoutInflater = LayoutInflater.from(context)
         val view = layoutInflater.inflate(R.layout.list_pictures_added_item, parent, false)
+        val viewHolder = ListPictureViewHolder(view)
+        listViewHolder.add(viewHolder)
 
-        return ListPictureViewHolder(view)
+        return viewHolder
     }
 
     override fun getItemCount(): Int {
-        return urlPictures.size
+        return photos.size
     }
 
     override fun onBindViewHolder(holder: ListPictureViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        holder.updateWithPicture(photos[position], glide, callback)
+    }
+
+    fun update(photos: List<PhotoForDisplay>){
+        this.photos = photos.toMutableList()
+        notifyDataSetChanged()
+    }
+
+    fun updateForegroundViewHolder(){
+        listViewHolder.forEach { it.updateForeground() }
     }
 }

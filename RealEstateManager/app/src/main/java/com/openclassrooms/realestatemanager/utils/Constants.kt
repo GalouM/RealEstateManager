@@ -30,3 +30,4 @@ const val KEY_PREF_CURRENCY = "prefCurrencyKey"
 const val KEY_PREF = "prefKey"
 const val IMAGE_ONLY_TYPE = "image/*"
 const val DATE_FORMAT_FOR_NAME = "yyyyMMdd_HHmmss"
+const val RC_CODE_TAKE_PHOTO = 800

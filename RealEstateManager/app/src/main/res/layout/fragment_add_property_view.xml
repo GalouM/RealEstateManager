@@ -293,6 +293,7 @@
         app:layout_constraintBottom_toBottomOf="@id/add_property_view_add_picture_button" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="@dimen/margin_small"
         android:id="@+id/add_property_view_picture_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

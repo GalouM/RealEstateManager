@@ -18,7 +18,7 @@
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.REM.LargeComponent</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.REM.MediumComponent</item>
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.REM.SmallComponent</item>
-        <item name="materialButtonStyle">@style/ButtonCenterREM</item>
+        <item name="materialButtonStyle">@style/ButtonREM</item>
         <item name="textInputStyle">@style/TextInputLayoutRem</item>
 
 
@@ -54,11 +54,19 @@
 
     <style name="ShapeAppearance.REM.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">8dp</item>
+        <item name="cornerSize">20dp</item>
     </style>
 
-    <style name="ButtonCenterREM" parent="Widget.MaterialComponents.Button">
+    <style name="ButtonREM" parent="Widget.MaterialComponents.Button">
         <item name="android:background">?attr/colorSecondary</item>
+        <item name="rippleColor">?attr/colorOnSecondary</item>
+    </style>
+
+    <style name="ButtonOutlineREM" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeWidth">2dp</item>
+        <item name="strokeColor">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="iconTint">?attr/colorSecondary</item>
         <item name="rippleColor">?attr/colorOnSecondary</item>
     </style>
 

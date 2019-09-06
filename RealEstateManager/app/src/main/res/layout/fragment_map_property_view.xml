@@ -26,6 +26,7 @@
         android:layout_margin="@dimen/margin_small"
         android:textSize="@dimen/small_text"
         android:visibility="invisible"
+        android:backgroundTint="@color/colorAccent"
         mapbox:layout_constraintTop_toTopOf="@id/map_view_map"
         mapbox:layout_constraintStart_toStartOf="@id/map_view_map"
         mapbox:layout_constraintEnd_toEndOf="@id/map_view_map"/>

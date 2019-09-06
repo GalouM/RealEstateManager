@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -133,13 +134,14 @@
             </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
+    <include
+        layout="@layout/separator"
         android:id="@+id/add_property_view_general_separator"
         app:layout_constraintTop_toBottomOf="@id/add_property_view_general_group"
-        android:layout_marginTop="10dip"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_size"
-        android:background="@color/colorPrimaryUltraLight"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -161,7 +163,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/near_by"
-        android:textSize="@dimen/text_title"
+        android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"/>
 
     <include
@@ -194,15 +196,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
+    <include
+        layout="@layout/separator"
         android:id="@+id/add_property_view_details_separator"
         app:layout_constraintTop_toBottomOf="@id/add_property_details_group"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dip"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_size"
-        android:background="@color/colorPrimaryUltraLight"/>
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -211,7 +212,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/add_property_view_details_separator"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_property_view_address_inputlayout"
@@ -240,10 +243,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        layout="@layout/separator"
+        android:id="@+id/add_property_view_address_separator"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_address_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/add_property_view_date_group"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_address_separator">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_property_view_since_inputlayout"
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_neighbourhood_inputlayout"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/on_market_since"
@@ -255,19 +278,19 @@
             android:layout_height="match_parent"
             android:inputType="date"/>
     </com.google.android.material.textfield.TextInputLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <Switch
             android:id="@+id/add_property_view_sold_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/add_property_view_address_group"
+            app:layout_constraintTop_toBottomOf="@id/add_property_view_since_inputlayout"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_margin="@dimen/margin_small"/>
         <TextView
             android:id="@+id/add_property_view_sold_text"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/sold"
             app:layout_constraintTop_toTopOf="@id/add_property_view_sold_switch"
             app:layout_constraintBottom_toBottomOf="@id/add_property_view_sold_switch"
@@ -276,7 +299,7 @@
             android:layout_marginEnd="@dimen/margin_big"/>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/add_property_view_soldon_inputlayout"
-            app:layout_constraintTop_toBottomOf="@id/add_property_view_address_group"
+            app:layout_constraintTop_toBottomOf="@id/add_property_view_since_inputlayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/sold_on"
@@ -295,16 +318,28 @@
                 android:inputType="date"
                 android:visibility="invisible"/>
         </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        layout="@layout/separator"
+        android:id="@+id/add_property_view_date_separator"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_date_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_property_view_dropdown_agent_inputlayout"
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_sold_switch"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_date_separator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/manage_by"
         android:layout_marginBottom="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
-        android:focusable="false">
+        android:focusable="false"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_property_view_dropdown_agent"
@@ -316,25 +351,26 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageButton
-        android:id="@+id/add_property_view_add_picture_button"
+    <include
+        layout="@layout/separator"
+        android:id="@+id/add_property_view_manage_separator"
         app:layout_constraintTop_toBottomOf="@id/add_property_view_dropdown_agent_inputlayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/add_property_view_picture_rv"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_width="@dimen/small_picture"
-        android:layout_height="@dimen/small_picture"
-        android:background="@drawable/add_circle_icon"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
 
-    <TextView
-        android:id="@+id/add_property_view_add_picture_text"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_property_view_add_picture_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_manage_separator"
+        android:layout_marginTop="@dimen/margin_small"
         android:text="@string/add_pictures"
-        android:textSize="@dimen/text_title"
-        app:layout_constraintTop_toTopOf="@id/add_property_view_add_picture_button"
-        app:layout_constraintStart_toEndOf="@id/add_property_view_add_picture_button"
-        app:layout_constraintBottom_toBottomOf="@id/add_property_view_add_picture_button" />
+        app:icon="@drawable/add_icon"
+        style="@style/ButtonOutlineREM" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="@dimen/margin_small"
@@ -342,8 +378,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_add_picture_text" />
-
-
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_add_picture_button"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 </androidx.core.widget.NestedScrollView>

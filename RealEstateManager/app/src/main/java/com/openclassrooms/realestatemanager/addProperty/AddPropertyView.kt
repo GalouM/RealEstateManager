@@ -239,7 +239,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     }
 
-    @OnClick(value = [R.id.add_property_view_add_picture_button, R.id.add_property_view_add_picture_text])
+    @OnClick(R.id.add_property_view_add_picture_button)
     fun onClickAddPicture(){
         if(requestPermissionStorage(this)){
             openChoosePhotoSourceDialog()

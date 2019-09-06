@@ -16,6 +16,7 @@ import com.openclassrooms.realestatemanager.utils.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -99,12 +100,12 @@ class PropertyRepository(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
-            isSold: List<Int>, hasPictures: List<Int>
+            isSold: List<Int>, hasPictures: List<Int>, afterDate: Date
     ): List<Property>{
         return propertyDao.getPropertiesQuery(
                 minPrice, maxPrice, minSurface, maxSurface,
                 minNbRoom, minNbBedrooms, minNbBathrooms,
-                listAgents, listTypes, neighborhood, isSold, hasPictures
+                listAgents, listTypes, neighborhood, isSold, hasPictures, afterDate
         )
     }
 
@@ -112,12 +113,12 @@ class PropertyRepository(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
-            isSold: List<Int>, hasPictures: List<Int>, listAmenities: List<TypeAmenity>
+            isSold: List<Int>, hasPictures: List<Int>, afterDate: Date, listAmenities: List<TypeAmenity>
     ): List<Property>{
         return propertyDao.getPropertiesQuery(
                 minPrice, maxPrice, minSurface, maxSurface,
                 minNbRoom, minNbBedrooms, minNbBathrooms,
-                listAgents, listTypes, neighborhood, isSold, hasPictures, listAmenities
+                listAgents, listTypes, neighborhood, isSold, hasPictures, afterDate, listAmenities
         )
     }
 

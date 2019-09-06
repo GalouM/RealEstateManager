@@ -23,21 +23,21 @@ import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputLayout
 
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.addProperty.PickDateDialogView
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
+import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.TypeAmenity
-import com.openclassrooms.realestatemanager.utils.TypeProperty
-import com.openclassrooms.realestatemanager.utils.extensions.toDouble
-import com.openclassrooms.realestatemanager.utils.extensions.toInt
-import com.openclassrooms.realestatemanager.utils.showSnackBar
+import com.openclassrooms.realestatemanager.utils.extensions.*
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgentSearchAdapter.ListenerCheckBox {
+class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgentSearchAdapter.ListenerCheckBox,
+        PickDateDialogView.OnOkButtonListener{
 
     @BindView(R.id.search_select_all_agents) lateinit var selectAllAgents: CheckBox
     @BindView(R.id.search_view_rv_agents) lateinit var recyclerViewAgents: RecyclerView
@@ -66,6 +66,8 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
     @BindView(R.id.search_view_select_all_type) lateinit var selectAllType: CheckBox
     @BindView(R.id.search_view_price_title) lateinit var priceTitle: TextView
     @BindView(R.id.search_view_surface_title) lateinit var surfaceTitle: TextView
+    @BindView(R.id.search_view_on_market_after) lateinit var onMarketSince: EditText
+    @BindView(R.id.search_view_on_market_after_inputlayout) lateinit var onMarketLayout: TextInputLayout
 
     private lateinit var viewModel: SearchPropertyViewModel
 
@@ -73,6 +75,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
     private var allAgents: List<Int>? = null
     private var adapter: ListAgentSearchAdapter?= null
     private lateinit var currentCurrency: Currency
+    private var datePosted: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -96,8 +99,101 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
                 getTypePropertySelected(), minPrice.toDouble(), maxPrice.toDouble(),
                 minSurface.toDouble(), maxSurface.toDouble(), minRooms.toInt(),
                 minBedrooms.toInt(), minBathrooms.toInt(), neighborhood.text.toString(), isAvailable.isChecked,
-                agentsSelectedId, getAmenitiesSelected(), null, withPictures.isChecked
+                agentsSelectedId, getAmenitiesSelected(), onMarketSince.text.toString(), withPictures.isChecked
         ))
+    }
+
+    override fun onOkButtonListener(calendar: Calendar, view: View) {
+        val dateForDisplay = calendar.time.toStringForDisplay()
+        onMarketSince.setText(dateForDisplay)
+    }
+
+    @OnClick(R.id.search_view_on_market_after)
+    fun onClickDate(view: View){
+        val calendar: Calendar? = onMarketSince.text.toString().toDate()?.toCalendar()
+
+        val datePickerDialog = PickDateDialogView(view, calendar)
+        datePickerDialog.setTargetFragment(this, PICK_DATE_DIALOG_CODE)
+        datePickerDialog.show(fragmentManager!!.beginTransaction(), PICK_DATE_TAG)
+
+    }
+
+    override fun onClickCheckBox(id: Int, isChecked: Boolean) {
+        if(isChecked){
+            agentsSelectedId.add(id)
+            if(agentsSelectedId.size == allAgents?.size) selectAllAgents.isChecked = true
+        } else {
+            agentsSelectedId.remove(id)
+            selectAllAgents.isChecked = false
+        }
+    }
+
+    @OnClick(R.id.search_select_all_agents)
+    fun onClickSelectAllAgents(checkBox: CheckBox){
+        if(checkBox.isChecked) {
+            adapter?.selectAllAgents()
+            agentsSelectedId.clear()
+            allAgents?.let { agentsSelectedId.addAll(it) }
+        }
+    }
+
+    @OnClick(R.id.search_view_select_all_amenities)
+    fun onClickSelectAllAmenities(checkBox: CheckBox){
+        if(checkBox.isChecked){
+            schoolBox.isChecked = true
+            parkBox.isChecked = true
+            busesBox.isChecked = true
+            subwayBox.isChecked = true
+            shopBox.isChecked = true
+            playgroundBox.isChecked = true
+        }
+    }
+
+    @OnClick(R.id.search_view_select_all_type)
+    fun onClickSelectAllTypes(checkBox: CheckBox){
+        if(checkBox.isChecked){
+            flatBox.isChecked = true
+            penthouseBox.isChecked = true
+            townhouseBox.isChecked = true
+            houseBox.isChecked = true
+            duplexBox.isChecked = true
+        }
+    }
+
+    @OnClick(value = [
+        R.id.checkbox_nearby_school, R.id.checkbox_nearby_buses, R.id.checkbox_nearby_park,
+        R.id.checkbox_nearby_playground, R.id.checkbox_nearby_shop, R.id.checkbox_nearby_subway
+    ])
+    fun onClickOneAmenity(checkBox: CheckBox){
+        if(!checkBox.isChecked && selectAllAmenities.isChecked){
+            selectAllAmenities.isChecked = false
+            return
+        }
+
+        if(
+                busesBox.isChecked && schoolBox.isChecked && parkBox.isChecked
+                && playgroundBox.isChecked && shopBox.isChecked && subwayBox.isChecked
+        ){
+            selectAllAmenities.isChecked = true
+        }
+    }
+
+    @OnClick(value = [
+        R.id.search_view_flat_check, R.id.search_view_penthouse_check, R.id.search_view_townhouse_check,
+        R.id.search_view_house_check, R.id.search_view_duplex_check
+    ])
+    fun onClickOneType(checkBox: CheckBox){
+        if(!checkBox.isChecked && selectAllType.isChecked){
+            selectAllType.isChecked = false
+            return
+        }
+
+        if(
+                flatBox.isChecked && penthouseBox.isChecked && townhouseBox.isChecked
+                && houseBox.isChecked && duplexBox.isChecked
+        ){
+            selectAllType.isChecked = true
+        }
     }
 
     //--------------------
@@ -151,15 +247,16 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
             }
         }
 
-
     }
 
     private fun renderShowResults(){
+        disableErrors()
         val intent = Intent(activity, SearchResultActivity::class.java)
         startActivity(intent)
     }
 
     private fun renderErrors(errors: List<ErrorSourceSearch>){
+        disableErrors()
         var missingAgent = false
         var missingType = false
         var missingTypeAndAgent = false
@@ -176,6 +273,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
                     missingAgent = true
                 }
                 ErrorSourceSearch.NO_PROPERTY_FOUND -> showSnackBarMessage(getString(R.string.no_property_found))
+                ErrorSourceSearch.WRONG_DATE_FORMAT -> onMarketLayout.error = "Has to be dd/MM/yyyy"
             }
 
             if(missingTypeAndAgent){
@@ -189,82 +287,8 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
 
     }
 
-    override fun onClickCheckBox(id: Int, isChecked: Boolean) {
-        if(isChecked){
-            agentsSelectedId.add(id)
-            if(agentsSelectedId.size == allAgents?.size) selectAllAgents.isChecked = true
-        } else {
-            agentsSelectedId.remove(id)
-            selectAllAgents.isChecked = false
-        }
-    }
-
-    @OnClick(R.id.search_select_all_agents)
-    fun onClickSelectAllAgents(checkBox: CheckBox){
-        if(checkBox.isChecked) {
-            adapter?.selectAllAgents()
-            agentsSelectedId.clear()
-            allAgents?.let { agentsSelectedId.addAll(it) }
-        }
-    }
-
-    @OnClick(R.id.search_view_select_all_amenities)
-    fun onClickSelectAllAmenities(checkBox: CheckBox){
-        if(checkBox.isChecked){
-            schoolBox.isChecked = true
-            parkBox.isChecked = true
-            busesBox.isChecked = true
-            subwayBox.isChecked = true
-            shopBox.isChecked = true
-            playgroundBox.isChecked = true
-        }
-    }
-
-    @OnClick(R.id.search_view_select_all_type)
-    fun onClickSelectAllTypes(checkBox: CheckBox){
-        if(checkBox.isChecked){
-            flatBox.isChecked = true
-            penthouseBox.isChecked = true
-            townhouseBox.isChecked = true
-            houseBox.isChecked = true
-            duplexBox.isChecked = true
-        }
-    }
-
-    @OnClick(value = [
-        R.id.checkbox_nearby_school, R.id.checkbox_nearby_buses, R.id.checkbox_nearby_park,
-    R.id.checkbox_nearby_playground, R.id.checkbox_nearby_shop, R.id.checkbox_nearby_subway
-    ])
-    fun onClickOneAmenity(checkBox: CheckBox){
-        if(!checkBox.isChecked && selectAllAmenities.isChecked){
-            selectAllAmenities.isChecked = false
-            return
-        }
-
-        if(
-                busesBox.isChecked && schoolBox.isChecked && parkBox.isChecked
-                && playgroundBox.isChecked && shopBox.isChecked && subwayBox.isChecked
-        ){
-           selectAllAmenities.isChecked = true
-        }
-    }
-
-    @OnClick(value = [
-    R.id.search_view_flat_check, R.id.search_view_penthouse_check, R.id.search_view_townhouse_check,
-    R.id.search_view_house_check, R.id.search_view_duplex_check
-    ])
-    fun onClickOneType(checkBox: CheckBox){
-        if(!checkBox.isChecked && selectAllType.isChecked){
-            selectAllType.isChecked = false
-            return
-        }
-
-        if(
-                flatBox.isChecked && penthouseBox.isChecked && townhouseBox.isChecked
-                && houseBox.isChecked && duplexBox.isChecked
-        ){
-            selectAllType.isChecked = true
-        }
+    private fun disableErrors(){
+        onMarketLayout.isErrorEnabled = false
     }
 
     private fun getAmenitiesSelected(): List<TypeAmenity>{

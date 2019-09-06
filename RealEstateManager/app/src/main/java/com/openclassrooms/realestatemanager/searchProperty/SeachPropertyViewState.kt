@@ -25,7 +25,7 @@ sealed class SearchPropertyIntent : REMIntent{
             val minSurface: Double?, val maxSurface: Double?, val minNbRooms: Int?,
             val minNbBedrooms: Int?, val minNbBathrooms: Int?, val neighborhood: String?,
             val stillOnMarket: Boolean?, val manageBy: List<Int>?, val closeTo: List<TypeAmenity>,
-            val maxDateOnMarket: String?, val hasPhotos: Boolean?
+            val maxDateOnMarket: String, val hasPhotos: Boolean?
     ) : SearchPropertyIntent()
 
     object GetListAgentsIntent : SearchPropertyIntent()

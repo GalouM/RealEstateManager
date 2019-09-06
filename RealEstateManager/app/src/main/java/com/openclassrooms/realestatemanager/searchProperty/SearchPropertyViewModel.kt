@@ -11,8 +11,12 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.extensions.toDate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.time.Year
+import java.util.*
 
 /**
  * Created by galou on 2019-08-28
@@ -50,6 +54,7 @@ class SearchPropertyViewModel(
     private lateinit var typeQuery: List<TypeProperty>
     private lateinit var agentsQuery: List<Int>
     private lateinit var amenitiesQuery: List<TypeAmenity>
+    private lateinit var dateQuery: Date
 
     override fun actionFromIntent(intent: SearchPropertyIntent) {
         when(intent){
@@ -122,7 +127,7 @@ class SearchPropertyViewModel(
             minSurface: Double?, maxSurface: Double?, minNbRooms: Int?,
             minNbBedrooms: Int?, minNbBathrooms: Int?, neighborhood: String?,
             stillOnMarket: Boolean?, manageBy: List<Int>?, amenitiesSelected: List<TypeAmenity>,
-            maxDateOnMarket: String?, hasPicture: Boolean?
+            maxDateOnMarket: String, hasPicture: Boolean?
     ){
         resultToViewState(Lce.Loading())
         val result: Lce<SearchPropertyResult>
@@ -131,6 +136,9 @@ class SearchPropertyViewModel(
         fun checkErrorsInputUser(){
             if (type.isEmpty()) listErrors.add(ErrorSourceSearch.NO_TYPE_SELECTED)
             if (manageBy == null || manageBy.isEmpty()) listErrors.add(ErrorSourceSearch.NO_AGENT_SELECTED)
+            if (maxDateOnMarket.isNotBlank() && maxDateOnMarket.toDate() == null){
+                listErrors.add(ErrorSourceSearch.WRONG_DATE_FORMAT)
+            }
         }
 
         fun setQueryInput(){
@@ -147,6 +155,7 @@ class SearchPropertyViewModel(
             typeQuery = type
             agentsQuery = manageBy!!
             amenitiesQuery = amenitiesSelected
+            dateQuery = maxDateOnMarket.toDate() ?: initiateDefaultDate()
 
         }
 
@@ -171,7 +180,7 @@ class SearchPropertyViewModel(
                 val propertiesQuery = propertyRepository.getPropertiesQuery(
                         minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery,
-                        neighborhoodQuery, isSoldQuery, hasPictureQuery
+                        neighborhoodQuery, isSoldQuery, hasPictureQuery, dateQuery
                 )
                 emitResultPropertyFetched(propertiesQuery)
             }
@@ -180,7 +189,7 @@ class SearchPropertyViewModel(
                 val propertyFromDB = propertyRepository.getPropertiesQuery(
                         minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery, neighborhoodQuery,
-                        isSoldQuery, hasPictureQuery, amenitiesQuery
+                        isSoldQuery, hasPictureQuery, dateQuery, amenitiesQuery
                 )
                 if(propertyFromDB.isNotEmpty()) {
                     val propertiesQuery = getOnlyPropertiesWithAllAmenities(amenitiesQuery.size, propertyFromDB)
@@ -256,6 +265,13 @@ class SearchPropertyViewModel(
         neighborhoodQuery = "%"
         isSoldQuery = listOf(0, 1)
         hasPictureQuery = listOf(0, 1)
+        dateQuery = initiateDefaultDate()
 
+    }
+
+    private fun initiateDefaultDate(): Date{
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, 1800)
+        return calendar.time
     }
 }

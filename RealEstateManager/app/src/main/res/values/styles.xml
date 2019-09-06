@@ -75,4 +75,9 @@
         <item name="boxBackgroundColor">@android:color/transparent</item>
     </style>
 
+    <style name="TitleREM">
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

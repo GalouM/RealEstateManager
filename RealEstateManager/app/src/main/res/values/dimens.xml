@@ -27,4 +27,6 @@
     <dimen name="add_pictue_button_size">20dip</dimen>
     <dimen name="small_corner">2dp</dimen>
     <dimen name="separator_size">1dp</dimen>
+    <dimen name="margin_card_big">5dp</dimen>
+    <dimen name="cardview_small_margin">2dp</dimen>
 </resources>

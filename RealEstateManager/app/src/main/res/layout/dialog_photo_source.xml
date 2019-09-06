@@ -13,7 +13,8 @@
         android:layout_width="@dimen/small_picture"
         android:layout_height="@dimen/small_picture"
         android:background="@drawable/camera_icon"
-        android:layout_margin="@dimen/margin_small"/>
+        android:layout_margin="@dimen/margin_small"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
 
     <TextView
         android:id="@+id/dialog_photo_take_text"
@@ -34,7 +35,8 @@
         android:layout_width="@dimen/small_picture"
         android:layout_height="@dimen/small_picture"
         android:background="@drawable/library_icon"
-        android:layout_margin="@dimen/margin_small"/>
+        android:layout_margin="@dimen/margin_small"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
     <TextView
         android:id="@+id/dialog_photo_pick_text"
         app:layout_constraintTop_toBottomOf="@id/dialog_photo_pick_icon"

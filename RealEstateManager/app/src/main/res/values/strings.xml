@@ -80,4 +80,21 @@
     <string name="take_new_picture">Take new picture</string>
     <string name="pick_from_library">Pick from library</string>
     <string name="no_description">Need description</string>
+    <string name="select_all">Select all</string>
+    <string name="flat">Flat</string>
+    <string name="penthouse">Penthouse</string>
+    <string name="townhouse">Townhouse</string>
+    <string name="house">House</string>
+    <string name="duplex">Duplex</string>
+    <string name="max_price">Max price</string>
+    <string name="min_price">Min price</string>
+    <string name="type">Type</string>
+    <string name="min_surface">Min surface</string>
+    <string name="min_rooms">Min rooms</string>
+    <string name="min_bedrooms">Min bedrooms</string>
+    <string name="min_bathrooms">Min bathrooms</string>
+    <string name="posted_after">Posted after</string>
+    <string name="extras">Extras</string>
+    <string name="is_available">is available</string>
+    <string name="has_pictures">has pictures</string>
 </resources>

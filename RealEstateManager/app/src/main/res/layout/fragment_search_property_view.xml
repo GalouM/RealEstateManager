@@ -2,115 +2,147 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".searchProperty.SearchPropertyView"
-    android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Type"
-            android:textSize="@dimen/text_title"
-            android:textStyle="bold"
-            android:layout_marginStart="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"/>
-
-    <androidx.gridlayout.widget.GridLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_view_type_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small">
+
+            <TextView
+                android:id="@+id/search_view_type_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/type"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="@style/TitleREM"/>
+
+            <androidx.gridlayout.widget.GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:rowCount="3"
+                app:columnCount="3"
+                android:layout_margin="@dimen/margin_small"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_view_type_text">
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_view_select_all_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_all"
+                    app:layout_row="0"
+                    app:layout_column="0"
+                    app:layout_columnWeight="1"
+                    android:checked="true"/>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_view_flat_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/flat"
+                    app:layout_row="1"
+                    app:layout_column="0"
+                    app:layout_columnWeight="1"
+                    android:checked="true"/>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_view_penthouse_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/penthouse"
+                    app:layout_row="1"
+                    app:layout_column="1"
+                    app:layout_columnWeight="1"
+                    android:checked="true"/>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_view_townhouse_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/townhouse"
+                    app:layout_row="1"
+                    app:layout_column="2"
+                    app:layout_columnWeight="1"
+                    android:checked="true"/>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_view_house_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/house"
+                    app:layout_row="2"
+                    app:layout_column="0"
+                    app:layout_columnWeight="1"
+                    android:checked="true"/>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_view_duplex_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/duplex"
+                    app:layout_row="2"
+                    app:layout_column="1"
+                    app:layout_columnWeight="1"
+                    android:checked="true"/>
+
+            </androidx.gridlayout.widget.GridLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/separator"
+            android:id="@+id/search_view_type_separator"
+            app:layout_constraintTop_toBottomOf="@id/search_view_type_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_view_price_group"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:rowCount="3"
-        app:columnCount="3"
-        android:layout_margin="@dimen/margin_small">
+        app:layout_constraintTop_toBottomOf="@id/search_view_type_separator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small">
 
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/search_view_select_all_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select all"
-            app:layout_row="0"
-            app:layout_column="0"
-            app:layout_columnWeight="1"
-            android:checked="true"/>
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/search_view_flat_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Flat"
-            app:layout_row="1"
-            app:layout_column="0"
-            app:layout_columnWeight="1"
-            android:checked="true"/>
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/search_view_penthouse_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Penthouse"
-            app:layout_row="1"
-            app:layout_column="1"
-            app:layout_columnWeight="1"
-            android:checked="true"/>
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/search_view_townhouse_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Townhouse"
-            app:layout_row="1"
-            app:layout_column="2"
-            app:layout_columnWeight="1"
-            android:checked="true"/>
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/search_view_house_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="House"
-            app:layout_row="2"
-            app:layout_column="0"
-            app:layout_columnWeight="1"
-            android:checked="true"/>
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/search_view_duplex_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Duplex"
-            app:layout_row="2"
-            app:layout_column="1"
-            app:layout_columnWeight="1"
-            android:checked="true"/>
-
-    </androidx.gridlayout.widget.GridLayout>
 
     <TextView
         android:id="@+id/search_view_price_title"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_title"
-        android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        style="@style/TitleREM"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/search_view_min_price_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Min price"
+            android:hint="@string/min_price"
             android:layout_weight="1"
-            android:layout_margin="@dimen/margin_small">
+            android:layout_margin="@dimen/margin_small"
+            app:layout_constraintTop_toBottomOf="@id/search_view_price_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/search_view_max_price_layout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/search_view_min_price"
@@ -120,11 +152,16 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/search_view_max_price_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Max price"
+            android:hint="@string/max_price"
             android:layout_weight="1"
-            android:layout_margin="@dimen/margin_small">
+            android:layout_margin="@dimen/margin_small"
+            app:layout_constraintTop_toTopOf="@id/search_view_min_price_layout"
+            app:layout_constraintBottom_toBottomOf="@id/search_view_min_price_layout"
+            app:layout_constraintStart_toEndOf="@id/search_view_min_price_layout"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <EditText
                 android:id="@+id/search_view_max_price"
@@ -132,197 +169,356 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/search_view_surface_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_title"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"/>
+        <include
+            layout="@layout/separator"
+            android:id="@+id/search_view_price_separator"
+            app:layout_constraintTop_toBottomOf="@id/search_view_price_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <com.google.android.material.textfield.TextInputLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_view_surface_group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Min surface"
-            android:layout_weight="1"
-            android:layout_margin="@dimen/margin_small">
-
-            <EditText
-                android:id="@+id/search_view_min_surface"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Max surface"
-            android:layout_weight="1"
-            android:layout_margin="@dimen/margin_small">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/search_view_max_surface"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Rooms"
-        android:textSize="@dimen/text_title"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Min rooms"
-            android:layout_weight="1"
-            android:layout_margin="@dimen/margin_small">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/search_view_min_rooms"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Min bedrooms"
-            android:layout_weight="1"
-            android:layout_margin="@dimen/margin_small">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/search_view_min_bedrooms"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Min bathrooms"
-            android:layout_weight="1"
-            android:layout_margin="@dimen/margin_small">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/search_view_min_bathrooms"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"/>
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Neighborhood name"
-        android:layout_weight="1"
-        android:layout_margin="@dimen/margin_small">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/search_view_neighborhood"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Near by"
-        android:textSize="@dimen/text_title"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"/>
-
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/search_view_select_all_amenities"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select all"
-        android:layout_marginHorizontal="@dimen/margin_small"/>
-
-    <include
-        layout="@layout/amenities_checkboxes"
-        android:layout_margin="@dimen/margin_small"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Extras"
-        android:textSize="@dimen/text_title"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:layout_margin="@dimen/margin_small">
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/search_view_is_available"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="is available"/>
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/search_view_photo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="has pictures"/>
-    </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Manage by"
-            android:textSize="@dimen/text_title"
-            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/search_view_price_separator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"/>
+            android:layout_marginEnd="@dimen/margin_small">
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/search_select_all_agents"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Select all"
-        android:layout_margin="@dimen/margin_small"
-        android:checked="true"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_view_rv_agents"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/search_view_surface_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                style="@style/TitleREM"
+                android:layout_marginTop="@dimen/margin_small"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
-</LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_view_surface_min_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/min_surface"
+                    android:layout_margin="@dimen/margin_small"
+                    app:layout_constraintTop_toBottomOf="@id/search_view_surface_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/search_view_surface_max_layout">
+
+                    <EditText
+                        android:id="@+id/search_view_min_surface"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_view_surface_max_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Max surface"
+                    android:layout_weight="1"
+                    android:layout_margin="@dimen/margin_small"
+                    app:layout_constraintTop_toTopOf="@id/search_view_surface_min_layout"
+                    app:layout_constraintBottom_toBottomOf="@id/search_view_surface_min_layout"
+                    app:layout_constraintStart_toEndOf="@id/search_view_surface_min_layout"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_view_max_surface"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"/>
+                </com.google.android.material.textfield.TextInputLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/separator"
+            android:id="@+id/search_view_surface_separator"
+            app:layout_constraintTop_toBottomOf="@id/search_view_surface_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_view_rooms_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/search_view_surface_separator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small">
+
+            <TextView
+                android:id="@+id/search_view_rooms_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/rooms"
+                style="@style/TitleREM"
+                android:layout_marginTop="@dimen/margin_small"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_view_room_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/min_rooms"
+                    android:layout_margin="@dimen/margin_small"
+                    app:layout_constraintTop_toBottomOf="@id/search_view_rooms_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_view_min_rooms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_view_bedroom_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/min_bedrooms"
+                    android:layout_margin="@dimen/margin_small"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/search_view_bathroom_layout"
+                    app:layout_constraintTop_toBottomOf="@id/search_view_room_layout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_view_min_bedrooms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_view_bathroom_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/min_bathrooms"
+                    android:layout_margin="@dimen/margin_small"
+                    app:layout_constraintTop_toTopOf="@id/search_view_bedroom_layout"
+                    app:layout_constraintBottom_toBottomOf="@id/search_view_bedroom_layout"
+                    app:layout_constraintStart_toEndOf="@id/search_view_bedroom_layout"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_view_min_bathrooms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/separator"
+            android:id="@+id/search_view_room_separator"
+            app:layout_constraintTop_toBottomOf="@id/search_view_rooms_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_view_address_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/search_view_room_separator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Neighborhood name"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/margin_small"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_view_neighborhood"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/separator"
+            android:id="@+id/search_view_address_separator"
+            app:layout_constraintTop_toBottomOf="@id/search_view_address_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_view_nearby_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/search_view_address_separator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small">
+
+            <TextView
+                android:id="@+id/search_view_nearby_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/near_by"
+                style="@style/TitleREM"
+                android:layout_marginTop="@dimen/margin_small"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/search_view_select_all_amenities"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select_all"
+                app:layout_constraintTop_toBottomOf="@id/search_view_nearby_title"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <include
+                layout="@layout/amenities_checkboxes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/search_view_select_all_amenities"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/separator"
+            android:id="@+id/search_view_nearby_separator"
+            app:layout_constraintTop_toBottomOf="@id/search_view_nearby_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_view_extra_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/search_view_nearby_separator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small">
+
+            <TextView
+                android:id="@+id/search_view_extra_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/extras"
+                style="@style/TitleREM"
+                android:layout_marginTop="@dimen/margin_small"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_view_is_available"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/is_available"
+                    app:layout_constraintTop_toBottomOf="@id/search_view_extra_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/search_view_photo"/>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_view_photo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/has_pictures"
+                    app:layout_constraintStart_toEndOf="@id/search_view_is_available"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/search_view_is_available"
+                    app:layout_constraintBottom_toBottomOf="@id/search_view_is_available"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_view_on_market_after_inputlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/posted_after"
+                    app:layout_constraintTop_toBottomOf="@id/search_view_photo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_view_on_market_after"
+                        style="@style/Widget.AppCompat.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="date"/>
+                </com.google.android.material.textfield.TextInputLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/separator"
+            android:id="@+id/search_view_extra_separator"
+            app:layout_constraintTop_toBottomOf="@id/search_view_extra_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_view_agent_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/search_view_extra_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small">
+
+                <TextView
+                    android:id="@+id/search_view_agent_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/manage_by"
+                    style="@style/TitleREM"
+                    android:layout_marginTop="@dimen/margin_small"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/search_select_all_agents"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_all"
+                    android:checked="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/search_view_agent_title"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/search_view_rv_agents"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/search_select_all_agents"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

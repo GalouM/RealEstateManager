@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.addProperty
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -47,5 +48,15 @@ class ListPictureAdapter(
 
     fun updateForegroundViewHolder(){
         listViewHolder.forEach { it.updateForeground() }
+    }
+
+    fun fetchPhotoWithDescription(){
+
+    }
+
+    fun showErrorViewHolder(message: String){
+        listViewHolder.forEach {
+            it.showError(message)
+        }
     }
 }

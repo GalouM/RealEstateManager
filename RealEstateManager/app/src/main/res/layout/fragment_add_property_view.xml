@@ -6,142 +6,160 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 <androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_marginEnd="@dimen/margin_small"
-    android:layout_marginStart="@dimen/margin_small"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".addProperty.AddPropertyView">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/add_property_view_general_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small"
         app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/add_property_view_type_inputlayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_property_view_type_inputlayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/type_dropdown_menu"
+            android:layout_marginBottom="@dimen/margin_small"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <AutoCompleteTextView
+                android:id="@+id/add_property_view_dropdown_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/add_property_view_price_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/price_dollar"
+                android:layout_marginEnd="@dimen/margin_small"
+                app:layout_constraintTop_toBottomOf="@id/add_property_view_type_inputlayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/add_property_view_surface_layout"
+                app:layout_constraintWidth_percent="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread_inside">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_property_view_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/add_property_view_surface_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/surface_m2"
+                app:layout_constraintTop_toBottomOf="@id/add_property_view_type_inputlayout"
+                app:layout_constraintStart_toEndOf="@id/add_property_view_price_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.5">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_property_view_surface"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/add_property_view_room_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/rooms"
+                android:layout_marginEnd="@dimen/margin_small"
+                app:layout_constraintTop_toBottomOf="@id/add_property_view_price_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/add_property_view_bedroom_layout"
+                app:layout_constraintWidth_percent="0.3">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_property_view_room"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/add_property_view_bedroom_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/bedrooms"
+                app:layout_constraintTop_toBottomOf="@id/add_property_view_price_layout"
+                app:layout_constraintStart_toEndOf="@id/add_property_view_room_layout"
+                app:layout_constraintEnd_toStartOf="@id/add_property_view_bathroom_layout"
+                app:layout_constraintWidth_percent="0.3">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_property_view_bedroom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:layout_marginEnd="@dimen/margin_small"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/add_property_view_bathroom_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/bathrooms"
+                app:layout_constraintTop_toBottomOf="@id/add_property_view_price_layout"
+                app:layout_constraintStart_toEndOf="@id/add_property_view_bedroom_layout"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_property_view_bathroom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:layout_marginEnd="@dimen/margin_small"/>
+            </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/add_property_view_general_separator"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_general_group"
+        android:layout_marginTop="10dip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_size"
+        android:background="@color/colorPrimaryUltraLight"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/add_property_details_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/type_dropdown_menu"
-        android:layout_marginBottom="@dimen/margin_small">
-
-        <AutoCompleteTextView
-            android:id="@+id/add_property_view_dropdown_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <androidx.gridlayout.widget.GridLayout
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_type_inputlayout"
-        android:id="@+id/add_property_view_price_surface_gridlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:columnCount="2"
-        android:layout_marginBottom="@dimen/margin_small">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_property_view_price_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/price_dollar"
-            app:layout_column="0"
-            app:layout_row="0"
-            app:layout_columnWeight="1"
-            android:layout_marginEnd="@dimen/margin_small">
-
-            <EditText
-                android:id="@+id/add_property_view_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_property_view_surface_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/surface_m2"
-            app:layout_column="1"
-            app:layout_row="0"
-            app:layout_columnWeight="1">
-
-            <EditText
-                android:id="@+id/add_property_view_surface"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-    </androidx.gridlayout.widget.GridLayout>
-
-    <androidx.gridlayout.widget.GridLayout
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_price_surface_gridlayout"
-        android:id="@+id/add_property_view_rooms_gridlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:columnCount="3"
-        android:layout_marginBottom="@dimen/margin_small">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_property_view_room_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/rooms"
-            app:layout_column="0"
-            app:layout_row="0"
-            app:layout_columnWeight="1"
-            android:layout_marginEnd="@dimen/margin_small">
-
-            <EditText
-                android:id="@+id/add_property_view_room"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="number"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_property_view_bedroom_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/bedrooms"
-            app:layout_column="1"
-            app:layout_row="0"
-            app:layout_columnWeight="1">
-
-            <EditText
-                android:id="@+id/add_property_view_bedroom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="number"
-                android:layout_marginEnd="@dimen/margin_small"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_property_view_bathroom_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/bathrooms"
-            app:layout_column="2"
-            app:layout_row="0"
-            app:layout_columnWeight="1">
-
-            <EditText
-                android:id="@+id/add_property_view_bathroom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="number"
-                android:layout_marginEnd="@dimen/margin_small"/>
-        </com.google.android.material.textfield.TextInputLayout>
-    </androidx.gridlayout.widget.GridLayout>
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_general_separator">
 
 
     <TextView
         android:id="@+id/add_property_view_nearby_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_rooms_gridlayout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/near_by"
         android:textSize="@dimen/text_title"
         android:layout_marginTop="@dimen/margin_small"/>
@@ -150,6 +168,8 @@
         layout="@layout/amenities_checkboxes"
         android:id="@+id/add_property_view_nearby_gridlayout_nearby"
         app:layout_constraintTop_toBottomOf="@id/add_property_view_nearby_textview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="@dimen/margin_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -161,24 +181,47 @@
         android:layout_width="match_parent"
         android:layout_height="100dip"
         android:hint="@string/description"
-        android:layout_marginBottom="@dimen/margin_small">
+        android:layout_marginBottom="@dimen/margin_small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_property_view_description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textMultiLine"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/add_property_view_details_separator"
+        app:layout_constraintTop_toBottomOf="@id/add_property_details_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_size"
+        android:background="@color/colorPrimaryUltraLight"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/add_property_view_address_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/add_property_view_details_separator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_property_view_address_inputlayout"
-        app:layout_constraintTop_toBottomOf="@id/add_property_view_description_inputlayout"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/address"
         android:layout_marginBottom="@dimen/margin_small">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_property_view_address"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -192,7 +235,7 @@
         android:hint="@string/neighbourhood"
         android:layout_marginBottom="@dimen/margin_small">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_property_view_neighbourhood"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -205,19 +248,20 @@
         android:layout_height="wrap_content"
         android:hint="@string/on_market_since"
         android:layout_marginBottom="@dimen/margin_small">
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_property_view_since"
             style="@style/Widget.AppCompat.Spinner"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="date"/>
     </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Switch
             android:id="@+id/add_property_view_sold_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/add_property_view_since_inputlayout"
+            app:layout_constraintTop_toBottomOf="@id/add_property_view_address_group"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_margin="@dimen/margin_small"/>
         <TextView
@@ -232,7 +276,7 @@
             android:layout_marginEnd="@dimen/margin_big"/>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/add_property_view_soldon_inputlayout"
-            app:layout_constraintTop_toBottomOf="@id/add_property_view_neighbourhood_inputlayout"
+            app:layout_constraintTop_toBottomOf="@id/add_property_view_address_group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/sold_on"
@@ -243,7 +287,7 @@
             app:layout_constraintBottom_toBottomOf="@id/add_property_view_sold_switch"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/add_property_view_sold_on"
                 style="@style/Widget.AppCompat.Spinner"
                 android:layout_width="match_parent"
@@ -262,7 +306,7 @@
         android:layout_marginTop="@dimen/margin_small"
         android:focusable="false">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_property_view_dropdown_agent"
             style="@style/Widget.AppCompat.Spinner"
             android:layout_width="match_parent"

@@ -79,4 +79,5 @@
     <string name="add_pictures">Add pictures</string>
     <string name="take_new_picture">Take new picture</string>
     <string name="pick_from_library">Pick from library</string>
+    <string name="no_description">Need description</string>
 </resources>

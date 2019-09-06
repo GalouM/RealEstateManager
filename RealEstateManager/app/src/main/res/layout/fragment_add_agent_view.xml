@@ -39,12 +39,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/first_name">
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_agent_view_firstname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textCapWords"
-            android:background="@android:color/transparent"/>
+            android:inputType="textCapWords"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -57,12 +56,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/last_name">
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_agent_view_lastname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textCapWords"
-            android:background="@android:color/transparent"/>
+            android:inputType="textCapWords"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,12 +73,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/email">
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_agent_view_email"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textEmailAddress"
-            android:background="@android:color/transparent"/>
+            android:inputType="textEmailAddress"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,12 +90,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/phone_number">
-        <EditText
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_agent_view_phonenb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="phone"
-            android:background="@android:color/transparent"/>
+            android:inputType="phone"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 

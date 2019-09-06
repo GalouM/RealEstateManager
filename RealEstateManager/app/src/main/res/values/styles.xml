@@ -6,8 +6,22 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="editTextStyle">@style/EditTextREM</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimary">@color/colorTextPrimary</item>
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="colorSecondaryVariant">@color/colorAccentDark</item>
+        <item name="colorOnSecondary">@color/colorTextAccent</item>
+        <item name="colorError">@color/colorAccentDark</item>
+        <item name="colorOnError">@color/colorTextAccent</item>
+        <item name="fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.REM.LargeComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.REM.MediumComponent</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.REM.SmallComponent</item>
+        <item name="materialButtonStyle">@style/ButtonCenterREM</item>
+        <item name="textInputStyle">@style/TextInputLayoutRem</item>
+
+
     </style>
 
     <!-- TOOLBAR THEME -->
@@ -30,15 +44,27 @@
 
     <style name="ShapeAppearance.REM.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
         <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">6dp</item>
+    </style>
+
+    <style name="ShapeAppearance.REM.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
         <item name="cornerSize">4dp</item>
     </style>
 
-    <style name="ButtonCenterREM" parent="Widget.AppCompat.Button">
-        <item name="android:background">@color/colorAccent</item>
+    <style name="ShapeAppearance.REM.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
     </style>
 
-    <style name="EditTextREM" parent="Widget.AppCompat.EditText">
-        <item name="android:background">@android:color/transparent</item>
+    <style name="ButtonCenterREM" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">?attr/colorSecondary</item>
+        <item name="rippleColor">?attr/colorOnSecondary</item>
+    </style>
+
+    <style name="TextInputLayoutRem" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundMode">filled</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
     </style>
 
 </resources>

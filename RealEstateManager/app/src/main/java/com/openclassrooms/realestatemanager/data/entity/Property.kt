@@ -31,4 +31,5 @@ data class Property (
         var sold: Boolean,
         @ColumnInfo(name = "sell_date") var sellDate: Date?,
         var agent: Int,
-        @ColumnInfo(name = "has_picture")var hasPictures: Boolean)
+        @ColumnInfo(name = "has_picture")var hasPictures: Boolean,
+        @ColumnInfo(name = "main_picture")var mainPicture: String?)

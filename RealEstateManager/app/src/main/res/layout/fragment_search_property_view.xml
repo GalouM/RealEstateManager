@@ -112,7 +112,7 @@
             android:layout_weight="1"
             android:layout_margin="@dimen/margin_small">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/search_view_min_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -170,7 +170,7 @@
             android:layout_weight="1"
             android:layout_margin="@dimen/margin_small">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/search_view_max_surface"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -200,7 +200,7 @@
             android:layout_weight="1"
             android:layout_margin="@dimen/margin_small">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/search_view_min_rooms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -214,7 +214,7 @@
             android:layout_weight="1"
             android:layout_margin="@dimen/margin_small">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/search_view_min_bedrooms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -228,7 +228,7 @@
             android:layout_weight="1"
             android:layout_margin="@dimen/margin_small">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/search_view_min_bathrooms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -243,7 +243,7 @@
         android:layout_weight="1"
         android:layout_margin="@dimen/margin_small">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/search_view_neighborhood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

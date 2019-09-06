@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -20,6 +21,8 @@ import androidx.room.PrimaryKey
 )
 data class Picture(
         @PrimaryKey val url: String,
+        @ColumnInfo(name = "thumbnail_url")val thumbnailUrl: String?,
+        @ColumnInfo(name = "server_url")val serverUrl: String?,
         val property: Int,
         val description: String?
 )

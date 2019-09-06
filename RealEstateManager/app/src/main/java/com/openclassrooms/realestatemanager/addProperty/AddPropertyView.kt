@@ -363,6 +363,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 ErrorSourceAddProperty.INCORECT_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
                 ErrorSourceAddProperty.UNKNOW_ERROR -> showSnackBarMessage(getString(R.string.unknow_error))
                 ErrorSourceAddProperty.ERROR_FETCHING_PROPERTY -> showSnackBarMessage(getString(R.string.unknow_error))
+                ErrorSourceAddProperty.MISSING_DESCRIPTION -> adapter.showErrorViewHolder(getString(R.string.no_description))
             }
         }
     }
@@ -446,7 +447,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
                 bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
                 addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, getAmenitiesSelected(), pictures, null,
+                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, getAmenitiesSelected(), picturesPicked,
                 activity!!.applicationContext)
         )
     }
@@ -545,5 +546,9 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         } else {
             picturesPicked.add(to -1, fromPhoto)
         }
+    }
+
+    private fun fetchPhotoWithDescription(){
+
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
+import com.openclassrooms.realestatemanager.data.PhotoForDisplay
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
@@ -73,8 +74,7 @@ BitmapDownloader.Listeners{
     private var sellOn: String? = null
     private var agent: Int? = null
     private lateinit var amenities: List<TypeAmenity>
-    private var pictures: List<String>? = null
-    private var pictureDescription: String? = null
+    private var pictures: List<PhotoForDisplay>? = null
     private var map = ""
     private var latitude: Double? = null
     private var longitude: Double? = null
@@ -104,7 +104,7 @@ BitmapDownloader.Listeners{
                         intent.neighborhood, intent.onMarketSince,
                         intent.isSold, intent.sellDate,
                         intent.agent, intent.amenities,
-                        intent.pictures, intent.pictureDescription, intent.context)
+                        intent.pictures, intent.context)
 
             }
 
@@ -212,7 +212,7 @@ BitmapDownloader.Listeners{
                                     neighborhood: String, onMarketSince: String,
                                     isSold: Boolean, sellOn: String?,
                                     agent: Int?, amenities: List<TypeAmenity>,
-                                    pictures: List<String>?, pictureDescription: String?,
+                                    pictures: List<PhotoForDisplay>?,
                                     contextApp: Context){
         fun setGlobalProperties() {
             context = contextApp
@@ -231,7 +231,6 @@ BitmapDownloader.Listeners{
             this.agent = agent
             this.amenities = amenities
             this.pictures = pictures
-            this.pictureDescription = pictureDescription
         }
 
         listErrorInputs.clear()
@@ -280,6 +279,11 @@ BitmapDownloader.Listeners{
         if(rooms == null) listErrors.add(ErrorSourceAddProperty.NO_ROOMS)
         if(address.isEmpty()) listErrors.add(ErrorSourceAddProperty.NO_ADDRESS)
         if(agent == null) listErrors.add(ErrorSourceAddProperty.NO_AGENT)
+        pictures?.forEach {
+            if(it.description.isNullOrBlank()){
+                listErrors.add(ErrorSourceAddProperty.MISSING_DESCRIPTION)
+            }
+        }
 
         return listErrors
     }
@@ -362,7 +366,10 @@ BitmapDownloader.Listeners{
         fun createPicturesInDB(){
             addPicturesJob = launch {
                 for(picture in pictures!!){
-                    val pictureForDB = Picture(picture, propertyId!!, pictureDescription)
+                    val pictureForDB = Picture(
+                            picture.uriPicture, picture.uriThumbnail,
+                            null, propertyId!!, picture.description
+                    )
                     propertyRepository.insertPicture(pictureForDB)
                 }
             }
@@ -388,13 +395,18 @@ BitmapDownloader.Listeners{
         fun createNewPropertyInDB(){
             addPropertyJob = launch {
                 val currency = currencyRepository.currency.value!!
-                val hasPicture = !pictures!!.isEmpty()
+                val hasPicture = pictures!!.isNotEmpty()
+                val mainPicture = if(hasPicture){
+                    pictures!![0].uriPicture
+                } else{
+                    null
+                }
                 val propertyForDB = Property(
                         propertyId, Converters.toTypeProperty(type), price!!.toEuro(currency),
                         surface!!.toSqMeter(currency), rooms!!,
                         bedrooms, bathrooms,
                         description, onMarketSince.toDate()!!,
-                        isSold, sellOn?.toDate(), agent!!, hasPicture)
+                        isSold, sellOn?.toDate(), agent!!, hasPicture, mainPicture)
                 when(actionType){
                     ActionType.NEW_PROPERTY -> propertyId = propertyRepository.createProperty(propertyForDB).toInt()
                     ActionType.MODIFY_PROPERTY -> propertyRepository.updateProperty(propertyForDB)

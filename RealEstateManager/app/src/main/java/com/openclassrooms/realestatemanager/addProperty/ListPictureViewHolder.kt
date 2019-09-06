@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -72,6 +73,18 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
     fun onClickDeleteButton(){
         val callback = callbackWeakRef.get()
         callback?.let{ callback.onClickDeleteButton(photo)}
+    }
+    
+    fun createPhotoWithDescription(){
+        photo.description = description.text.toString()
+    }
+    
+    fun showError(message: String){
+        if(description.text.isNullOrBlank()){
+            inputLayout.error = message
+        } else{
+            inputLayout.isErrorEnabled = false
+        }
     }
 
 

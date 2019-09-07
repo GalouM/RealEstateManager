@@ -99,7 +99,7 @@ class PropertyRepository(
                 amenityDao.insertAmenity(amenities)
             }
             launch {
-                pictureDao.insertPicture(pictures)
+                val picId = pictureDao.insertPicture(pictures)
             }
             launch {
                 when(actionType){

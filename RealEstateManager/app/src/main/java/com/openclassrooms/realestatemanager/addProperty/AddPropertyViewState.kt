@@ -8,9 +8,7 @@ import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.mviBase.REMIntent
 import com.openclassrooms.realestatemanager.mviBase.REMResult
 import com.openclassrooms.realestatemanager.mviBase.REMViewState
-import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
-import com.openclassrooms.realestatemanager.utils.TypeProperty
 
 /**
  * Created by galou on 2019-07-27

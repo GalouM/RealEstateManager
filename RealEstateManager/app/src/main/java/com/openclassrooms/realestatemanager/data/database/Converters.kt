@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.data.database
 
-import android.util.Log
 import androidx.room.TypeConverter
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import com.openclassrooms.realestatemanager.utils.TypeProperty

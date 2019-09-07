@@ -2,7 +2,7 @@ package com.openclassrooms.realestatemanager.detailsProperty
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import com.openclassrooms.realestatemanager.data.entity.*
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
@@ -83,6 +83,7 @@ class DetailsPropertyViewModel(
 
     private fun displayPropertyDetails(){
         propertyRepository.propertyPicked?.let {
+            Log.e("from rep", it.pictures.toString())
             emitResultDisplayProperty(it)
         }
     }
@@ -103,6 +104,7 @@ class DetailsPropertyViewModel(
         fun fetchProperty(){
             searchPropertyJob = launch {
                 val property = propertyRepository.getProperty(propertyId!!)[0]
+                Log.e("from db", property.pictures.toString())
                 propertyRepository.propertyPicked = property
                 emitResult(property)
             }

@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.addAgent
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.Intent.*
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -26,7 +25,6 @@ import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.extensions.saveToInternalStorage
-import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
 // TODO: Rename parameter arguments, choose names that match

@@ -1,14 +1,14 @@
 package com.openclassrooms.realestatemanager.addAgent
 
 import android.util.Log
-import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.entity.Agent
-import com.openclassrooms.realestatemanager.utils.extensions.isCorrectEmail
-import com.openclassrooms.realestatemanager.utils.extensions.isCorrectName
-import com.openclassrooms.realestatemanager.utils.extensions.isCorrectPhoneNumber
+import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectEmail
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectName
+import com.openclassrooms.realestatemanager.utils.extensions.isCorrectPhoneNumber
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 

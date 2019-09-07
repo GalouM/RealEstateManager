@@ -1,13 +1,12 @@
 package com.openclassrooms.realestatemanager.injection
 
 import android.content.Context
+import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
+import com.openclassrooms.realestatemanager.data.database.REMDatabase
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
-import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
-import com.openclassrooms.realestatemanager.data.database.REMDatabase
 import com.openclassrooms.realestatemanager.utils.KEY_PREF
-import com.openclassrooms.realestatemanager.utils.KEY_PREF_CURRENCY
 
 /**
  * Created by galou on 2019-07-24

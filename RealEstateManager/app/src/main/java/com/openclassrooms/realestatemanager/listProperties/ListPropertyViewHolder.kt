@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -13,10 +14,10 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
+import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.utils.extensions.toEuroDisplay
-import com.openclassrooms.realestatemanager.utils.Currency
 
 /**
  * Created by galou on 2019-08-12
@@ -36,10 +37,11 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun updateWithProperty(property: PropertyWithAllData, glide: RequestManager, currency: Currency, context: Context){
 
-        val picture = property.pictures.find { it.isMainPicture }
-        picture?.let{
-            val pictureUrl = it.thumbnailUrl ?: it.url
+        if(property.pictures.isNotEmpty()){
+            val firstPicture = property.pictures[0]
+            val pictureUrl = firstPicture.thumbnailUrl ?: firstPicture.url
             glide.load(pictureUrl).apply(RequestOptions.centerCropTransform()).into(pictureView)
+            Log.e("picture display", firstPicture.toString())
         }
 
         type.text = property.property.type.typeName

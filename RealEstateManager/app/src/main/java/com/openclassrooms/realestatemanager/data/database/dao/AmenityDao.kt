@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.data.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,8 +12,6 @@ import com.openclassrooms.realestatemanager.data.entity.Amenity
 
 @Dao
 interface AmenityDao {
-    @Query("SELECT * FROM amenities WHERE property = :propertyId")
-    suspend fun getAmenities(propertyId: Int): List<Amenity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAmenity(amenities: List<Amenity>)

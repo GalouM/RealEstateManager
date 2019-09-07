@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.searchProperty
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyActivity
 import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyIntent

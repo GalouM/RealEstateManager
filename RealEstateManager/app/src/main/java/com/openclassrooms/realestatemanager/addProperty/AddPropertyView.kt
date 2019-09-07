@@ -31,11 +31,11 @@ import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Picture
-import com.openclassrooms.realestatemanager.utils.extensions.*
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.extensions.*
 import kotlinx.android.synthetic.main.dialog_photo_source.view.*
 import java.io.File
 import java.io.IOException
@@ -527,14 +527,14 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private fun addPicturePickedToList(data: Intent){
         getPicturesPathFromData(data).forEach {
-            picturesPicked.add(Picture(null, it, null, null, null, null, false))
+            picturesPicked.add(Picture(null, it, null, null, null, null, null))
         }
         adapter.update(picturesPicked)
     }
 
     private fun addPictureTakenToList(){
         lastPhotoTakenPath?.let {
-            picturesPicked.add(Picture(null, it, getThumbnailFromPicture(it, activity!!), null, null, null, false))
+            picturesPicked.add(Picture(null, it, getThumbnailFromPicture(it, activity!!), null, null, null, null))
             adapter.update(picturesPicked)
             addPictureToGallery(activity!!, it)
         }

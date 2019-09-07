@@ -3,17 +3,10 @@ package com.openclassrooms.realestatemanager.addProperty
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyActivity
 import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyIntent
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_ADD_PROPERTY
-import com.openclassrooms.realestatemanager.utils.Currency
 
 class AddPropertyActivity : BaseCurrencyActivity<AddPropertyView>() {
 

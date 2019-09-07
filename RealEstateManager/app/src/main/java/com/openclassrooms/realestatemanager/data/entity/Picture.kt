@@ -24,7 +24,7 @@ data class Picture(
         val url: String,
         @ColumnInfo(name = "thumbnail_url") var thumbnailUrl: String?,
         @ColumnInfo(name = "server_url") var serverUrl: String?,
-        @ColumnInfo(name = "id_property") val property: Int?,
+        @ColumnInfo(name = "id_property") var property: Int?,
         var description: String?,
-        @ColumnInfo(name = "is_main_picture") var isMainPicture: Boolean
+        @ColumnInfo(name = "order_number") var orderNumber: Int?
 )

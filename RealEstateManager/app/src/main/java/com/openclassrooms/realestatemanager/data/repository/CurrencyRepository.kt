@@ -1,14 +1,8 @@
 package com.openclassrooms.realestatemanager.data.repository
 
-import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
-import com.openclassrooms.realestatemanager.data.database.dao.AddressDao
-import com.openclassrooms.realestatemanager.data.database.dao.AmenityDao
-import com.openclassrooms.realestatemanager.data.database.dao.PictureDao
-import com.openclassrooms.realestatemanager.data.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.KEY_PREF_CURRENCY
 

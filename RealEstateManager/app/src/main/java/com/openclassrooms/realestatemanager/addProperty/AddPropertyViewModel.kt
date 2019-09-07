@@ -2,18 +2,22 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.LiveData
-import com.openclassrooms.realestatemanager.data.repository.AgentRepository
-import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
-import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.data.entity.*
-import com.openclassrooms.realestatemanager.utils.extensions.*
+import com.openclassrooms.realestatemanager.data.repository.AgentRepository
+import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
+import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
-import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.BitmapDownloader
+import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.TypeAmenity
+import com.openclassrooms.realestatemanager.utils.TypeImage
+import com.openclassrooms.realestatemanager.utils.extensions.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
@@ -347,8 +351,11 @@ BitmapDownloader.Listeners{
 
         fun createObjectForDB(){
             if(pictures.isNotEmpty()){
-                pictures.forEach { it.isMainPicture = false }
-                pictures[0].isMainPicture = true
+                pictures.forEachIndexed { index, picture ->
+                    picture.orderNumber = index
+                    Log.e("index", index.toString())
+                    picture.property = propertyId
+                }
             }
             amenities.forEach {
                 amenitiesForDB.add(Amenity(null, propertyId!!, it))
@@ -453,7 +460,9 @@ BitmapDownloader.Listeners{
                 ))
             } else {
                 Lce.Content(AddPropertyResult.FetchedPropertyResult(
-                        property!!.property, property!!.amenities.map { it.type }, property!!.pictures, agent, property!!.address[0], null
+                        property!!.property, property!!.amenities.map { it.type },
+                        property!!.pictures.sortedBy { it.orderNumber }, agent,
+                        property!!.address[0], null
                 ))
             }
             resultToViewState(result)

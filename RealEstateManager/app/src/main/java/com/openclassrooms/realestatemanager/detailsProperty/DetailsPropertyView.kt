@@ -20,6 +20,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.data.entity.Address
+import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
@@ -28,6 +29,8 @@ import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_PROPERTY
 import com.openclassrooms.realestatemanager.utils.extensions.toSqFt
 import com.openclassrooms.realestatemanager.utils.showSnackBar
+import com.smarteist.autoimageslider.IndicatorAnimations
+import com.smarteist.autoimageslider.SliderView
 
 /**
  * A simple [Fragment] subclass.
@@ -46,6 +49,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     @BindView(R.id.details_view_location_zip) lateinit var zipCode: TextView
     @BindView(R.id.details_view_location_country) lateinit var country: TextView
     @BindView(R.id.details_view_map) lateinit var map: ImageView
+    @BindView(R.id.details_view_slider_pictures) lateinit var sliderPictures: SliderView
 
     private lateinit var viewModel: DetailsPropertyViewModel
 
@@ -116,7 +120,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         if (state == null) return
 
         if(state.property != null && currentCurrency != null){
-            renderFetchedProperty(state.property, state.address!!)
+            renderFetchedProperty(state.property, state.address!!, state.pictures!!)
         }
 
         if(state.modifyProperty) renderModifyProperty()
@@ -134,7 +138,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 
-    private fun renderFetchedProperty(property: Property, address: Address){
+    private fun renderFetchedProperty(property: Property, address: Address, pictures: List<Picture>){
         surfaceProperty = property.surface
         surfaceProperty?.let{
             when(currentCurrency){
@@ -155,10 +159,19 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         zipCode.text = String.format("%s %s", address.state, address.postalCode)
         country.text = address.country
         Glide.with(this).load(address.mapIconUrl).into(map)
+        configureSliderPicture(pictures.sortedBy { it.orderNumber })
     }
 
     private fun renderChangeCurrency(){
         viewModel.actionFromIntent(DetailsPropertyIntent.DisplayDetailsIntent)
+    }
+
+    private fun configureSliderPicture(pictures: List<Picture>){
+        val adapter = SliderPhotoAdapter(activity!!.applicationContext, pictures, Glide.with(this))
+        sliderPictures.apply{
+            sliderAdapter = adapter
+            setIndicatorAnimation(IndicatorAnimations.SCALE)
+        }
     }
 
     private fun showSnackBarMessage(message: String){

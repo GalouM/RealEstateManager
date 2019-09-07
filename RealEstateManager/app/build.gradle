@@ -110,6 +110,9 @@ dependencies {
     implementation "com.mapbox.mapboxsdk:mapbox-android-sdk:$rootProject.mapBoxVersion"
     implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$rootProject.mapBoxPluginVersion"
 
+    //IMAGE SLIDER
+    implementation "com.github.smarteist:autoimageslider:$rootProject.imageSliderVersion"
+
 
 }
 

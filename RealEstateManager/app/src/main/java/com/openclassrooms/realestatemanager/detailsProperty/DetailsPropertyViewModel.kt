@@ -83,7 +83,6 @@ class DetailsPropertyViewModel(
 
     private fun displayPropertyDetails(){
         propertyRepository.propertyPicked?.let {
-            Log.e("from rep", it.pictures.toString())
             emitResultDisplayProperty(it)
         }
     }
@@ -104,7 +103,6 @@ class DetailsPropertyViewModel(
         fun fetchProperty(){
             searchPropertyJob = launch {
                 val property = propertyRepository.getProperty(propertyId!!)[0]
-                Log.e("from db", property.pictures.toString())
                 propertyRepository.propertyPicked = property
                 emitResult(property)
             }

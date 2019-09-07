@@ -22,7 +22,7 @@ import java.util.*
 
 fun intentSeveralPicture(): Intent {
     return Intent().apply {
-        action = Intent.ACTION_PICK
+        action = Intent.ACTION_OPEN_DOCUMENT
         type = IMAGE_ONLY_TYPE
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)

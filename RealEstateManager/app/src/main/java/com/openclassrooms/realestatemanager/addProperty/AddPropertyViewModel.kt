@@ -227,7 +227,7 @@ BitmapDownloader.Listeners{
         }
 
         listErrorInputs.clear()
-        resultToViewState(Lce.Loading())
+        //resultToViewState(Lce.Loading())
         setGlobalProperties()
         checkErrorsFromUserInput().forEach { listErrorInputs.add(it) }
         fetchAddressLocation(address)
@@ -353,10 +353,11 @@ BitmapDownloader.Listeners{
             if(pictures.isNotEmpty()){
                 pictures.forEachIndexed { index, picture ->
                     picture.orderNumber = index
-                    Log.e("index", index.toString())
                     picture.property = propertyId
+
                 }
             }
+
             amenities.forEach {
                 amenitiesForDB.add(Amenity(null, propertyId!!, it))
             }

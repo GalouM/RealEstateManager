@@ -13,6 +13,7 @@ import butterknife.ButterKnife
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
@@ -38,10 +39,9 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun updateWithProperty(property: PropertyWithAllData, glide: RequestManager, currency: Currency, context: Context){
 
         if(property.pictures.isNotEmpty()){
-            val firstPicture = property.pictures[0]
-            val pictureUrl = firstPicture.thumbnailUrl ?: firstPicture.url
+            val firstPicture = property.pictures.minBy{it.orderNumber!!}
+            val pictureUrl = firstPicture!!.thumbnailUrl ?: firstPicture.url
             glide.load(pictureUrl).apply(RequestOptions.centerCropTransform()).into(pictureView)
-            Log.e("picture display", firstPicture.toString())
         }
 
         type.text = property.property.type.typeName

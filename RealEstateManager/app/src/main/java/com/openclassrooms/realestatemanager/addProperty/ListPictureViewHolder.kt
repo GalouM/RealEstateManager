@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.addProperty
 import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText

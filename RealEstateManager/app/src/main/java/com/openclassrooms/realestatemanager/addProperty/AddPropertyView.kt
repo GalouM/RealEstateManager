@@ -301,6 +301,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
             return
         }
 
+        if(state.isLoading) return
+
         if(state.errors != null){
             renderErrors(state.errors)
             return
@@ -543,11 +545,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     private fun moveItem(from: Int, to: Int){
         val fromPhoto = picturesPicked[from]
         picturesPicked.removeAt(from)
-        if(to < from){
-            picturesPicked.add(to, fromPhoto)
-        } else {
-            picturesPicked.add(to -1, fromPhoto)
-        }
+        picturesPicked.add(to, fromPhoto)
+
     }
 
     override fun onPictureDescriptionEntered(position: Int, description: String) {

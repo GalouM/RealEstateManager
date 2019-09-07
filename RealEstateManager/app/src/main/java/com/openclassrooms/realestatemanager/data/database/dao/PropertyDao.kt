@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.data.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.openclassrooms.realestatemanager.data.PropertyForDisplay
 import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import com.openclassrooms.realestatemanager.utils.TypeProperty
@@ -18,6 +19,9 @@ interface PropertyDao {
 
     @Query("SELECT * FROM properties WHERE property_id = :propertyId")
     suspend fun getProperty(propertyId: Int): List<Property>
+
+    @Query("SELECT * FROM properties ORDER BY on_market_since")
+    suspend fun getAllPropertiesForDisplay(): List<PropertyForDisplay>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createProperty(agent: Property): Long

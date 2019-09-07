@@ -125,6 +125,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val toDelete = viewHolder.adapterPosition
+                val pictureToDelete = picturesPicked[toDelete]
+                viewModel.actionFromIntent(AddPropertyIntent.DeletePictureIntent(pictureToDelete.uriPicture))
                 picturesPicked.removeAt(toDelete)
                 adapter.update(picturesPicked)
             }
@@ -152,8 +154,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         configureViewModel()
         currencyObserver()
         configureTypeDropdownOptions()
-        configureActionType()
         configureRecyclerViewPictures()
+        configureActionType()
 
         return view
 
@@ -247,11 +249,12 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     }
 
     override fun onClickDeleteButton(photo: PhotoForDisplay) {
+        viewModel.actionFromIntent(AddPropertyIntent.DeletePictureIntent(photo.uriPicture))
         picturesPicked.remove(photo)
         adapter.update(picturesPicked)
     }
 
-    override fun onDrag(viewHolder: ListPictureViewHolder) {
+    override fun onDragItemRV(viewHolder: ListPictureViewHolder) {
         itemTouchHelper.startDrag(viewHolder)
     }
 
@@ -322,7 +325,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                     state.type, state.price!!, state.surface!!, state.rooms!!,
                     state.bedrooms, state.bathrooms, state.description, state.address,
                     state.neighborhood, state.onMarketSince, state.isSold, state.sellDate,
-                    state.agentId!!, state.amenities!!, state.pictures, state.agentFirstName,
+                    state.agentId!!, state.amenities!!, state.pictures!!, state.agentFirstName,
                     state.agentLastName
             )
         }
@@ -389,7 +392,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                                           neighborhood: String?, onMarketSince: String,
                                           isSold: Boolean, sellOn: String?,
                                           agentId: Int, amenities: List<TypeAmenity>,
-                                          pictures: List<Picture>?, agentFirstName: String,
+                                          pictures: List<PhotoForDisplay>, agentFirstName: String,
                                           agentLastName: String){
         val priceToDisplay = when(currentCurrency!!){
             Currency.EURO -> price.toString()
@@ -425,6 +428,11 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
             }
         }
 
+        if(pictures.isNotEmpty()) {
+            picturesPicked.addAll(pictures)
+            adapter.update(picturesPicked)
+        }
+
     }
 
     private fun disableAllErrors(){
@@ -441,7 +449,6 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         disableAllErrors()
 
         val typeProperty = dropdowPropertyType.text.toString()
-        val pictures = listOf<String>()
 
         viewModel.actionFromIntent(AddPropertyIntent.AddPropertyToDBIntent(
                 typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
@@ -548,7 +555,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         }
     }
 
-    private fun fetchPhotoWithDescription(){
-
+    override fun onPictureDescriptionEntered(position: Int, description: String) {
+        picturesPicked[position].description = description
     }
 }

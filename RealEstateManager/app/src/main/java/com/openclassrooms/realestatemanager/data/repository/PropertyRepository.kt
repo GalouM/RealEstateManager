@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.data.repository
 
 import android.util.Log
 import com.openclassrooms.realestatemanager.BuildConfig
+import com.openclassrooms.realestatemanager.data.PropertyForDisplay
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.dao.AddressDao
@@ -33,6 +34,10 @@ class PropertyRepository(
 
     var propertyFromSearch: List<Property>? = null
 
+    suspend fun getPropertiesForDisplay(): List<PropertyForDisplay>{
+        return propertyDao.getAllPropertiesForDisplay()
+    }
+
     suspend fun createProperty(property: Property): Long{
         return propertyDao.createProperty(property)
     }
@@ -45,16 +50,16 @@ class PropertyRepository(
         amenityDao.insertAmenity(amenity)
     }
 
-    suspend fun deleteAmenity(id: Int){
-        amenityDao.deleteAmenity(id)
+    suspend fun deleteAmenities(id: List<Int>){
+        amenityDao.deleteAmenities(id)
     }
 
     suspend fun insertPicture(picture: Picture){
         pictureDao.insertPicture(picture)
     }
 
-    suspend fun deletePicture(url: String){
-        pictureDao.deletePicture(url)
+    suspend fun deletePictures(id: List<Int>){
+        pictureDao.deletePictures(id)
     }
 
     suspend fun createAddress(address: Address): Long{
@@ -124,11 +129,9 @@ class PropertyRepository(
 
     fun setIdPropertyPicked(id: Int){
         idPropertyPicked = id
-        Log.e("set from repo", id.toString())
     }
 
     fun getPropertyPickedId(): Int?{
-        Log.e("get from repo", idPropertyPicked.toString())
         return idPropertyPicked
     }
 

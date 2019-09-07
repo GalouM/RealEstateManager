@@ -1,8 +1,8 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
@@ -48,6 +48,16 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
         }
         updateForeground()
         setDragButtonListener()
+
+        description.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+                fetchDescription()
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        })
     }
 
     fun updateForeground(){
@@ -63,7 +73,7 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
         dragButton.setOnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                 val callback = callbackWeakRef.get()
-                callback?.let { callback.onDrag(this) }
+                callback?.let { callback.onDragItemRV(this) }
             }
             return@setOnTouchListener true
         }
@@ -75,16 +85,17 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
         callback?.let{ callback.onClickDeleteButton(photo)}
     }
     
-    fun createPhotoWithDescription(){
-        photo.description = description.text.toString()
-    }
-    
     fun showError(message: String){
         if(description.text.isNullOrBlank()){
             inputLayout.error = message
         } else{
             inputLayout.isErrorEnabled = false
         }
+    }
+
+    private fun fetchDescription(){
+        val callback = callbackWeakRef.get()
+        callback?.let{ callback.onPictureDescriptionEntered(this.adapterPosition, description.text.toString())}
     }
 
 

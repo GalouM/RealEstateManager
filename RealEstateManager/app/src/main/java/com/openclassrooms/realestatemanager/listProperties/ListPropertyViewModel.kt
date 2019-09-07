@@ -121,8 +121,9 @@ class ListPropertyViewModel(
         fun configurePropertyForDisplay(property: Property){
             val propertyToDisplay = PropertyForListDisplay(
                     property.id!!, property.type.typeName, neighborhood,
-                    latitude, longitude, property.price, pictureUrl, property.sold)
+                    latitude, longitude, property.price, property.mainPicture, property.sold)
             propertiesForDisplay.add(propertyToDisplay)
+            Log.e("display", property.mainPicture)
 
             emitResult()
         }
@@ -137,23 +138,12 @@ class ListPropertyViewModel(
             }
         }
 
-        fun fetchPicture(idProperty: Int, property: Property){
-            launch {
-                val pictures = propertyRepository.getPropertyPicture(idProperty)
-                if(pictures.isNotEmpty()) {
-                    pictureUrl = pictures[0].url
-                }
-
-                fetchAddress(idProperty, property)
-            }
-        }
-
         when(actionType){
             ActionTypeList.ALL_PROPERTIES -> {
                 searchPropertiesJob = launch {
                     val properties: List<Property>? = propertyRepository.getAllProperties()
                     properties?.forEach {
-                        fetchPicture(it.id!!, it)
+                        fetchAddress(it.id!!, it)
                     }
                 }
 
@@ -161,7 +151,7 @@ class ListPropertyViewModel(
             ActionTypeList.SEARCH_RESULT -> {
                 val properties: List<Property>? = propertyRepository.propertyFromSearch
                 properties?.forEach {
-                    fetchPicture(it.id!!, it)
+                    fetchAddress(it.id!!, it)
                 }
             }
         }

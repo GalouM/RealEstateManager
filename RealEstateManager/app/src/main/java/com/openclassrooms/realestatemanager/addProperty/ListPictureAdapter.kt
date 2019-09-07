@@ -20,7 +20,8 @@ class ListPictureAdapter(
 
     interface Listener{
         fun onClickDeleteButton(photo: PhotoForDisplay)
-        fun onDrag(viewHolder: ListPictureViewHolder)
+        fun onDragItemRV(viewHolder: ListPictureViewHolder)
+        fun onPictureDescriptionEntered(position: Int, description: String)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListPictureViewHolder {
@@ -48,10 +49,6 @@ class ListPictureAdapter(
 
     fun updateForegroundViewHolder(){
         listViewHolder.forEach { it.updateForeground() }
-    }
-
-    fun fetchPhotoWithDescription(){
-
     }
 
     fun showErrorViewHolder(message: String){

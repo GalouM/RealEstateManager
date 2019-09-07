@@ -7,6 +7,8 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.data.PhotoForDisplay
+import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.utils.extensions.saveToInternalStorage
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -92,4 +94,18 @@ fun getPicturesPathFromData(data: Intent): List<String>{
 
 fun generateName(): String{
     return SimpleDateFormat(DATE_FORMAT_FOR_NAME).format(Date())
+}
+
+fun getMainPictureUrl(pictures: List<PhotoForDisplay>): String{
+    val firstPicture = pictures[0]
+    return firstPicture.uriThumbnail ?: pictures[0].uriPicture
+}
+
+fun createPictureForDisplay(pictures: List<Picture>): List<PhotoForDisplay>{
+    val pictureForDisplay = mutableListOf<PhotoForDisplay>()
+    pictures.forEach {
+        val photo = PhotoForDisplay(it.url, it.description, it.thumbnailUrl)
+        pictureForDisplay.add(photo)
+    }
+    return pictureForDisplay
 }

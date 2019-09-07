@@ -2,9 +2,7 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
-import com.openclassrooms.realestatemanager.data.PhotoForDisplay
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
@@ -47,8 +45,6 @@ BitmapDownloader.Listeners{
     private lateinit var context: Context
     private var propertyId: Int? = null
     private lateinit var idFromApi: String
-    private lateinit var amenitiesFetched: List<Amenity>
-    private lateinit var picturesToDisplay: List<PhotoForDisplay>
 
     // data
     private val listErrorInputs = mutableListOf<ErrorSourceAddProperty>()
@@ -71,7 +67,7 @@ BitmapDownloader.Listeners{
     private var sellOn: String? = null
     private var agent: Int? = null
     private lateinit var amenities: List<TypeAmenity>
-    private var pictures: List<PhotoForDisplay>? = null
+    private lateinit var pictures: List<Picture>
     private var map = ""
     private var latitude: Double? = null
     private var longitude: Double? = null
@@ -80,16 +76,9 @@ BitmapDownloader.Listeners{
 
     //Coroutine job
     private var addPropertyJob: Job? = null
-    private var addAddressJob: Job? = null
-    private var addAmenitiesJob: Job? = null
-    private var addPicturesJob: Job? = null
+    private var addPropertyDataJob: Job? = null
     private var searchAgentsJob: Job? = null
-    private var searchPropertyJob: Job? = null
-    private var searchAddressJob: Job? = null
-    private var searchAmenitiesJob: Job? = null
-    private var searchPicturesJob: Job? = null
-    private var deletePicturesJob: Job? = null
-    private var deleteAmenitiesJob: Job? = null
+    private var deletePreviousDataJob: Job? = null
 
 
     override fun actionFromIntent(intent: AddPropertyIntent) {
@@ -110,7 +99,6 @@ BitmapDownloader.Listeners{
             is AddPropertyIntent.OpenListAgentsIntent -> fetchAgentsFromDB()
 
             is AddPropertyIntent.SetActionTypeIntent -> setActionType(intent.actionType)
-            is AddPropertyIntent.DeletePictureIntent -> deletePictureFromDB(intent.urlPicture)
         }
     }
 
@@ -126,10 +114,10 @@ BitmapDownloader.Listeners{
 
                     is AddPropertyResult.AddPropertyToDBResult -> {
                         currentViewState.copy(
+                                isSaved = true,
                                 listAgents = null,
                                 errors = null,
-                                isLoading = false,
-                                isSaved = true
+                                isLoading = false
                         )
                     }
                     is AddPropertyResult.FetchedPropertyResult -> {
@@ -153,7 +141,7 @@ BitmapDownloader.Listeners{
                                 agentId = result.packet.agent!!.id,
                                 agentFirstName = result.packet.agent.firstName,
                                 agentLastName = result.packet.agent.lastName,
-                                pictures = picturesToDisplay
+                                pictures = result.packet.pictures
                         )
                     }
                 }
@@ -213,7 +201,7 @@ BitmapDownloader.Listeners{
                                     neighborhood: String, onMarketSince: String,
                                     isSold: Boolean, sellOn: String?,
                                     agent: Int?, amenities: List<TypeAmenity>,
-                                    pictures: List<PhotoForDisplay>?,
+                                    pictures: List<Picture>,
                                     contextApp: Context){
         fun setGlobalProperties() {
             context = contextApp
@@ -346,45 +334,37 @@ BitmapDownloader.Listeners{
 
     private fun emitResultAddPropertyToView(){
         if(addPropertyJob?.isActive == true) addPropertyJob?.cancel()
-        if(addAddressJob?.isActive == true) addAddressJob?.cancel()
-        if(addAmenitiesJob?.isActive == true) addAmenitiesJob?.cancel()
-        if(addPicturesJob?.isActive == true) addPicturesJob?.cancel()
+        if(addPropertyDataJob?.isActive == true) addPropertyDataJob?.cancel()
 
-        fun createAmenitiesInDB(){
-            addAmenitiesJob = launch {
-                for(amenity in amenities){
-                    val amenityForDB = Amenity(null, propertyId!!, amenity)
-                    propertyRepository.insertAmenity(amenityForDB)
-                }
-            }
+        val amenitiesForDB = mutableListOf<Amenity>()
+
+        var address: Address? = null
+
+        fun emitResult(){
+            val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.AddPropertyToDBResult(null))
+            resultToViewState(result)
         }
 
-        fun createPicturesInDB(){
-            addPicturesJob = launch {
-                for(picture in pictures!!){
-                    val pictureForDB = Picture(
-                            picture.uriPicture, picture.uriThumbnail,
-                            null, propertyId!!, picture.description
-                    )
-                    Log.e("picture", picture.toString())
-                    propertyRepository.insertPicture(pictureForDB)
-                }
+        fun createObjectForDB(){
+            if(pictures.isNotEmpty()){
+                pictures.forEach { it.isMainPicture = false }
+                pictures[0].isMainPicture = true
+            }
+            amenities.forEach {
+                amenitiesForDB.add(Amenity(null, propertyId!!, it))
             }
 
+            address = Address(
+                    propertyId!!, street, city, postalCode, country, state,
+                    longitude!!, latitude!!, neighborhood, map, addressForDisplay
+            )
+
+            emitResult()
         }
 
-        fun createAddressInDB(){
-            addAddressJob = launch {
-                val addressForDB = Address(
-                        propertyId!!, street, city, postalCode, country, state,
-                        longitude!!, latitude!!, neighborhood, map, addressForDisplay
-                )
-
-                when(actionType){
-                    ActionType.NEW_PROPERTY -> propertyRepository.createAddress(addressForDB)
-                    ActionType.MODIFY_PROPERTY -> propertyRepository.updateAddress(addressForDB)
-                }
-
+        fun createDataPropertyInDB(){
+            addPropertyDataJob = launch {
+                propertyRepository.createDataProperty(amenitiesForDB, pictures, address!!, actionType)
             }
 
         }
@@ -392,61 +372,36 @@ BitmapDownloader.Listeners{
         fun createNewPropertyInDB(){
             addPropertyJob = launch {
                 val currency = currencyRepository.currency.value!!
-                val hasPicture = pictures!!.isNotEmpty()
-                val mainPicture = if(hasPicture){
-                    getMainPictureUrl(pictures!!)
-                } else{
-                    null
-                }
+                val hasPicture = pictures.isNotEmpty()
                 val propertyForDB = Property(
                         propertyId, Converters.toTypeProperty(type), price!!.toEuro(currency),
                         surface!!.toSqMeter(currency), rooms!!,
                         bedrooms, bathrooms,
                         description, onMarketSince.toDate()!!,
-                        isSold, sellOn?.toDate(), agent!!, hasPicture, mainPicture)
+                        isSold, sellOn?.toDate(), agent!!, hasPicture)
                 when(actionType){
                     ActionType.NEW_PROPERTY -> propertyId = propertyRepository.createProperty(propertyForDB).toInt()
                     ActionType.MODIFY_PROPERTY -> propertyRepository.updateProperty(propertyForDB)
                 }
 
-                if(pictures != null && pictures!!.isNotEmpty()){
-                    createPicturesInDB()
-                }
-                if(amenities.isNotEmpty()){
-                    createAmenitiesInDB()
-                }
-
-                createAddressInDB()
-
-                val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.AddPropertyToDBResult(null))
-                resultToViewState(result)
+                createObjectForDB()
+                createDataPropertyInDB()
             }
 
         }
 
         fun deletePreviousAmenities(){
-            Log.e("done with pics", "here")
-            if(deleteAmenitiesJob?.isActive == true) deleteAmenitiesJob?.cancel()
-            deleteAmenitiesJob = launch {
-                propertyRepository.deleteAmenities(amenitiesFetched.map { it.id!! })
+            if(deletePreviousDataJob?.isActive == true) deletePreviousDataJob?.cancel()
+            deletePreviousDataJob = launch {
+                propertyRepository.deletePreviousData(propertyId!!)
                 createNewPropertyInDB()
-            }
-
-        }
-
-        fun deletePreviousPictures(){
-            if(deletePicturesJob?.isActive == true) deletePicturesJob?.cancel()
-            deletePicturesJob = launch {
-                propertyRepository.deletePictures(picturesToDisplay.map{it.uriPicture})
-                deletePreviousAmenities()
             }
 
         }
 
         if(listErrorInputs.isEmpty()){
             if(actionType == ActionType.MODIFY_PROPERTY){
-                Log.e("start delete", "here")
-                deletePreviousPictures()
+                deletePreviousAmenities()
             } else{
                 createNewPropertyInDB()
             }
@@ -484,82 +439,42 @@ BitmapDownloader.Listeners{
     //--------------------
 
     private fun fetchExistingPropertyFromDB(){
-        propertyId = propertyRepository.getPropertyPickedId()
-        if(searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
-        if(searchAddressJob?.isActive == true) searchAddressJob?.cancel()
-        if(searchAmenitiesJob?.isActive == true) searchAmenitiesJob?.cancel()
-        if(searchPicturesJob?.isActive == true) searchPicturesJob?.cancel()
         if(searchAgentsJob?.isActive == true) searchAgentsJob?.cancel()
 
-        var property: Property? = null
-        var address: Address? = null
+        var property: PropertyWithAllData? = null
         var agent: Agent? = null
 
         fun emitResult(){
             val result: Lce<AddPropertyResult>
-            result = if(property == null || agent == null || address == null){
+            result = if(property == null){
                 val errors = listOf(ErrorSourceAddProperty.ERROR_FETCHING_PROPERTY)
                 Lce.Error(AddPropertyResult.FetchedPropertyResult(
                         null, null, null, null, null, errors
                 ))
             } else {
                 Lce.Content(AddPropertyResult.FetchedPropertyResult(
-                        property, amenitiesFetched.map { it.type }, picturesToDisplay, agent, address, null
+                        property!!.property, property!!.amenities.map { it.type }, property!!.pictures, agent, property!!.address[0], null
                 ))
             }
             resultToViewState(result)
         }
 
-        fun fetchAddress(){
-            searchAddressJob = launch {
-                address = propertyRepository.getPropertyAddress(propertyId!!)[0]
+        fun fetchAgent(){
+            searchAgentsJob = launch {
+                agent = agentRepository.getAgent(property!!.property.agent)[0]
                 emitResult()
             }
         }
 
-        fun fetchAmenities(){
-            searchAmenitiesJob = launch {
-                amenitiesFetched = propertyRepository.getPropertyAmenities(propertyId!!)
-                fetchAddress()
-            }
-        }
-
-        fun fetchPicture(){
-            searchPicturesJob = launch {
-                val pictureFetched = propertyRepository.getPropertyPicture(propertyId!!)
-                picturesToDisplay = createPictureForDisplay(pictureFetched)
-                fetchAmenities()
-            }
-        }
-
-        fun fetchAgent(){
-            searchAgentsJob = launch {
-                agent = agentRepository.getAgent(property!!.agent)[0]
-                fetchPicture()
-            }
-        }
-
         fun fetchProperty(){
-            searchPropertyJob = launch {
-                property = propertyRepository.getProperty(propertyId!!)[0]
-                fetchAgent()
-            }
+            property = propertyRepository.propertyPicked!!
+            propertyId = property!!.property.id
         }
 
         fetchProperty()
-
+        fetchAgent()
 
     }
 
-    //--------------------
-    // DELETE PICTURE
-    //--------------------
-    private fun deletePictureFromDB(url: String){
-        if(deletePicturesJob?.isActive == true) deletePicturesJob?.cancel()
-
-        deletePicturesJob = launch {
-            propertyRepository.deletePictures(listOf(url))
-        }
-    }
 
 }

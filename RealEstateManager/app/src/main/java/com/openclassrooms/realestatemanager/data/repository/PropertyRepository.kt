@@ -1,22 +1,20 @@
 package com.openclassrooms.realestatemanager.data.repository
 
-import android.util.Log
 import com.openclassrooms.realestatemanager.BuildConfig
-import com.openclassrooms.realestatemanager.data.PropertyForDisplay
+import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.dao.AddressDao
 import com.openclassrooms.realestatemanager.data.database.dao.AmenityDao
 import com.openclassrooms.realestatemanager.data.database.dao.PictureDao
 import com.openclassrooms.realestatemanager.data.database.dao.PropertyDao
-import com.openclassrooms.realestatemanager.data.entity.Address
-import com.openclassrooms.realestatemanager.data.entity.Amenity
-import com.openclassrooms.realestatemanager.data.entity.Picture
-import com.openclassrooms.realestatemanager.data.entity.Property
+import com.openclassrooms.realestatemanager.data.entity.*
 import com.openclassrooms.realestatemanager.utils.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -28,47 +26,16 @@ class PropertyRepository(
         private val amenityDao: AmenityDao,
         private val pictureDao: PictureDao,
         private val addressDao: AddressDao,
-        private val geocodingApiService: GeocodingApiService){
+        private val geocodingApiService: GeocodingApiService
+){
 
-    private var idPropertyPicked: Int? = null
+    var propertyPicked: PropertyWithAllData? = null
 
-    var propertyFromSearch: List<Property>? = null
+    var propertyFromSearch: List<PropertyWithAllData>? = null
 
-    suspend fun getPropertiesForDisplay(): List<PropertyForDisplay>{
-        return propertyDao.getAllPropertiesForDisplay()
-    }
-
-    suspend fun createProperty(property: Property): Long{
-        return propertyDao.createProperty(property)
-    }
-
-    suspend fun updateProperty(property: Property){
-        propertyDao.updateProperty(property)
-    }
-
-    suspend fun insertAmenity(amenity: Amenity){
-        amenityDao.insertAmenity(amenity)
-    }
-
-    suspend fun deleteAmenities(id: List<Int>){
-        amenityDao.deleteAmenities(id)
-    }
-
-    suspend fun insertPicture(picture: Picture){
-        pictureDao.insertPicture(picture)
-    }
-
-    suspend fun deletePictures(id: List<Int>){
-        pictureDao.deletePictures(id)
-    }
-
-    suspend fun createAddress(address: Address): Long{
-        return addressDao.createAddress(address)
-    }
-
-    suspend fun updateAddress(address: Address){
-        addressDao.updateAddress(address)
-    }
+    //-----------------
+    // API ADDRESS REQUEST
+    //-----------------
 
     fun getLocationFromAddress(address: String): Observable<GeocodingApiResponse>{
         return geocodingApiService.getLocationFromAddress(address, BuildConfig.GoogleMapApiKey)
@@ -81,24 +48,16 @@ class PropertyRepository(
         return "${BASE_URL_MAP_API}staticmap?zoom=${MAP_ICON_ZOOM}&size=${MAP_ICON_SIZE}x${MAP_ICON_SIZE}&maptype=roadmap&markers=color:${MAP_ICON_MARKER_COLOR}%7C${lat},${lng}&key=${BuildConfig.GoogleMapApiKey}"
     }
 
-    suspend fun getAllProperties(): List<Property>{
+    //-----------------
+    // DB REQUEST
+    //-----------------
+    //------get--------
+    suspend fun getAllProperties(): List<PropertyWithAllData>{
         return propertyDao.getAllProperties()
     }
 
-    suspend fun getProperty(idProperty: Int): List<Property>{
+    suspend fun getProperty(idProperty: Int): List<PropertyWithAllData>{
         return propertyDao.getProperty(idProperty)
-    }
-
-    suspend fun getPropertyAddress(idProperty: Int): List<Address>{
-        return addressDao.getAddress(idProperty)
-    }
-
-    suspend fun getPropertyPicture(idProperty: Int): List<Picture>{
-        return pictureDao.getPictures(idProperty)
-    }
-
-    suspend fun getPropertyAmenities(idProperty: Int): List<Amenity>{
-        return amenityDao.getAmenities(idProperty)
     }
 
     suspend fun getPropertiesQuery(
@@ -106,7 +65,7 @@ class PropertyRepository(
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPictures: List<Int>, afterDate: Date
-    ): List<Property>{
+    ): List<PropertyWithAllData>{
         return propertyDao.getPropertiesQuery(
                 minPrice, maxPrice, minSurface, maxSurface,
                 minNbRoom, minNbBedrooms, minNbBathrooms,
@@ -119,7 +78,7 @@ class PropertyRepository(
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPictures: List<Int>, afterDate: Date, listAmenities: List<TypeAmenity>
-    ): List<Property>{
+    ): List<PropertyWithAllData>{
         return propertyDao.getPropertiesQuery(
                 minPrice, maxPrice, minSurface, maxSurface,
                 minNbRoom, minNbBedrooms, minNbBathrooms,
@@ -127,13 +86,42 @@ class PropertyRepository(
         )
     }
 
-    fun setIdPropertyPicked(id: Int){
-        idPropertyPicked = id
+    //------create--------
+    suspend fun createProperty(property: Property): Long{
+        return propertyDao.createProperty(property)
     }
 
-    fun getPropertyPickedId(): Int?{
-        return idPropertyPicked
+    suspend fun createDataProperty(
+            amenities: List<Amenity>, pictures: List<Picture>, address: Address, actionType: ActionType
+    ){
+        coroutineScope {
+            launch {
+                amenityDao.insertAmenity(amenities)
+            }
+            launch {
+                pictureDao.insertPicture(pictures)
+            }
+            launch {
+                when(actionType){
+                    ActionType.NEW_PROPERTY -> addressDao.createAddress(address)
+                    ActionType.MODIFY_PROPERTY -> addressDao.updateAddress(address)
+                }
+
+            }
+        }
     }
+
+    suspend fun updateProperty(property: Property){
+        propertyDao.updateProperty(property)
+    }
+
+    //------delete--------
+    suspend fun deletePreviousData(idProperty: Int){
+        amenityDao.deleteAmenities(idProperty)
+        pictureDao.deletePictures(idProperty)
+    }
+
+
 
     companion object{
         @Volatile

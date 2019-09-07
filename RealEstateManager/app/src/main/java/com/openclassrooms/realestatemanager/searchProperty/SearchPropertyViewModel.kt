@@ -1,9 +1,8 @@
 package com.openclassrooms.realestatemanager.searchProperty
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.entity.Agent
-import com.openclassrooms.realestatemanager.data.entity.Property
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
@@ -15,7 +14,6 @@ import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.extensions.toDate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.time.Year
 import java.util.*
 
 /**
@@ -161,7 +159,6 @@ class SearchPropertyViewModel(
 
         checkErrorsInputUser()
 
-
         if(listErrors.isNotEmpty()){
             result = Lce.Error(SearchPropertyResult.SearchResult(listErrors))
             resultToViewState(result)
@@ -176,7 +173,7 @@ class SearchPropertyViewModel(
 
     private fun fetchQueryPropertiesFromDB(){
         if (amenitiesQuery.isEmpty()) {
-            searchAgentsJob = launch {
+            searchPropertyJob = launch {
                 val propertiesQuery = propertyRepository.getPropertiesQuery(
                         minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery,
@@ -185,14 +182,14 @@ class SearchPropertyViewModel(
                 emitResultPropertyFetched(propertiesQuery)
             }
         } else {
-            searchAgentsJob = launch {
+            searchPropertyJob = launch {
                 val propertyFromDB = propertyRepository.getPropertiesQuery(
                         minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery, neighborhoodQuery,
                         isSoldQuery, hasPictureQuery, dateQuery, amenitiesQuery
                 )
                 if(propertyFromDB.isNotEmpty()) {
-                    val propertiesQuery = getOnlyPropertiesWithAllAmenities(amenitiesQuery.size, propertyFromDB)
+                    val propertiesQuery = propertyFromDB.filter { it.amenities.size == amenitiesQuery.size }
                     emitResultPropertyFetched(propertiesQuery)
                 }
             }
@@ -200,7 +197,7 @@ class SearchPropertyViewModel(
 
     }
 
-    private fun emitResultPropertyFetched(properties: List<Property>){
+    private fun emitResultPropertyFetched(properties: List<PropertyWithAllData>){
         val result: Lce<SearchPropertyResult> = if (properties.isEmpty()) {
             val listErrors = listOf(ErrorSourceSearch.NO_PROPERTY_FOUND)
             Lce.Error(SearchPropertyResult.SearchResult(listErrors))
@@ -210,23 +207,6 @@ class SearchPropertyViewModel(
 
         }
         resultToViewState(result)
-    }
-
-    private fun getOnlyPropertiesWithAllAmenities(nbAmenities: Int, properties: List<Property>): List<Property>{
-        if(nbAmenities == 1) return  properties
-        val idPropertyToKeep = properties
-                .groupingBy { it.id }
-                .eachCount()
-                .filterValues { it == nbAmenities }.keys
-
-        val propertyToDisplay = mutableListOf<Property>()
-        idPropertyToKeep.forEach { id ->
-            properties.find { it.id == id }?.let{
-                propertyToDisplay.add(it)
-            }
-        }
-
-        return propertyToDisplay
     }
 
     //--------------------

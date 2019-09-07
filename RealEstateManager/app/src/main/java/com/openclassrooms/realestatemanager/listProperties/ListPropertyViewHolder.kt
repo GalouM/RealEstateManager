@@ -12,7 +12,7 @@ import butterknife.ButterKnife
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.utils.extensions.toEuroDisplay
@@ -34,21 +34,22 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         ButterKnife.bind(this, view)
     }
 
-    fun updateWithProperty(property: PropertyForListDisplay, glide: RequestManager, currency: Currency, context: Context){
+    fun updateWithProperty(property: PropertyWithAllData, glide: RequestManager, currency: Currency, context: Context){
 
-        val pictureUrl = property.pictureUrl
-        if(pictureUrl != null && pictureUrl.isNotEmpty()){
-            glide.load(this).apply(RequestOptions.centerCropTransform()).into(pictureView)
+        val picture = property.pictures.find { it.isMainPicture }
+        picture?.let{
+            val pictureUrl = it.thumbnailUrl ?: it.url
+            glide.load(pictureUrl).apply(RequestOptions.centerCropTransform()).into(pictureView)
         }
 
-        type.text = property.type
-        neighborhood.text = property.neighborhood
+        type.text = property.property.type.typeName
+        neighborhood.text = property.address[0].neighbourhood
         price.text = when(currency){
-            Currency.EURO -> "${property.price.toEuroDisplay()}€"
-            Currency.DOLLAR -> "$${property.price.toDollar().toDollarDisplay()}"
+            Currency.EURO -> "${property.property.price.toEuroDisplay()}€"
+            Currency.DOLLAR -> "$${property.property.price.toDollar().toDollarDisplay()}"
         }
 
-        if(property.sold) {
+        if(property.property.sold) {
             layout.setBackgroundColor(getColor(context, R.color.colorPrimaryUltraLight))
             price.setTextColor(getColor(context, R.color.colorAccentLight))
             type.setTextColor(getColor(context, R.color.colorTextPrimaryAlpha))

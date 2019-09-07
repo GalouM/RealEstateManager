@@ -4,7 +4,6 @@ package com.openclassrooms.realestatemanager.listProperties
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
@@ -69,7 +68,7 @@ class ListPropertyView : BaseViewListProperties(),
     // VIEW MODEL CONNECTION
     //--------------------
 
-    override fun renderListProperties(properties: List<PropertyForListDisplay>){
+    override fun renderListProperties(properties: List<PropertyWithAllData>){
         configureRecyclerView(properties)
         configureClickRecyclerView()
     }
@@ -94,7 +93,7 @@ class ListPropertyView : BaseViewListProperties(),
     // RECYCLERVIEW
     //--------------------
 
-    private fun configureRecyclerView(properties: List<PropertyForListDisplay>){
+    private fun configureRecyclerView(properties: List<PropertyWithAllData>){
         adapter = ListPropertyAdapter(properties, currentCurrency!!, Glide.with(this))
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)

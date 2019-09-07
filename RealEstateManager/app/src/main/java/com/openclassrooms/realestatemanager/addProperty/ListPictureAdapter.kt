@@ -1,25 +1,24 @@
 package com.openclassrooms.realestatemanager.addProperty
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.PhotoForDisplay
+import com.openclassrooms.realestatemanager.data.entity.Picture
 
 /**
  * Created by galou on 2019-09-04
  */
 class ListPictureAdapter(
-        var photos: List<PhotoForDisplay>, private val glide: RequestManager, private val callback: Listener,
+        var pictures: List<Picture>, private val glide: RequestManager, private val callback: Listener,
         val fragment: AddPropertyView
 ) : RecyclerView.Adapter<ListPictureViewHolder>() {
 
     private val listViewHolder = mutableListOf<ListPictureViewHolder>()
 
     interface Listener{
-        fun onClickDeleteButton(photo: PhotoForDisplay)
+        fun onClickDeleteButton(photo: Picture)
         fun onDragItemRV(viewHolder: ListPictureViewHolder)
         fun onPictureDescriptionEntered(position: Int, description: String)
     }
@@ -35,15 +34,15 @@ class ListPictureAdapter(
     }
 
     override fun getItemCount(): Int {
-        return photos.size
+        return pictures.size
     }
 
     override fun onBindViewHolder(holder: ListPictureViewHolder, position: Int) {
-        holder.updateWithPicture(photos[position], glide, callback)
+        holder.updateWithPicture(pictures[position], glide, callback)
     }
 
-    fun update(photos: List<PhotoForDisplay>){
-        this.photos = photos.toMutableList()
+    fun update(pictures: List<Picture>){
+        this.pictures = pictures.toMutableList()
         notifyDataSetChanged()
     }
 

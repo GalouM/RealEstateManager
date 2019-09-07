@@ -1,9 +1,8 @@
 package com.openclassrooms.realestatemanager.data.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.openclassrooms.realestatemanager.data.PropertyForDisplay
 import com.openclassrooms.realestatemanager.data.entity.Property
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import java.util.*
@@ -14,14 +13,12 @@ import java.util.*
 
 @Dao
 interface PropertyDao {
-    @Query("SELECT * FROM properties ORDER BY on_market_since")
-    suspend fun getAllProperties(): List<Property>
 
     @Query("SELECT * FROM properties WHERE property_id = :propertyId")
-    suspend fun getProperty(propertyId: Int): List<Property>
+    suspend fun getProperty(propertyId: Int): List<PropertyWithAllData>
 
     @Query("SELECT * FROM properties ORDER BY on_market_since")
-    suspend fun getAllPropertiesForDisplay(): List<PropertyForDisplay>
+    suspend fun getAllProperties(): List<PropertyWithAllData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createProperty(agent: Property): Long
@@ -49,7 +46,7 @@ interface PropertyDao {
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPicture: List<Int>, afterDate: Date
-    ): List<Property>
+    ): List<PropertyWithAllData>
 
     @Query("SELECT * FROM properties " +
             "INNER JOIN amenities ON amenities.property = properties.property_id " +
@@ -73,5 +70,5 @@ interface PropertyDao {
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPicture: List<Int>, afterDate: Date, listAmenities: List<TypeAmenity>
-    ): List<Property>
+    ): List<PropertyWithAllData>
 }

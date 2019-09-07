@@ -16,7 +16,7 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.PhotoForDisplay
+import com.openclassrooms.realestatemanager.data.entity.Picture
 import java.lang.ref.WeakReference
 
 /**
@@ -32,18 +32,18 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
     @BindView(R.id.pictures_added_rv_foreground) lateinit var foreground: ImageView
 
     private lateinit var callbackWeakRef: WeakReference<ListPictureAdapter.Listener>
-    private lateinit var photo: PhotoForDisplay
+    private lateinit var picture: Picture
 
     init {
         ButterKnife.bind(this, view)
     }
 
-    fun updateWithPicture(photo: PhotoForDisplay, glide: RequestManager, callback: ListPictureAdapter.Listener){
-        this.photo = photo
+    fun updateWithPicture(picture: Picture, glide: RequestManager, callback: ListPictureAdapter.Listener){
+        this.picture = picture
         callbackWeakRef = WeakReference(callback)
-        val pictureToDisplay = photo.uriThumbnail ?: photo.uriPicture
+        val pictureToDisplay = picture.thumbnailUrl ?: picture.url
         glide.load(pictureToDisplay).apply(RequestOptions.centerCropTransform()).into(pictureImage)
-        photo.description?.let {
+        picture.description?.let {
             description.setText(it)
         }
         updateForeground()
@@ -82,7 +82,7 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
     @OnClick(R.id.pictures_added_rv_delete)
     fun onClickDeleteButton(){
         val callback = callbackWeakRef.get()
-        callback?.let{ callback.onClickDeleteButton(photo)}
+        callback?.let{ callback.onClickDeleteButton(picture)}
     }
     
     fun showError(message: String){

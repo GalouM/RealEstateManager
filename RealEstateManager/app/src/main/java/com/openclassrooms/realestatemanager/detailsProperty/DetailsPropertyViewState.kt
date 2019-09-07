@@ -24,7 +24,7 @@ data class DetailsPropertyViewState(
 
 sealed class DetailsPropertyIntent : REMIntent{
     object FetchDetailsIntent : DetailsPropertyIntent()
-
+    object DisplayDetailsIntent : DetailsPropertyIntent()
     object ModifyPropertyIntent : DetailsPropertyIntent()
 }
 

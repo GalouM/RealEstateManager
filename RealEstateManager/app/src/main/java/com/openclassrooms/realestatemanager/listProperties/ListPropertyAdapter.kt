@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
 
 /**
  * Created by galou on 2019-08-12
  */
 
-class ListPropertyAdapter(var properties: List<PropertyForListDisplay>,
+class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
                           var currency: Currency,
                           val glide: RequestManager)
     : RecyclerView.Adapter<ListPropertyViewHolder>(){
@@ -36,8 +36,8 @@ class ListPropertyAdapter(var properties: List<PropertyForListDisplay>,
         holder.updateWithProperty(properties[position], glide, currency, context)
     }
 
-    fun getProperty(position: Int): Int{
-        return properties[position].id!!
+    fun getProperty(position: Int): PropertyWithAllData{
+        return properties[position]
     }
 
     fun updateCurrency(newCurrency: Currency){

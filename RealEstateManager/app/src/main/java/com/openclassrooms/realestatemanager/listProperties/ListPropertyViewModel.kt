@@ -1,11 +1,9 @@
 package com.openclassrooms.realestatemanager.listProperties
 
-import android.util.Log
 import androidx.lifecycle.LiveData
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
-import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
-import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
@@ -38,7 +36,7 @@ class ListPropertyViewModel(
     override fun actionFromIntent(intent: PropertyListIntent){
         when(intent){
             is PropertyListIntent.DisplayPropertiesIntent -> fetchPropertiesFromDB()
-            is PropertyListIntent.OpenPropertyDetailIntent -> setPropertySelected(intent.idProperty)
+            is PropertyListIntent.OpenPropertyDetailIntent -> setPropertySelected(intent.property)
             is PropertyListIntent.SetActionTypeIntent -> setActionType(intent.actionType)
         }
 
@@ -51,12 +49,14 @@ class ListPropertyViewModel(
                     is PropertyListResult.DisplayPropertiesResult -> {
                         currentViewState.copy(
                                 openDetails = false,
+                                errorSource = null,
                                 isLoading = false,
                                 listProperties = result.packet.properties
                         )
                     }
                     is PropertyListResult.OpenPropertyDetailResult -> {
                         currentViewState.copy(
+                                errorSource = null,
                                 isLoading = false,
                                 openDetails = true
                         )
@@ -89,10 +89,9 @@ class ListPropertyViewModel(
         this.actionType = actionType
     }
 
-    private fun setPropertySelected(id: Int){
-        propertyRepository.setIdPropertyPicked(id)
-        Log.e("vm set", propertyRepository.getPropertyPickedId().toString())
-        propertyRepository.getPropertyPickedId()?.let {
+    private fun setPropertySelected(property: PropertyWithAllData){
+        propertyRepository.propertyPicked = property
+        propertyRepository.propertyPicked?.let {
             val result: Lce<PropertyListResult> = Lce.Content(PropertyListResult.OpenPropertyDetailResult)
             resultToViewState(result)
         }
@@ -103,14 +102,10 @@ class ListPropertyViewModel(
         resultToViewState(Lce.Loading())
         if(searchPropertiesJob?.isActive == true) searchPropertiesJob?.cancel()
 
-        var neighborhood = ""
-        var pictureUrl = ""
-        var latitude: Double = 0.0
-        var longitude: Double = 0.0
-        val propertiesForDisplay = mutableListOf<PropertyForListDisplay>()
+        var propertiesForDisplay: List<PropertyWithAllData>? = null
 
         fun emitResult(){
-            val result: Lce<PropertyListResult> = if(propertiesForDisplay.isEmpty()){
+            val result: Lce<PropertyListResult> = if(propertiesForDisplay!!.isEmpty()){
                 Lce.Error(PropertyListResult.DisplayPropertiesResult(null))
             } else{
                 Lce.Content(PropertyListResult.DisplayPropertiesResult(propertiesForDisplay))
@@ -118,41 +113,17 @@ class ListPropertyViewModel(
             resultToViewState(result)
         }
 
-        fun configurePropertyForDisplay(property: Property){
-            val propertyToDisplay = PropertyForListDisplay(
-                    property.id!!, property.type.typeName, neighborhood,
-                    latitude, longitude, property.price, property.mainPicture, property.sold)
-            propertiesForDisplay.add(propertyToDisplay)
-            Log.e("display", property.mainPicture)
-
-            emitResult()
-        }
-
-        fun fetchAddress(idProperty: Int, property: Property){
-            launch {
-                val propertyAddress = propertyRepository.getPropertyAddress(idProperty)[0]
-                neighborhood = propertyAddress.neighbourhood
-                longitude = propertyAddress.longitude
-                latitude = propertyAddress.latitude
-                configurePropertyForDisplay(property)
-            }
-        }
-
         when(actionType){
             ActionTypeList.ALL_PROPERTIES -> {
                 searchPropertiesJob = launch {
-                    val properties: List<Property>? = propertyRepository.getAllProperties()
-                    properties?.forEach {
-                        fetchAddress(it.id!!, it)
-                    }
+                    propertiesForDisplay = propertyRepository.getAllProperties()
+                    emitResult()
                 }
 
             }
             ActionTypeList.SEARCH_RESULT -> {
-                val properties: List<Property>? = propertyRepository.propertyFromSearch
-                properties?.forEach {
-                    fetchAddress(it.id!!, it)
-                }
+                propertiesForDisplay = propertyRepository.propertyFromSearch
+                emitResult()
             }
         }
 

@@ -14,15 +14,17 @@ import androidx.room.PrimaryKey
     ForeignKey(
             entity = Property::class,
             parentColumns = ["property_id"],
-            childColumns = ["property"],
+            childColumns = ["id_property"],
             onDelete = ForeignKey.CASCADE
     )
         ]
 )
 data class Picture(
-        @PrimaryKey val url: String,
-        @ColumnInfo(name = "thumbnail_url")val thumbnailUrl: String?,
-        @ColumnInfo(name = "server_url")val serverUrl: String?,
-        val property: Int,
-        val description: String?
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "picture_id") val id: Int?,
+        val url: String,
+        @ColumnInfo(name = "thumbnail_url") var thumbnailUrl: String?,
+        @ColumnInfo(name = "server_url") var serverUrl: String?,
+        @ColumnInfo(name = "id_property") val property: Int?,
+        var description: String?,
+        @ColumnInfo(name = "is_main_picture") var isMainPicture: Boolean
 )

@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
-import com.openclassrooms.realestatemanager.data.PhotoForDisplay
 import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Picture
@@ -30,7 +29,7 @@ data class AddPropertyViewState(
         val address: String = "", val neighborhood: String = "",
         val onMarketSince: String = "", val isSold: Boolean = false,
         val sellDate: String? = null, val agentId: Int? = null,
-        val amenities: List<TypeAmenity>? = null, val pictures: List<PhotoForDisplay>? = null,
+        val amenities: List<TypeAmenity>? = null, val pictures: List<Picture>? = null,
         val agentFirstName: String = "", val agentLastName: String = ""
 
 ) : REMViewState
@@ -44,7 +43,7 @@ sealed class AddPropertyIntent : REMIntent{
             val neighborhood: String, val onMarketSince: String,
             val isSold: Boolean, val sellDate: String?,
             val agent: Int?, val amenities: List<TypeAmenity>,
-            val pictures: List<PhotoForDisplay>,
+            val pictures: List<Picture>,
             val context: Context
     ) : AddPropertyIntent()
 
@@ -52,15 +51,13 @@ sealed class AddPropertyIntent : REMIntent{
 
     object OpenListAgentsIntent : AddPropertyIntent()
 
-    data class DeletePictureIntent(val urlPicture: String) : AddPropertyIntent()
-
 }
 
 sealed class AddPropertyResult : REMResult{
     data class AddPropertyToDBResult(val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
     data class FetchedPropertyResult(
             val property: Property?, val amenities: List<TypeAmenity>?,
-            val pictures: List<PhotoForDisplay>?, val agent: Agent?, val address: Address?,
+            val pictures: List<Picture>?, val agent: Agent?, val address: Address?,
             val errorSource: List<ErrorSourceAddProperty>?
     ) : AddPropertyResult()
     data class ListAgentsResult(val listAgents: List<Agent>?, val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()

@@ -31,7 +31,7 @@ public abstract class REMDatabase : RoomDatabase(){
                 val instance = Room.databaseBuilder(
                         context.applicationContext,
                         REMDatabase::class.java,
-                        "REM_database6.db")
+                        "REM_database7.db")
                         .build()
                 INSTANCE = instance
                 return instance

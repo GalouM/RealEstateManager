@@ -4,6 +4,7 @@ package com.openclassrooms.realestatemanager.detailsProperty
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -61,7 +62,6 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
         configureViewModel()
         currencyObserver()
-        viewModel.actionFromIntent(DetailsPropertyIntent.FetchDetailsIntent)
         return view
     }
 
@@ -106,7 +106,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     private fun currencyObserver(){
         viewModel.currency.observe(this, Observer {currency ->
             currentCurrency = currency
-            renderChangeCurrency(currentCurrency!!)
+            renderChangeCurrency()
         })
     }
 
@@ -138,7 +138,12 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
     private fun renderFetchedProperty(property: Property, address: Address){
         surfaceProperty = property.surface
-        configureSurfaceUnitDisplay(currentCurrency!!)
+        surfaceProperty?.let{
+            when(currentCurrency){
+                Currency.EURO -> surface.text = String.format(getString(R.string.surface_m2_details), surfaceProperty.toString())
+                Currency.DOLLAR -> surface.text = String.format(getString(R.string.ft_2_surface_details), surfaceProperty!!.toSqFt().toString())
+            }
+        }
         description.text = property.description
         rooms.text = property.rooms.toString()
         property.bedrooms?.let{
@@ -154,17 +159,8 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         Glide.with(this).load(address.mapIconUrl).into(map)
     }
 
-    private fun renderChangeCurrency(currency: Currency){
-        configureSurfaceUnitDisplay(currency)
-    }
-
-    private fun configureSurfaceUnitDisplay(currency: Currency){
-        surfaceProperty?.let{
-            when(currency){
-                Currency.EURO -> surface.text = String.format(getString(R.string.surface_m2_details), surfaceProperty.toString())
-                Currency.DOLLAR -> surface.text = String.format(getString(R.string.ft_2_surface_details), surfaceProperty!!.toSqFt().toString())
-            }
-        }
+    private fun renderChangeCurrency(){
+        viewModel.actionFromIntent(DetailsPropertyIntent.DisplayDetailsIntent)
     }
 
     private fun showSnackBarMessage(message: String){

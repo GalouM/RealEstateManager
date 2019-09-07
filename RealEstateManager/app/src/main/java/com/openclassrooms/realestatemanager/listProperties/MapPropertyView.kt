@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 
-import android.annotation.SuppressLint
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -27,7 +26,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.extensions.toBounds
@@ -51,7 +50,7 @@ class MapPropertyView : BaseViewListProperties(),
     private var userLocationBounds: LatLngBounds? = null
     private var userLastKnowLocation: LatLng? = null
 
-    private var propertiesNearBy = mutableListOf<PropertyForListDisplay>()
+    private var propertiesNearBy = mutableListOf<PropertyWithAllData>()
 
     private var mapBoxMap: MapboxMap? = null
 
@@ -90,10 +89,10 @@ class MapPropertyView : BaseViewListProperties(),
     //--------------------
     // VIEW MODEL CONNECTION
     //--------------------
-    override fun renderListProperties(properties: List<PropertyForListDisplay>){
+    override fun renderListProperties(properties: List<PropertyWithAllData>){
         propertiesNearBy.clear()
         properties.forEach { property ->
-            val position = LatLng(property.lat, property.lng)
+            val position = LatLng(property.address[0].latitude, property.address[0].longitude)
             userLocationBounds?.let{
                 if(it.contains(position)){
                     propertiesNearBy.add(property)
@@ -128,18 +127,18 @@ class MapPropertyView : BaseViewListProperties(),
         mapBoxMap?.onInfoWindowClickListener = this
         val iconFactory = IconFactory.getInstance(activity!!.applicationContext)
         propertiesNearBy.forEach {
-            val positionProperty = LatLng(it.lat, it.lng)
-            val drawable = if (it.sold) R.drawable.icon_location_sold else R.drawable.icon_location_normal
+            val positionProperty = LatLng(it.address[0].latitude, it.address[0].longitude)
+            val drawable = if (it.property.sold) R.drawable.icon_location_sold else R.drawable.icon_location_normal
             val snippet = when (currency) {
-                Currency.EURO -> "${it.price.toEuroDisplay()}€"
-                Currency.DOLLAR -> "$${it.price.toDollar().toDollarDisplay()}"
+                Currency.EURO -> "${it.property.price.toEuroDisplay()}€"
+                Currency.DOLLAR -> "$${it.property.price.toDollar().toDollarDisplay()}"
             }
             val markerREM = MarkerREMOptions()
-                    .title(it.type)
+                    .title(it.property.type.typeName)
                     .position(positionProperty)
                     .snippet(snippet)
                     .icon(iconFactory.fromResource(drawable))
-            markerREM.idRem = it.id
+            markerREM.idRem = it.property.id!!
             mapBoxMap?.addMarker(markerREM)
         }
 
@@ -206,7 +205,6 @@ class MapPropertyView : BaseViewListProperties(),
     }
 
     private fun centerCameraOnUser(){
-        Log.e("center cam", "here")
         mapBoxMap?.animateCamera(CameraUpdateFactory.newLatLng(userLastKnowLocation!!))
         buttonCenter.visibility = View.GONE
 
@@ -219,8 +217,7 @@ class MapPropertyView : BaseViewListProperties(),
 
     override fun onInfoWindowClick(marker: Marker): Boolean {
         val markerREM = marker as MarkerREM
-        Log.e("marker click", markerREM.idRem.toString())
-        setPropertyPicked(markerREM.idRem)
+        setPropertyPicked(propertiesNearBy.find{it.property.id == markerREM.idRem}!!)
         return false
     }
 

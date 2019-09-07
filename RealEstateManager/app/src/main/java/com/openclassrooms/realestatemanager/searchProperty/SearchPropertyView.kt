@@ -273,7 +273,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
                     missingAgent = true
                 }
                 ErrorSourceSearch.NO_PROPERTY_FOUND -> showSnackBarMessage(getString(R.string.no_property_found))
-                ErrorSourceSearch.WRONG_DATE_FORMAT -> onMarketLayout.error = "Has to be dd/MM/yyyy"
+                ErrorSourceSearch.WRONG_DATE_FORMAT -> onMarketLayout.error = getString(R.string.has_to_be_fomat_date)
             }
 
             if(missingTypeAndAgent){

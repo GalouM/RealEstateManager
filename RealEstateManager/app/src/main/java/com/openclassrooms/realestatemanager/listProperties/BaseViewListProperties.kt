@@ -1,13 +1,11 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Intent
-import android.util.Log
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.openclassrooms.realestatemanager.addProperty.AddPropertyIntent
-import com.openclassrooms.realestatemanager.data.PropertyForListDisplay
+import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
@@ -24,7 +22,7 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
     protected lateinit var viewModel: ListPropertyViewModel
     protected var currentCurrency: Currency? = null
 
-    protected abstract fun renderListProperties(properties: List<PropertyForListDisplay>)
+    protected abstract fun renderListProperties(properties: List<PropertyWithAllData>)
     protected abstract fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty)
     protected abstract fun renderIsLoading(loading: Boolean)
     protected abstract fun renderChangeCurrency(currency: Currency)
@@ -90,8 +88,8 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
         })
     }
 
-    protected fun setPropertyPicked(propertyId: Int){
-        viewModel.actionFromIntent(PropertyListIntent.OpenPropertyDetailIntent(propertyId))
+    protected fun setPropertyPicked(property: PropertyWithAllData){
+        viewModel.actionFromIntent(PropertyListIntent.OpenPropertyDetailIntent(property))
 
     }
 

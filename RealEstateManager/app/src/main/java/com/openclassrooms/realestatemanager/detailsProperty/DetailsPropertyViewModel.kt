@@ -2,12 +2,9 @@ package com.openclassrooms.realestatemanager.detailsProperty
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import com.openclassrooms.realestatemanager.data.entity.*
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
-import com.openclassrooms.realestatemanager.data.entity.Address
-import com.openclassrooms.realestatemanager.data.entity.Amenity
-import com.openclassrooms.realestatemanager.data.entity.Picture
-import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
@@ -35,14 +32,12 @@ class DetailsPropertyViewModel(
         get() = currencyRepository.currency
 
     private var searchPropertyJob: Job? = null
-    private var searchAddressJob: Job? = null
-    private var searchAmenitiesJob: Job? = null
-    private var searchPicturesJob: Job? = null
 
     override fun actionFromIntent(intent: DetailsPropertyIntent) {
         when(intent){
             is DetailsPropertyIntent.FetchDetailsIntent -> fetchDetailsProperty()
             is DetailsPropertyIntent.ModifyPropertyIntent -> modifyProperty()
+            is DetailsPropertyIntent.DisplayDetailsIntent -> displayPropertyDetails()
         }
     }
 
@@ -86,57 +81,42 @@ class DetailsPropertyViewModel(
         }
     }
 
+    private fun displayPropertyDetails(){
+        propertyRepository.propertyPicked?.let {
+            emitResultDisplayProperty(it)
+        }
+    }
+
     private fun fetchDetailsProperty(){
         resultToViewState(Lce.Loading())
         if(searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
-        if(searchAddressJob?.isActive == true) searchAddressJob?.cancel()
-        if(searchAmenitiesJob?.isActive == true) searchAmenitiesJob?.cancel()
-        if(searchPicturesJob?.isActive == true) searchPicturesJob?.cancel()
 
-        val propertyId = propertyRepository.getPropertyPickedId()!!
+        val propertyId = propertyRepository.propertyPicked!!.property.id
 
-        var property: Property? = null
-        var address: Address? = null
-        var amenities: List<Amenity>? = null
-        var pictures: List<Picture>? = null
-
-        fun emitResult(){
+        fun emitResult(property: PropertyWithAllData){
             val result: Lce<DetailsPropertyResult> = Lce.Content(DetailsPropertyResult.FetchDetailsResult(
-                    property, address, amenities, pictures
+                    property.property, property.address[0], property.amenities, property.pictures
             ))
             resultToViewState(result)
         }
 
-        fun fetchPictures(){
-            searchPicturesJob = launch {
-                pictures = propertyRepository.getPropertyPicture(propertyId)
-                emitResult()
-            }
-        }
-
-        fun fetchAmenities(){
-            searchAmenitiesJob = launch {
-                amenities = propertyRepository.getPropertyAmenities(propertyId)
-                fetchPictures()
-            }
-        }
-
-        fun fetchAddress(){
-            searchAddressJob = launch {
-                address = propertyRepository.getPropertyAddress(propertyId)[0]
-                fetchAmenities()
-            }
-        }
-
         fun fetchProperty(){
             searchPropertyJob = launch {
-                property = propertyRepository.getProperty(propertyId)[0]
-                fetchAddress()
+                val property = propertyRepository.getProperty(propertyId!!)[0]
+                propertyRepository.propertyPicked = property
+                emitResult(property)
             }
         }
 
         fetchProperty()
 
+    }
+
+    private fun emitResultDisplayProperty(property: PropertyWithAllData){
+        val result: Lce<DetailsPropertyResult> = Lce.Content(DetailsPropertyResult.FetchDetailsResult(
+                property.property, property.address[0], property.amenities, property.pictures
+        ))
+        resultToViewState(result)
     }
 
     private fun modifyProperty(){

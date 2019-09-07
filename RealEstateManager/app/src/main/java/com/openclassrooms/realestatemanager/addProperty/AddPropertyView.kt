@@ -3,13 +3,8 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.Intent.*
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment.DIRECTORY_PICTURES
-import android.os.Environment.getExternalStoragePublicDirectory
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -35,7 +29,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.PhotoForDisplay
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.utils.extensions.*
@@ -44,8 +37,6 @@ import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
 import kotlinx.android.synthetic.main.dialog_photo_source.view.*
-import pub.devrel.easypermissions.AfterPermissionGranted
-import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -96,7 +87,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private var openAgentWindowHandled = true
 
-    private val picturesPicked = mutableListOf<PhotoForDisplay>()
+    private val picturesPicked = mutableListOf<Picture>()
 
     private var packageManager: PackageManager? = null
     private var lastPhotoTakenPath: String? = null
@@ -125,8 +116,6 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val toDelete = viewHolder.adapterPosition
-                val pictureToDelete = picturesPicked[toDelete]
-                viewModel.actionFromIntent(AddPropertyIntent.DeletePictureIntent(pictureToDelete.uriPicture))
                 picturesPicked.removeAt(toDelete)
                 adapter.update(picturesPicked)
             }
@@ -248,8 +237,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         }
     }
 
-    override fun onClickDeleteButton(photo: PhotoForDisplay) {
-        viewModel.actionFromIntent(AddPropertyIntent.DeletePictureIntent(photo.uriPicture))
+    override fun onClickDeleteButton(photo: Picture) {
         picturesPicked.remove(photo)
         adapter.update(picturesPicked)
     }
@@ -310,10 +298,12 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         if (state == null) return
         if(state.isSaved) {
             renderPropertyAddedToDB()
+            return
         }
 
         if(state.errors != null){
             renderErrors(state.errors)
+            return
         }
 
         state.listAgents?.let{
@@ -392,7 +382,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                                           neighborhood: String?, onMarketSince: String,
                                           isSold: Boolean, sellOn: String?,
                                           agentId: Int, amenities: List<TypeAmenity>,
-                                          pictures: List<PhotoForDisplay>, agentFirstName: String,
+                                          pictures: List<Picture>, agentFirstName: String,
                                           agentLastName: String){
         val priceToDisplay = when(currentCurrency!!){
             Currency.EURO -> price.toString()
@@ -411,7 +401,11 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         addressText.setText(address)
         neighborhood?.let { neighbourhoodText.setText(it) }
         soldSwithch.isChecked = isSold
-        sellOn?.let{ soldOnText.setText(sellOn)}
+        sellOn?.let{
+            soldOnText.setText(sellOn)
+            soldOnText.visibility = View.VISIBLE
+            soldOnLayout.visibility = View.VISIBLE
+        }
         onMarketSinceText.setText(onMarketSince)
         dropdowPropertyType.setText(type)
         agentSelectedId = agentId
@@ -449,12 +443,13 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         disableAllErrors()
 
         val typeProperty = dropdowPropertyType.text.toString()
+        val soldOn = if(soldSwithch.isChecked) soldOnText.text.toString() else null
 
         viewModel.actionFromIntent(AddPropertyIntent.AddPropertyToDBIntent(
                 typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
                 bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
                 addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOnText.text.toString(), agentSelectedId, getAmenitiesSelected(), picturesPicked,
+                soldSwithch.isChecked, soldOn, agentSelectedId, getAmenitiesSelected(), picturesPicked,
                 activity!!.applicationContext)
         )
     }
@@ -532,14 +527,14 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private fun addPicturePickedToList(data: Intent){
         getPicturesPathFromData(data).forEach {
-            picturesPicked.add(PhotoForDisplay(it, null, null))
+            picturesPicked.add(Picture(null, it, null, null, null, null, false))
         }
         adapter.update(picturesPicked)
     }
 
     private fun addPictureTakenToList(){
         lastPhotoTakenPath?.let {
-            picturesPicked.add(PhotoForDisplay(it, null, getThumbnailFromPicture(it, activity!!)))
+            picturesPicked.add(Picture(null, it, getThumbnailFromPicture(it, activity!!), null, null, null, false))
             adapter.update(picturesPicked)
             addPictureToGallery(activity!!, it)
         }

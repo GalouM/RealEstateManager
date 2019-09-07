@@ -13,12 +13,12 @@ import com.openclassrooms.realestatemanager.data.entity.Picture
 
 @Dao
 interface PictureDao {
-    @Query("SELECT * FROM pictures WHERE property = :propertyId")
+    @Query("SELECT * FROM pictures WHERE id_property = :propertyId ORDER BY picture_id")
     suspend fun getPictures(propertyId: Int): List<Picture>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPicture(pictures: Picture)
+    suspend fun insertPicture(pictures: List<Picture>)
 
-    @Query("DELETE FROM pictures WHERE url IN (:urlPictures)")
-    suspend fun deletePictures(urlPictures: List<Int>)
+    @Query("DELETE FROM pictures WHERE id_property = :propertyId")
+    suspend fun deletePictures(propertyId: Int)
 }

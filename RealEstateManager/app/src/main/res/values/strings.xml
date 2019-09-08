@@ -98,4 +98,7 @@
     <string name="is_available">is available</string>
     <string name="has_pictures">has pictures</string>
     <string name="has_to_be_fomat_date">Has to be dd/MM/yyyy</string>
+    <string name="price">Price</string>
+    <string name="price_euro_details">%s€</string>
+    <string name="price_dollar_details">$%s</string>
 </resources>

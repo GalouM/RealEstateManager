@@ -80,4 +80,19 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="SmallTextREM">
+        <item name="android:textSize">@dimen/small_text</item>
+    </style>
+
+    <style name="SmallTitleREM" parent="SmallTextREM">
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
+    <style name="IconDetailREM">
+        <item name="android:layout_weight">@dimen/icon_details_size</item>
+        <item name="android:layout_height">@dimen/icon_details_size</item>
+        <item name="android:tint">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>

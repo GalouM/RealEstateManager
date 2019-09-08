@@ -12,14 +12,6 @@
         android:scaleType="fitXY" />
 
 
-    <ImageView
-        android:id="@+id/iv_gif_container"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="50dp" />
-
-
     <FrameLayout
         android:id="@+id/fl_shadow_container"
         android:background="@drawable/bg_overlay"
@@ -33,9 +25,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="25dp"
-            android:padding="6dp"
-            android:textColor="#FFF"
-            android:textSize="18sp" />
+            android:padding="@dimen/padding_small"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_size_slider_pic" />
 
     </FrameLayout>
 

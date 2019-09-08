@@ -18,7 +18,7 @@
     <dimen name="text_subtitle">18sp</dimen>
     <dimen name="text_price">23sp</dimen>
     <dimen name="radius_medium_button">10dp</dimen>
-    <dimen name="small_text">10sp</dimen>
+    <dimen name="small_text">12sp</dimen>
     <dimen name="title_details_size">20sp</dimen>
     <dimen name="details_size">15sp</dimen>
     <dimen name="icon_details_size">20dip</dimen>
@@ -29,4 +29,6 @@
     <dimen name="separator_size">1dp</dimen>
     <dimen name="margin_card_big">5dp</dimen>
     <dimen name="cardview_small_margin">2dp</dimen>
+    <dimen name="text_size_slider_pic">18sp</dimen>
+    <dimen name="size_pic_slider">300dp</dimen>
 </resources>

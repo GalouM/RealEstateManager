@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.ContentFrameLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -20,15 +23,13 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.data.entity.Address
+import com.openclassrooms.realestatemanager.data.entity.Amenity
 import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
-import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_ADD_PROPERTY
-import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.RC_CODE_ADD_PROPERTY
-import com.openclassrooms.realestatemanager.utils.extensions.toSqFt
-import com.openclassrooms.realestatemanager.utils.showSnackBar
+import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.extensions.*
 import com.smarteist.autoimageslider.IndicatorAnimations
 import com.smarteist.autoimageslider.SliderView
 
@@ -45,15 +46,23 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     @BindView(R.id.details_view_bath) lateinit var bathRooms: TextView
     @BindView(R.id.details_view_location_city) lateinit var city: TextView
     @BindView(R.id.details_view_location_street) lateinit var street: TextView
-    @BindView(R.id.details_view_location_details) lateinit var details: TextView
     @BindView(R.id.details_view_location_zip) lateinit var zipCode: TextView
     @BindView(R.id.details_view_location_country) lateinit var country: TextView
     @BindView(R.id.details_view_map) lateinit var map: ImageView
     @BindView(R.id.details_view_slider_pictures) lateinit var sliderPictures: SliderView
+    @BindView(R.id.detail_view_main_layout) lateinit var mainLayout: ConstraintLayout
+    @BindView(R.id.detail_view_price_icon) lateinit var priceIcon: ImageView
+    @BindView(R.id.detail_view_price) lateinit var price: TextView
+    @BindView(R.id.detail_view_type) lateinit var type: TextView
+    @BindView(R.id.detail_view_amenity_one) lateinit var amenity1: ImageView
+    @BindView(R.id.detail_view_amenity_two) lateinit var amenity2: ImageView
+    @BindView(R.id.detail_view_amenity_three) lateinit var amenity3: ImageView
+    @BindView(R.id.detail_view_amenity_four) lateinit var amenity4: ImageView
+    @BindView(R.id.detail_view_amenity_five) lateinit var amenity5: ImageView
+    @BindView(R.id.detail_view_amenity_six) lateinit var amenity6: ImageView
+
 
     private lateinit var viewModel: DetailsPropertyViewModel
-
-    private var surfaceProperty: Double? = null
 
     private var currentCurrency: Currency? = null
 
@@ -120,8 +129,12 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         if (state == null) return
 
         if(state.property != null && currentCurrency != null){
-            renderFetchedProperty(state.property, state.address!!, state.pictures!!)
+            renderFetchedProperty(state.property)
         }
+
+        state.pictures?.let { renderFetchedPictures(it) }
+        state.address?.let { renderFetchedAddress(it) }
+        state.amenities?.let { renderFetchedAmenities(it) }
 
         if(state.modifyProperty) renderModifyProperty()
 
@@ -138,14 +151,25 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 
-    private fun renderFetchedProperty(property: Property, address: Address, pictures: List<Picture>){
-        surfaceProperty = property.surface
-        surfaceProperty?.let{
-            when(currentCurrency){
-                Currency.EURO -> surface.text = String.format(getString(R.string.surface_m2_details), surfaceProperty.toString())
-                Currency.DOLLAR -> surface.text = String.format(getString(R.string.ft_2_surface_details), surfaceProperty!!.toSqFt().toString())
+    private fun renderFetchedProperty(property: Property){
+        val surfaceProperty = property.surface
+        val priceProperty = property.price
+        var iconPrice: Int? = null
+        when(currentCurrency){
+            Currency.EURO -> {
+                surface.text = String.format(getString(R.string.surface_m2_details), surfaceProperty.toString())
+                iconPrice = R.drawable.euro_icon
+                price.text = String.format(getString(R.string.price_euro_details), priceProperty.toEuroDisplay())
+            }
+            Currency.DOLLAR -> {
+                surface.text = String.format(getString(R.string.ft_2_surface_details), surfaceProperty.toSqFt().toString())
+                price.text = String.format(getString(R.string.price_dollar_details), priceProperty.toDollar().toDollarDisplay())
+                iconPrice = R.drawable.dollar_icon
             }
         }
+
+        priceIcon.setImageResource(iconPrice!!)
+
         description.text = property.description
         rooms.text = property.rooms.toString()
         property.bedrooms?.let{
@@ -154,25 +178,51 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         property.bathrooms?.let{
             bathRooms.text = it.toString()
         }
+
+        if(property.sold) mainLayout.setBackgroundColor(
+                ContextCompat.getColor(activity!!.applicationContext, R.color.colorPrimaryLight)
+        )
+        type.text = property.type.typeName
+
+    }
+
+    private fun renderFetchedAddress(address: Address){
         street.text = address.street
         city.text = address.city
         zipCode.text = String.format("%s %s", address.state, address.postalCode)
         country.text = address.country
         Glide.with(this).load(address.mapIconUrl).into(map)
-        configureSliderPicture(pictures.sortedBy { it.orderNumber })
     }
+
+    private fun renderFetchedPictures(pictures: List<Picture>){
+        if(pictures.isEmpty()){
+            sliderPictures.visibility = View.GONE
+        } else {
+            val adapter = SliderPhotoAdapter(
+                    activity!!.applicationContext, pictures.sortedBy { it.orderNumber }, Glide.with(this)
+            )
+            sliderPictures.apply{
+                sliderAdapter = adapter
+                setIndicatorAnimation(IndicatorAnimations.SCALE)
+            }
+        }
+    }
+
+    private fun renderFetchedAmenities(amenities: List<Amenity>){
+        val numberAmenities = amenities.size
+        if(numberAmenities >= 1) amenity1.setImageResource(amenities[0].toDrawable())
+        if(numberAmenities >= 2) amenity2.setImageResource(amenities[1].toDrawable())
+        if(numberAmenities >= 3) amenity3.setImageResource(amenities[2].toDrawable())
+        if(numberAmenities >= 4) amenity4.setImageResource(amenities[3].toDrawable())
+        if(numberAmenities >= 5) amenity5.setImageResource(amenities[4].toDrawable())
+        if(numberAmenities == 6) amenity6.setImageResource(amenities[5].toDrawable())
+    }
+
 
     private fun renderChangeCurrency(){
         viewModel.actionFromIntent(DetailsPropertyIntent.DisplayDetailsIntent)
     }
 
-    private fun configureSliderPicture(pictures: List<Picture>){
-        val adapter = SliderPhotoAdapter(activity!!.applicationContext, pictures, Glide.with(this))
-        sliderPictures.apply{
-            sliderAdapter = adapter
-            setIndicatorAnimation(IndicatorAnimations.SCALE)
-        }
-    }
 
     private fun showSnackBarMessage(message: String){
         val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)

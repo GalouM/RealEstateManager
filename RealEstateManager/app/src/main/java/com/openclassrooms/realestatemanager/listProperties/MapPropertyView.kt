@@ -194,7 +194,6 @@ class MapPropertyView : BaseViewListProperties(),
     }
 
     private fun addCameraMovementListener(userLocation: Location){
-
         mapBoxMap!!.addOnCameraMoveListener {
             val newLocation = mapBoxMap!!.cameraPosition.target
             if(newLocation.isEqualTo(userLocation, 3)){
@@ -202,9 +201,7 @@ class MapPropertyView : BaseViewListProperties(),
             } else {
                 buttonCenter.visibility = View.VISIBLE
             }
-
         }
-
     }
 
     private fun centerCameraOnUser(){

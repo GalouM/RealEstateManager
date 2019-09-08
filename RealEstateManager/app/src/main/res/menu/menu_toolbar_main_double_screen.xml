@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/menu_toolbar_currency"
+        android:icon="@drawable/euro_icon"
+        app:showAsAction="always"
+        android:title="@string/currency"/>
+
+    <item
+        android:id="@+id/menu_details_property_modify"
+        android:icon="@drawable/modify_icon"
+        app:showAsAction="always"
+        android:title="@string/modify"/>
+
+    <item
+        android:id="@+id/menu_main_activity_search"
+        android:icon="@drawable/search_icon"
+        app:showAsAction="ifRoom"
+        android:title="@string/search"/>
+
+</menu>

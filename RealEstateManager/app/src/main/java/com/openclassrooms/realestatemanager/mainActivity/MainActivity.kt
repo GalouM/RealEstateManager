@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
+    private var isDoubleScreenMode = false
+
     fun setListPropertiesChangeList(callback: OnListPropertiesChangeListener){
         this.callbackListPropertiesRefresh = callback
     }
@@ -74,6 +76,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         Mapbox.getInstance(applicationContext, BuildConfig.MapBoxToken)
 
         setContentView(R.layout.activity_main)
+        configureScreenMode()
         ButterKnife.bind(this)
 
         configureViewModel()
@@ -108,10 +111,18 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     // CONFIGURE UI
     //--------------------
 
+    private fun configureScreenMode(){
+        isDoubleScreenMode = findViewById<FrameLayout>(R.id.main_activity_frame_layout) != null
+    }
+
     //------Toolbar---------
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_toolbar_main_activity, menu)
+        if(isDoubleScreenMode){
+            menuInflater.inflate(R.menu.menu_toolbar_main_double_screen, menu)
+        } else{
+            menuInflater.inflate(R.menu.menu_toolbar_main_activity, menu)
+        }
         menuToolbar = menu
         viewModel.actionFromIntent(MainActivityIntent.GetCurrentCurrencyIntent)
         return true
@@ -124,6 +135,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
                 return true
             }
             R.id.menu_main_activity_search -> openSearchActivity()
+            R.id.menu_details_property_modify -> detailsView?.toolBarModifyClickListener()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -229,16 +241,14 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
                 .beginTransaction()
                 .replace(R.id.main_activity_frame_layout, detailsView!!)
                 .commit()
-
-
     }
 
     fun openDetailsProperty(){
-        if(findViewById<FrameLayout>(R.id.main_activity_frame_layout) == null){
+        if(isDoubleScreenMode){
+            showDetailsView()
+        } else{
             val intent = Intent(this, DetailActivity::class.java)
             startActivity(intent)
-        } else{
-            showDetailsView()
         }
     }
 

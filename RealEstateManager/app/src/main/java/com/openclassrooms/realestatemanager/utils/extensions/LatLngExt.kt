@@ -1,7 +1,10 @@
 package com.openclassrooms.realestatemanager.utils.extensions
 
+import android.location.Location
+import android.view.View
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
+import java.math.RoundingMode
 import kotlin.math.*
 
 /**
@@ -27,4 +30,14 @@ private fun computeOffsetBounds(from: LatLng, distanceSet: Double, headingSet: D
     val sinLat = cosDistance * sinFromLat + sinDistance * cosFromLat * cos(heading)
     val dLng = atan2(sinDistance * cosFromLat * sin(heading), cosDistance - sinFromLat * sinLat)
     return LatLng(Math.toDegrees(asin(sinLat)), Math.toDegrees(fromLng + dLng))
+}
+
+fun LatLng.isEqualTo(previousLocation: Location, roundTo: Int): Boolean{
+    val locationLatRoundUp = this.latitude.toBigDecimal().setScale(roundTo, RoundingMode.UP)
+    val locationLngRoundUp = this.longitude.toBigDecimal().setScale(roundTo, RoundingMode.UP)
+    val previousLatRoundUp = previousLocation.latitude.toBigDecimal().setScale(roundTo, RoundingMode.UP)
+    val previousLngRoundUp = previousLocation.longitude.toBigDecimal().setScale(roundTo, RoundingMode.UP)
+
+    return locationLatRoundUp == previousLatRoundUp && locationLngRoundUp == previousLngRoundUp
+
 }

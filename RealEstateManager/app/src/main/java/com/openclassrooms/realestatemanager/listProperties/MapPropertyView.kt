@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.listProperties
 
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,12 +29,11 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.*
-import com.openclassrooms.realestatemanager.utils.extensions.toBounds
-import com.openclassrooms.realestatemanager.utils.extensions.toDollar
-import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
-import com.openclassrooms.realestatemanager.utils.extensions.toEuroDisplay
+import com.openclassrooms.realestatemanager.utils.extensions.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
+import java.math.RoundingMode
+import kotlin.math.roundToLong
 
 
 /**
@@ -194,18 +194,21 @@ class MapPropertyView : BaseViewListProperties(),
     }
 
     private fun addCameraMovementListener(userLocation: Location){
+
         mapBoxMap!!.addOnCameraMoveListener {
             val newLocation = mapBoxMap!!.cameraPosition.target
-            if(newLocation != userLocation){
+            if(newLocation.isEqualTo(userLocation, 3)){
+                buttonCenter.visibility = View.INVISIBLE
+            } else {
                 buttonCenter.visibility = View.VISIBLE
             }
 
         }
+
     }
 
     private fun centerCameraOnUser(){
         mapBoxMap?.animateCamera(CameraUpdateFactory.newLatLng(userLastKnowLocation!!))
-        buttonCenter.visibility = View.GONE
 
     }
 
@@ -219,6 +222,7 @@ class MapPropertyView : BaseViewListProperties(),
         setPropertyPicked(propertiesNearBy.find{it.property.id == markerREM.idRem}!!)
         return false
     }
+
 
     //--------------------
     // LIFE STATE MAP

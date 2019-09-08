@@ -19,13 +19,16 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
     : RecyclerView.Adapter<ListPropertyViewHolder>(){
 
     private lateinit var context: Context
+    private val viewHolders = mutableListOf<ListPropertyViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListPropertyViewHolder {
         context = parent.context
         val layoutInflater = LayoutInflater.from(context)
         val view = layoutInflater.inflate(R.layout.list_view_item, parent, false)
+        val holder = ListPropertyViewHolder(view)
+        viewHolders.add(holder)
 
-        return ListPropertyViewHolder(view)
+        return holder
     }
 
     override fun getItemCount(): Int {
@@ -43,5 +46,11 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
     fun updateCurrency(newCurrency: Currency){
         currency = newCurrency
         notifyDataSetChanged()
+    }
+
+    fun updateSelection(itemSelected: Int){
+        viewHolders.forEach {
+            it.displaySelection(itemSelected, context)
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Intent
+import android.util.Log
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -59,16 +60,18 @@ abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewStat
 
     override fun render(state: PropertyListViewState?) {
         if (state == null) return
+        if(state.openDetails) {
+            renderOpenPropertyDetails()
+            return
+        }
 
-        if(state.listProperties != null && currentCurrency != null){
+        if(state.listProperties != null && currentCurrency != null && !state.isLoading){
             renderListProperties(state.listProperties)
         }
 
         state.errorSource?.let { renderErrorFetchingProperty(it) }
 
         renderIsLoading(state.isLoading)
-
-        if(state.openDetails) renderOpenPropertyDetails()
 
     }
 

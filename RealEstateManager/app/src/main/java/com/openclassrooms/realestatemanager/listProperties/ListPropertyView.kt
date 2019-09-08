@@ -101,7 +101,11 @@ class ListPropertyView : BaseViewListProperties(),
 
     private fun configureClickRecyclerView(){
         ItemClickSupport.addTo(recyclerView, R.layout.list_agent_dialog_item)
-                .setOnItemClickListener{ _, position, _ ->  setPropertyPicked(adapter!!.getProperty(position))}
+                .setOnItemClickListener{ _, position, _ ->
+                    setPropertyPicked(adapter!!.getProperty(position))
+                    adapter!!.updateSelection(position)
+                    adapter
+                }
     }
 
     //--------------------

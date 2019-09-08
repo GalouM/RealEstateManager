@@ -4,6 +4,7 @@ package com.openclassrooms.realestatemanager.detailsProperty
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,10 +67,13 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
     private var currentCurrency: Currency? = null
 
+    private lateinit var amenitiesImageView: List<ImageView>
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_details_property_view, container, false)
         ButterKnife.bind(this, view)
+        initiateAmenitiesIVList()
 
         configureViewModel()
         currencyObserver()
@@ -90,6 +94,10 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
             else -> showSnackBarMessage(getString(R.string.error_modification))
         }
 
+    }
+
+    private fun initiateAmenitiesIVList(){
+        amenitiesImageView = listOf(amenity1, amenity2, amenity3, amenity4, amenity5, amenity6)
     }
 
     //--------------------
@@ -152,6 +160,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     }
 
     private fun renderFetchedProperty(property: Property){
+        Log.e("property", "here")
         val surfaceProperty = property.surface
         val priceProperty = property.price
         var iconPrice: Int? = null
@@ -209,13 +218,13 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     }
 
     private fun renderFetchedAmenities(amenities: List<Amenity>){
-        val numberAmenities = amenities.size
-        if(numberAmenities >= 1) amenity1.setImageResource(amenities[0].toDrawable())
-        if(numberAmenities >= 2) amenity2.setImageResource(amenities[1].toDrawable())
-        if(numberAmenities >= 3) amenity3.setImageResource(amenities[2].toDrawable())
-        if(numberAmenities >= 4) amenity4.setImageResource(amenities[3].toDrawable())
-        if(numberAmenities >= 5) amenity5.setImageResource(amenities[4].toDrawable())
-        if(numberAmenities == 6) amenity6.setImageResource(amenities[5].toDrawable())
+        amenitiesImageView.forEach {it.setImageResource(0)}
+
+        if(amenities.size <= amenitiesImageView.size){
+            amenities.sortedBy { it.type }.forEachIndexed { index, amenity ->
+                amenitiesImageView[index].setImageResource(amenity.toDrawable())
+            }
+        }
     }
 
 
@@ -229,7 +238,5 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         showSnackBar(viewLayout, message)
 
     }
-
-
 
 }

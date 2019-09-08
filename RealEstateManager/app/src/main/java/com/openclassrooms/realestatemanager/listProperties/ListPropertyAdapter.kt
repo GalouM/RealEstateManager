@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,7 @@ import com.openclassrooms.realestatemanager.utils.Currency
  */
 
 class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
-                          var currency: Currency,
+                          var currency: Currency?,
                           val glide: RequestManager)
     : RecyclerView.Adapter<ListPropertyViewHolder>(){
 
@@ -39,6 +40,11 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
         holder.updateWithProperty(properties[position], glide, currency, context)
     }
 
+    fun update(properties: List<PropertyWithAllData>){
+        this.properties = properties
+        notifyDataSetChanged()
+    }
+
     fun getProperty(position: Int): PropertyWithAllData{
         return properties[position]
     }
@@ -48,9 +54,9 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
         notifyDataSetChanged()
     }
 
-    fun updateSelection(itemSelected: Int){
+    fun updateSelection(itemSelected: Int?){
         viewHolders.forEach {
-            it.displaySelection(itemSelected, context)
+            it.displaySelection(itemSelected)
         }
     }
 }

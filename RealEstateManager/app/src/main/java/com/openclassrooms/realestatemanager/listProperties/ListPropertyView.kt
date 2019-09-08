@@ -4,6 +4,7 @@ package com.openclassrooms.realestatemanager.listProperties
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +51,7 @@ class ListPropertyView : BaseViewListProperties(),
         ButterKnife.bind(this, view)
         configureRefreshLayout()
         configureForeground()
+        configureRecyclerView()
         configureViewModel()
         configureActionType()
         currencyObserver()
@@ -69,8 +71,14 @@ class ListPropertyView : BaseViewListProperties(),
     //--------------------
 
     override fun renderListProperties(properties: List<PropertyWithAllData>){
-        configureRecyclerView(properties)
-        configureClickRecyclerView()
+        Log.e("update", "__________________________")
+        adapter?.update(properties)
+        if(activity is MainActivity){
+            if(!(activity as MainActivity).isDoubleScreenMode){
+                adapter?.updateSelection(null)
+
+            }
+        }
     }
 
     override fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
@@ -93,10 +101,11 @@ class ListPropertyView : BaseViewListProperties(),
     // RECYCLERVIEW
     //--------------------
 
-    private fun configureRecyclerView(properties: List<PropertyWithAllData>){
-        adapter = ListPropertyAdapter(properties, currentCurrency!!, Glide.with(this))
+    private fun configureRecyclerView(){
+        adapter = ListPropertyAdapter(listOf<PropertyWithAllData>(), currentCurrency, Glide.with(this))
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
+        configureClickRecyclerView()
     }
 
     private fun configureClickRecyclerView(){
@@ -104,7 +113,6 @@ class ListPropertyView : BaseViewListProperties(),
                 .setOnItemClickListener{ _, position, _ ->
                     setPropertyPicked(adapter!!.getProperty(position))
                     adapter!!.updateSelection(position)
-                    adapter
                 }
     }
 

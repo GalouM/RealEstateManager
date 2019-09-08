@@ -3,12 +3,14 @@ package com.openclassrooms.realestatemanager.detailsProperty
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -51,7 +53,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     @BindView(R.id.details_view_location_country) lateinit var country: TextView
     @BindView(R.id.details_view_map) lateinit var map: ImageView
     @BindView(R.id.details_view_slider_pictures) lateinit var sliderPictures: SliderView
-    @BindView(R.id.detail_view_main_layout) lateinit var mainLayout: ConstraintLayout
+    @BindView(R.id.detail_view_main_layout) lateinit var mainLayout: ScrollView
     @BindView(R.id.detail_view_price_icon) lateinit var priceIcon: ImageView
     @BindView(R.id.detail_view_price) lateinit var price: TextView
     @BindView(R.id.detail_view_type) lateinit var type: TextView
@@ -160,7 +162,6 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     }
 
     private fun renderFetchedProperty(property: Property){
-        Log.e("property", "here")
         val surfaceProperty = property.surface
         val priceProperty = property.price
         var iconPrice: Int? = null
@@ -188,9 +189,13 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
             bathRooms.text = it.toString()
         }
 
-        if(property.sold) mainLayout.setBackgroundColor(
-                ContextCompat.getColor(activity!!.applicationContext, R.color.colorPrimaryLight)
-        )
+        if(property.sold){
+            mainLayout.setBackgroundColor(
+                    ContextCompat.getColor(activity!!.applicationContext, R.color.colorPrimaryLight)
+            )
+        } else{
+            mainLayout.setBackgroundColor(Color.WHITE)
+        }
         type.text = property.type.typeName
 
     }

@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
-    private var isDoubleScreenMode = false
+    var isDoubleScreenMode = false
 
     fun setListPropertiesChangeList(callback: OnListPropertiesChangeListener){
         this.callbackListPropertiesRefresh = callback
@@ -80,7 +80,6 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         ButterKnife.bind(this)
 
         configureViewModel()
-
         configureToolbar()
         configureViewPagerAndTablayout()
         configureRapidFloatingActionButton()

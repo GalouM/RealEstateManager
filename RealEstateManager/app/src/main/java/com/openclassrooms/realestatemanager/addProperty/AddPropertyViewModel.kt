@@ -70,7 +70,7 @@ BitmapDownloader.Listeners{
     private lateinit var onMarketSince: String
     private var isSold: Boolean = false
     private var sellOn: String? = null
-    private var agent: Int? = null
+    private var agentId: Int? = null
     private lateinit var amenities: List<TypeAmenity>
     private lateinit var pictures: List<Picture>
     private var map = ""
@@ -96,14 +96,16 @@ BitmapDownloader.Listeners{
                         intent.description, intent.address,
                         intent.neighborhood, intent.onMarketSince,
                         intent.isSold, intent.sellDate,
-                        intent.agent, intent.amenities,
-                        intent.pictures, intent.context)
+                        intent.amenities,intent.pictures,
+                        intent.context
+                )
 
             }
 
             is AddPropertyIntent.OpenListAgentsIntent -> fetchAgentsFromDB()
 
             is AddPropertyIntent.SetActionTypeIntent -> setActionType(intent.actionType)
+            is AddPropertyIntent.SelectAgentIntent -> setAgentSelected(intent.agentId)
         }
     }
 
@@ -196,6 +198,10 @@ BitmapDownloader.Listeners{
         }
     }
 
+    private fun setAgentSelected(agentId: Int){
+        this.agentId = agentId
+    }
+
     //--------------------
     // ADD PROPERTY TO DB
     //--------------------
@@ -206,8 +212,7 @@ BitmapDownloader.Listeners{
                                     description: String, address: String,
                                     neighborhood: String, onMarketSince: String,
                                     isSold: Boolean, sellOn: String?,
-                                    agent: Int?, amenities: List<TypeAmenity>,
-                                    pictures: List<Picture>,
+                                    amenities: List<TypeAmenity>, pictures: List<Picture>,
                                     contextApp: Context){
         fun setGlobalProperties() {
             context = contextApp
@@ -223,13 +228,12 @@ BitmapDownloader.Listeners{
             this.onMarketSince = onMarketSince
             this.isSold = isSold
             this.sellOn = sellOn
-            this.agent = agent
             this.amenities = amenities
             this.pictures = pictures
         }
 
         listErrorInputs.clear()
-        //resultToViewState(Lce.Loading())
+        resultToViewState(Lce.Loading())
         setGlobalProperties()
         checkErrorsFromUserInput().forEach { listErrorInputs.add(it) }
         fetchAddressLocation(address)
@@ -274,12 +278,13 @@ BitmapDownloader.Listeners{
         if(surface == null) listErrors.add(ErrorSourceAddProperty.NO_SURFACE)
         if(rooms == null) listErrors.add(ErrorSourceAddProperty.NO_ROOMS)
         if(address.isEmpty()) listErrors.add(ErrorSourceAddProperty.NO_ADDRESS)
-        if(agent == null) listErrors.add(ErrorSourceAddProperty.NO_AGENT)
-        pictures?.forEach {
+        if(agentId == null) listErrors.add(ErrorSourceAddProperty.NO_AGENT)
+        pictures.forEach {
             if(it.description.isNullOrBlank()){
                 listErrors.add(ErrorSourceAddProperty.MISSING_DESCRIPTION)
             }
         }
+        Log.e("udpate", "${agentId}")
 
         return listErrors
     }
@@ -388,7 +393,7 @@ BitmapDownloader.Listeners{
                         surface!!.toSqMeter(currency), rooms!!,
                         bedrooms, bathrooms,
                         description, onMarketSince.toDate()!!,
-                        isSold, sellOn?.toDate(), agent!!, hasPicture)
+                        isSold, sellOn?.toDate(), agentId!!, hasPicture)
                 when(actionType){
                     ActionType.NEW_PROPERTY -> propertyId = propertyRepository.createProperty(propertyForDB).toInt()
                     ActionType.MODIFY_PROPERTY -> propertyRepository.updateProperty(propertyForDB)
@@ -472,6 +477,7 @@ BitmapDownloader.Listeners{
         }
 
         fun fetchAgent(){
+            agentId = property!!.property.agent
             searchAgentsJob = launch {
                 agent = agentRepository.getAgent(property!!.property.agent)[0]
                 emitResult()
@@ -485,6 +491,7 @@ BitmapDownloader.Listeners{
 
         fetchProperty()
         fetchAgent()
+
 
     }
 

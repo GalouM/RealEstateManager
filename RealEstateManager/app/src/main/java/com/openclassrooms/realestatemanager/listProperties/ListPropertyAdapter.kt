@@ -16,7 +16,7 @@ import com.openclassrooms.realestatemanager.utils.Currency
 
 class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
                           var currency: Currency?,
-                          val glide: RequestManager)
+                          val glide: RequestManager, var isDoubleScreen: Boolean)
     : RecyclerView.Adapter<ListPropertyViewHolder>(){
 
     private lateinit var context: Context
@@ -37,7 +37,7 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
     }
 
     override fun onBindViewHolder(holder: ListPropertyViewHolder, position: Int) {
-        holder.updateWithProperty(properties[position], glide, currency, context)
+        holder.updateWithProperty(properties[position], glide, currency, context, isDoubleScreen)
     }
 
     fun update(properties: List<PropertyWithAllData>){

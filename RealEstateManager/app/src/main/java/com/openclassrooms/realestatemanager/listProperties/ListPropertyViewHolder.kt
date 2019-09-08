@@ -49,7 +49,10 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         typeColor = type.currentTextColor
     }
 
-    fun updateWithProperty(property: PropertyWithAllData, glide: RequestManager, currency: Currency?, context: Context){
+    fun updateWithProperty(
+            property: PropertyWithAllData, glide: RequestManager,
+            currency: Currency?, context: Context, isDoubleScreen: Boolean
+    ){
         this.context = context
         isSold = property.property.sold
 
@@ -70,7 +73,7 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             else -> ""
         }
 
-        if(!isSelected){
+        if(!isDoubleScreen || !isSelected){
             configureCardToNormalState()
         }
     }

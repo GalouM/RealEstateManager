@@ -71,10 +71,10 @@ class ListPropertyView : BaseViewListProperties(),
     //--------------------
 
     override fun renderListProperties(properties: List<PropertyWithAllData>){
-        adapter?.update(properties)
+        adapter!!.update(properties)
         if(activity is MainActivity){
             if(!(activity as MainActivity).isDoubleScreenMode){
-                adapter?.updateSelection(null)
+                adapter!!.updateSelection(null)
 
             }
         }
@@ -101,7 +101,11 @@ class ListPropertyView : BaseViewListProperties(),
     //--------------------
 
     private fun configureRecyclerView(){
-        adapter = ListPropertyAdapter(listOf<PropertyWithAllData>(), currentCurrency, Glide.with(this))
+        var isDoubleScreen = false
+        if(activity is MainActivity){
+            isDoubleScreen = (activity as MainActivity).isDoubleScreenMode
+        }
+        adapter = ListPropertyAdapter(listOf<PropertyWithAllData>(), currentCurrency, Glide.with(this), isDoubleScreen)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
         configureClickRecyclerView()

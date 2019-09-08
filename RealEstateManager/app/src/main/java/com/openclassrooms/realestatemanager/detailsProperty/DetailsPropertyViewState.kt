@@ -17,14 +17,12 @@ data class DetailsPropertyViewState(
         val property: Property? = null,
         val address: Address? = null,
         val pictures: List<Picture>? = null,
-        val amenities: List<Amenity>? = null,
-        val modifyProperty: Boolean = false
+        val amenities: List<Amenity>? = null
 ) : REMViewState
 
 sealed class DetailsPropertyIntent : REMIntent{
     object FetchDetailsIntent : DetailsPropertyIntent()
     object DisplayDetailsIntent : DetailsPropertyIntent()
-    object ModifyPropertyIntent : DetailsPropertyIntent()
 }
 
 sealed class DetailsPropertyResult : REMResult {
@@ -32,5 +30,4 @@ sealed class DetailsPropertyResult : REMResult {
             val property: Property?, val address: Address?,
             val amenities: List<Amenity>?, val pictures: List<Picture>?
     ) : DetailsPropertyResult()
-    object ModifyPropertyResult : DetailsPropertyResult()
 }

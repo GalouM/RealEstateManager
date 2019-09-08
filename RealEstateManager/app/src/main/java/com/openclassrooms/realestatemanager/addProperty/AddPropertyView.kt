@@ -386,6 +386,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                                           agentId: Int, amenities: List<TypeAmenity>,
                                           pictures: List<Picture>, agentFirstName: String,
                                           agentLastName: String){
+        Log.e("update", "update ui")
         val priceToDisplay = when(currentCurrency!!){
             Currency.EURO -> price.toString()
             Currency.DOLLAR -> price.toDollar().toString()
@@ -451,8 +452,9 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
                 bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
                 addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOn, agentSelectedId, getAmenitiesSelected(), picturesPicked,
-                activity!!.applicationContext)
+                soldSwithch.isChecked, soldOn, getAmenitiesSelected(), picturesPicked,
+                activity!!.applicationContext
+        )
         )
     }
 

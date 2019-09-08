@@ -40,10 +40,11 @@ sealed class AddPropertyIntent : REMIntent{
             val description: String, val address: String,
             val neighborhood: String, val onMarketSince: String,
             val isSold: Boolean, val sellDate: String?,
-            val agent: Int?, val amenities: List<TypeAmenity>,
-            val pictures: List<Picture>,
+            val amenities: List<TypeAmenity>, val pictures: List<Picture>,
             val context: Context
     ) : AddPropertyIntent()
+
+    data class SelectAgentIntent(val agentId: Int): AddPropertyIntent()
 
     data class SetActionTypeIntent(val actionType: ActionType) : AddPropertyIntent()
 

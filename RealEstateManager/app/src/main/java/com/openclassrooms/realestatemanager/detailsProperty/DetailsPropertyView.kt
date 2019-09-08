@@ -107,7 +107,9 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
     //--------------------
 
     fun toolBarModifyClickListener(){
-        viewModel.actionFromIntent(DetailsPropertyIntent.ModifyPropertyIntent)
+        val intent = Intent(activity, AddPropertyActivity::class.java)
+        intent.putExtra(ACTION_TYPE_ADD_PROPERTY, ActionType.MODIFY_PROPERTY.actionName)
+        startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 
     //--------------------
@@ -146,19 +148,11 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         state.address?.let { renderFetchedAddress(it) }
         state.amenities?.let { renderFetchedAmenities(it) }
 
-        if(state.modifyProperty) renderModifyProperty()
-
         renderIsLoading(state.isLoading)
     }
 
     private fun renderIsLoading(loading: Boolean){
 
-    }
-
-    private fun renderModifyProperty(){
-        val intent = Intent(activity, AddPropertyActivity::class.java)
-        intent.putExtra(ACTION_TYPE_ADD_PROPERTY, ActionType.MODIFY_PROPERTY.actionName)
-        startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
     }
 
     private fun renderFetchedProperty(property: Property){

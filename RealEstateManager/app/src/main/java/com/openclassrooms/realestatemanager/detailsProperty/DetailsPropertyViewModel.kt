@@ -36,7 +36,6 @@ class DetailsPropertyViewModel(
     override fun actionFromIntent(intent: DetailsPropertyIntent) {
         when(intent){
             is DetailsPropertyIntent.FetchDetailsIntent -> fetchDetailsProperty()
-            is DetailsPropertyIntent.ModifyPropertyIntent -> modifyProperty()
             is DetailsPropertyIntent.DisplayDetailsIntent -> displayPropertyDetails()
         }
     }
@@ -47,7 +46,6 @@ class DetailsPropertyViewModel(
                 when(result.packet){
                     is DetailsPropertyResult.FetchDetailsResult -> {
                         currentViewState.copy(
-                                modifyProperty = false,
                                 isLoading = false,
                                 property = result.packet.property,
                                 address = result.packet.address,
@@ -56,23 +54,15 @@ class DetailsPropertyViewModel(
                         )
                     }
 
-                    is DetailsPropertyResult.ModifyPropertyResult -> {
-                        currentViewState.copy(
-                                modifyProperty = true,
-                                isLoading = false
-                        )
-                    }
                 }
             }
             is Lce.Loading -> {
                 currentViewState.copy(
-                        modifyProperty = false,
                         isLoading = true
                 )
             }
             is Lce.Error -> {
                 currentViewState.copy(
-                        modifyProperty = false,
                         isLoading = false
                 )
 
@@ -116,12 +106,6 @@ class DetailsPropertyViewModel(
         val result: Lce<DetailsPropertyResult> = Lce.Content(DetailsPropertyResult.FetchDetailsResult(
                 property.property, property.address[0], property.amenities, property.pictures
         ))
-        resultToViewState(result)
-    }
-
-    private fun modifyProperty(){
-        resultToViewState(Lce.Loading())
-        val result: Lce<DetailsPropertyResult> = Lce.Content(DetailsPropertyResult.ModifyPropertyResult)
         resultToViewState(result)
     }
 }

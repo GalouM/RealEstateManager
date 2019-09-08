@@ -44,6 +44,7 @@ BitmapDownloader.Listeners{
         get() = currencyRepository.currency
 
     private lateinit var disposable: Disposable
+    private var displayDataPropertyHandled = false
 
     private lateinit var actionType: ActionType
     private lateinit var context: Context
@@ -189,8 +190,9 @@ BitmapDownloader.Listeners{
 
     private fun setActionType(actionType: ActionType){
         this.actionType = actionType
-        if(actionType == ActionType.MODIFY_PROPERTY){
+        if(actionType == ActionType.MODIFY_PROPERTY && !displayDataPropertyHandled){
             fetchExistingPropertyFromDB()
+            displayDataPropertyHandled = true
         }
     }
 

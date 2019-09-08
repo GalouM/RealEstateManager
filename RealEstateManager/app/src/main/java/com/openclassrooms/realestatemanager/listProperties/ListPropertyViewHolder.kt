@@ -100,7 +100,6 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             price.setTextColor(priceColor!!)
             type.setTextColor(typeColor!!)
         }
-        Log.e("update", "$isSold, ${type.currentTextColor}")
     }
 
     private fun configureCardToSelectedState(){

@@ -71,7 +71,6 @@ class ListPropertyView : BaseViewListProperties(),
     //--------------------
 
     override fun renderListProperties(properties: List<PropertyWithAllData>){
-        Log.e("update", "__________________________")
         adapter?.update(properties)
         if(activity is MainActivity){
             if(!(activity as MainActivity).isDoubleScreenMode){

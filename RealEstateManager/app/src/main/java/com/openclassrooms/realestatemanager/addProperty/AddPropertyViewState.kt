@@ -40,15 +40,22 @@ sealed class AddPropertyIntent : REMIntent{
             val description: String, val address: String,
             val neighborhood: String, val onMarketSince: String,
             val isSold: Boolean, val sellDate: String?,
-            val amenities: List<TypeAmenity>, val pictures: List<Picture>,
-            val context: Context
+            val amenities: List<TypeAmenity>, val context: Context
     ) : AddPropertyIntent()
 
     data class SelectAgentIntent(val agentId: Int): AddPropertyIntent()
 
-    data class SetActionTypeIntent(val actionType: ActionType) : AddPropertyIntent()
+    data class InitialIntent(val actionType: ActionType) : AddPropertyIntent()
 
     object OpenListAgentsIntent : AddPropertyIntent()
+
+    data class AddPictureToList(val pictureUrl: String, val thumbnailUrl: String?) : AddPropertyIntent()
+
+    data class RemovePictureFromList(val picture: Picture) : AddPropertyIntent()
+
+    data class MovePictureInListPosition(val from: Int, val to: Int) : AddPropertyIntent()
+
+    data class AddDescriptionToPicture(val position: Int, val description: String) : AddPropertyIntent()
 
 }
 
@@ -56,8 +63,8 @@ sealed class AddPropertyResult : REMResult{
     data class AddPropertyToDBResult(val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
     data class FetchedPropertyResult(
             val property: Property?, val amenities: List<TypeAmenity>?,
-            val pictures: List<Picture>?, val agent: Agent?, val address: Address?,
-            val errorSource: List<ErrorSourceAddProperty>?
+            val agent: Agent?, val address: Address?, val errorSource: List<ErrorSourceAddProperty>?
     ) : AddPropertyResult()
     data class ListAgentsResult(val listAgents: List<Agent>?, val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
+    data class PictureResult(val pictures: List<Picture>) : AddPropertyResult()
 }

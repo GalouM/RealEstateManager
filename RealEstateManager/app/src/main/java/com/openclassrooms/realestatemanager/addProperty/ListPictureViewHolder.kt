@@ -33,7 +33,7 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
     @BindView(R.id.pictures_added_rv_foreground) lateinit var foreground: ImageView
 
     private lateinit var callbackWeakRef: WeakReference<ListPictureAdapter.Listener>
-    private lateinit var picture: Picture
+    lateinit var picture: Picture
 
     init {
         ButterKnife.bind(this, view)

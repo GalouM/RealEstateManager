@@ -82,12 +82,9 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     @BindView(R.id.add_property_view_picture_rv) lateinit var recyclerViewPictures: RecyclerView
 
     private lateinit var viewModel: AddPropertyViewModel
-    private var agentSelectedId: Int? = null
     private var currentCurrency: Currency? = null
 
     private var openAgentWindowHandled = true
-
-    private val picturesPicked = mutableListOf<Picture>()
 
     private var packageManager: PackageManager? = null
     private var lastPhotoTakenPath: String? = null
@@ -100,7 +97,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 val adapter = recyclerView.adapter as ListPictureAdapter
                 val from = viewHolder.adapterPosition
                 val to = target.adapterPosition
-                moveItem(from, to)
+                viewModel.actionFromIntent(AddPropertyIntent.MovePictureInListPosition(from, to))
                 adapter.notifyItemMoved(from, to)
                 adapter.updateForegroundViewHolder()
 
@@ -115,9 +112,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val toDelete = viewHolder.adapterPosition
-                picturesPicked.removeAt(toDelete)
-                adapter.update(picturesPicked)
+                val toDelete = (viewHolder as ListPictureViewHolder).picture
+                viewModel.actionFromIntent(AddPropertyIntent.RemovePictureFromList(toDelete))
             }
 
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
@@ -144,6 +140,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         currencyObserver()
         configureTypeDropdownOptions()
         configureRecyclerViewPictures()
+        configureSellDateVisibility()
         configureActionType()
 
         return view
@@ -170,7 +167,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         val argument = arguments?.getString(ACTION_TYPE_ADD_PROPERTY, "")
         argument?.let{
             val actionType = ActionType.valueOf(it)
-            viewModel.actionFromIntent(AddPropertyIntent.SetActionTypeIntent(actionType))
+            viewModel.actionFromIntent(AddPropertyIntent.InitialIntent(actionType))
         }
 
     }
@@ -214,19 +211,13 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     override fun onAgentSelected(agent: Agent) {
         val displayNameAgent = "${agent.firstName} ${agent.lastName}"
         dropdowAgent.setText(displayNameAgent)
-        agentSelectedId = agent.id
+        viewModel.actionFromIntent(AddPropertyIntent.SelectAgentIntent(agent.id!!))
         openAgentWindowHandled = true
     }
 
     @OnClick(R.id.add_property_view_sold_switch)
     fun clickSoldButtonListener(){
-        if(soldSwithch.isChecked){
-            soldOnText.visibility = View.VISIBLE
-            soldOnLayout.visibility = View.VISIBLE
-        } else {
-            soldOnText.visibility = View.INVISIBLE
-            soldOnLayout.visibility = View.INVISIBLE
-        }
+        configureSellDateVisibility()
 
     }
 
@@ -237,9 +228,8 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         }
     }
 
-    override fun onClickDeleteButton(photo: Picture) {
-        picturesPicked.remove(photo)
-        adapter.update(picturesPicked)
+    override fun onClickDeleteButton(picture: Picture) {
+        viewModel.actionFromIntent(AddPropertyIntent.RemovePictureFromList(picture))
     }
 
     override fun onDragItemRV(viewHolder: ListPictureViewHolder) {
@@ -249,6 +239,16 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     //--------------------
     // CONFIGURE UI
     //--------------------
+
+    private fun configureSellDateVisibility(){
+        if(soldSwithch.isChecked){
+            soldOnText.visibility = View.VISIBLE
+            soldOnLayout.visibility = View.VISIBLE
+        } else {
+            soldOnText.visibility = View.INVISIBLE
+            soldOnLayout.visibility = View.INVISIBLE
+        }
+    }
 
     private fun configureTypeDropdownOptions(){
         val propertyType = mutableListOf<String>()
@@ -262,7 +262,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     }
 
     private fun configureRecyclerViewPictures(){
-        adapter = ListPictureAdapter(picturesPicked, Glide.with(this), this, this)
+        adapter = ListPictureAdapter(listOf<Picture>(), Glide.with(this), this, this)
         recyclerViewPictures.adapter = adapter
         recyclerViewPictures.layoutManager = LinearLayoutManager(activity)
         itemTouchHelper.attachToRecyclerView(recyclerViewPictures)
@@ -317,10 +317,11 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                     state.type, state.price!!, state.surface!!, state.rooms!!,
                     state.bedrooms, state.bathrooms, state.description, state.address,
                     state.neighborhood, state.onMarketSince, state.isSold, state.sellDate,
-                    state.agentId!!, state.amenities!!, state.pictures!!, state.agentFirstName,
-                    state.agentLastName
+                    state.amenities!!, state.agentFirstName, state.agentLastName
             )
         }
+
+        state.pictures?.let { renderPictures(it) }
 
 
     }
@@ -383,10 +384,9 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                                           description: String?, address: String,
                                           neighborhood: String?, onMarketSince: String,
                                           isSold: Boolean, sellOn: String?,
-                                          agentId: Int, amenities: List<TypeAmenity>,
-                                          pictures: List<Picture>, agentFirstName: String,
-                                          agentLastName: String){
-        Log.e("update", "update ui")
+                                          amenities: List<TypeAmenity>, agentFirstName: String,
+                                          agentLastName: String
+    ){
         val priceToDisplay = when(currentCurrency!!){
             Currency.EURO -> price.toString()
             Currency.DOLLAR -> price.toDollar().toString()
@@ -404,14 +404,12 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         addressText.setText(address)
         neighborhood?.let { neighbourhoodText.setText(it) }
         soldSwithch.isChecked = isSold
+        configureSellDateVisibility()
         sellOn?.let{
             soldOnText.setText(sellOn)
-            soldOnText.visibility = View.VISIBLE
-            soldOnLayout.visibility = View.VISIBLE
         }
         onMarketSinceText.setText(onMarketSince)
         dropdowPropertyType.setText(type)
-        agentSelectedId = agentId
         val displayNameAgent = "$agentFirstName $agentLastName"
         dropdowAgent.setText(displayNameAgent)
         amenities.forEach {
@@ -425,11 +423,11 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
             }
         }
 
-        if(pictures.isNotEmpty()) {
-            picturesPicked.addAll(pictures)
-            adapter.update(picturesPicked)
-        }
+    }
 
+    private fun renderPictures(pictures: List<Picture>){
+        adapter.update(pictures)
+        recyclerViewPictures.scrollToPosition(pictures.size - 1)
     }
 
     private fun disableAllErrors(){
@@ -452,8 +450,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
                 bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
                 addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOn, getAmenitiesSelected(), picturesPicked,
-                activity!!.applicationContext
+                soldSwithch.isChecked, soldOn, getAmenitiesSelected(), activity!!.applicationContext
         )
         )
     }
@@ -531,27 +528,18 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private fun addPicturePickedToList(data: Intent){
         getPicturesPathFromData(data).forEach {
-            picturesPicked.add(Picture(null, it, null, null, null, null, null))
+            viewModel.actionFromIntent(AddPropertyIntent.AddPictureToList(it, null))
         }
-        adapter.update(picturesPicked)
     }
 
     private fun addPictureTakenToList(){
         lastPhotoTakenPath?.let {
-            picturesPicked.add(Picture(null, it, getThumbnailFromPicture(it, activity!!), null, null, null, null))
-            adapter.update(picturesPicked)
+            viewModel.actionFromIntent(AddPropertyIntent.AddPictureToList(it, getThumbnailFromPicture(it, activity!!)))
             addPictureToGallery(activity!!, it)
         }
     }
 
-    private fun moveItem(from: Int, to: Int){
-        val fromPhoto = picturesPicked[from]
-        picturesPicked.removeAt(from)
-        picturesPicked.add(to, fromPhoto)
-
-    }
-
     override fun onPictureDescriptionEntered(position: Int, description: String) {
-        picturesPicked[position].description = description
+        viewModel.actionFromIntent(AddPropertyIntent.AddDescriptionToPicture(position, description))
     }
 }

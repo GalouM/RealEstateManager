@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
+    android:id="@+id/add_property_scroll_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -303,7 +304,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/sold_on"
-            android:visibility="invisible"
             android:layout_marginStart="@dimen/margin_big"
             app:layout_constraintStart_toEndOf="@id/add_property_view_sold_text"
             app:layout_constraintTop_toTopOf="@id/add_property_view_sold_switch"
@@ -315,8 +315,7 @@
                 style="@style/Widget.AppCompat.Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:inputType="date"
-                android:visibility="invisible"/>
+                android:inputType="date"/>
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -18,7 +18,7 @@ class ListPictureAdapter(
     private val listViewHolder = mutableListOf<ListPictureViewHolder>()
 
     interface Listener{
-        fun onClickDeleteButton(photo: Picture)
+        fun onClickDeleteButton(picture: Picture)
         fun onDragItemRV(viewHolder: ListPictureViewHolder)
         fun onPictureDescriptionEntered(position: Int, description: String)
     }

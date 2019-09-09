@@ -2,7 +2,6 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.Converters
@@ -50,6 +49,7 @@ BitmapDownloader.Listeners{
     private lateinit var context: Context
     private var propertyId: Int? = null
     private lateinit var idFromApi: String
+    private var propertyFetched: PropertyWithAllData? = null
 
     // data
     private val listErrorInputs = mutableListOf<ErrorSourceAddProperty>()
@@ -72,7 +72,7 @@ BitmapDownloader.Listeners{
     private var sellOn: String? = null
     private var agentId: Int? = null
     private lateinit var amenities: List<TypeAmenity>
-    private lateinit var pictures: List<Picture>
+    private var pictures = mutableListOf<Picture>()
     private var map = ""
     private var latitude: Double? = null
     private var longitude: Double? = null
@@ -96,16 +96,19 @@ BitmapDownloader.Listeners{
                         intent.description, intent.address,
                         intent.neighborhood, intent.onMarketSince,
                         intent.isSold, intent.sellDate,
-                        intent.amenities,intent.pictures,
-                        intent.context
+                        intent.amenities, intent.context
                 )
 
             }
 
             is AddPropertyIntent.OpenListAgentsIntent -> fetchAgentsFromDB()
 
-            is AddPropertyIntent.SetActionTypeIntent -> setActionType(intent.actionType)
+            is AddPropertyIntent.InitialIntent -> setActionType(intent.actionType)
             is AddPropertyIntent.SelectAgentIntent -> setAgentSelected(intent.agentId)
+            is AddPropertyIntent.AddPictureToList -> addPictureToProperty(intent.pictureUrl, intent.thumbnailUrl)
+            is AddPropertyIntent.RemovePictureFromList -> removePictureFromList(intent.picture)
+            is AddPropertyIntent.MovePictureInListPosition -> movePictureInList(intent.from, intent.to)
+            is AddPropertyIntent.AddDescriptionToPicture -> addDescriptionToPicture(intent.position, intent.description)
         }
     }
 
@@ -147,7 +150,15 @@ BitmapDownloader.Listeners{
                                 amenities = result.packet.amenities,
                                 agentId = result.packet.agent!!.id,
                                 agentFirstName = result.packet.agent.firstName,
-                                agentLastName = result.packet.agent.lastName,
+                                agentLastName = result.packet.agent.lastName
+                        )
+                    }
+                    is AddPropertyResult.PictureResult -> {
+                        currentViewState.copy(
+                                isSaved = false,
+                                listAgents = null,
+                                errors = null,
+                                isLoading = false,
                                 pictures = result.packet.pictures
                         )
                     }
@@ -184,6 +195,7 @@ BitmapDownloader.Listeners{
                                 errors = result.packet.errorSource
                         )
                     }
+                    else -> return
                 }
 
             }
@@ -196,10 +208,52 @@ BitmapDownloader.Listeners{
             fetchExistingPropertyFromDB()
             displayDataPropertyHandled = true
         }
+        fetchPictureExistingPictureFromDB()
     }
+
+    //--------------------
+    // SET DATA
+    //--------------------
 
     private fun setAgentSelected(agentId: Int){
         this.agentId = agentId
+    }
+
+    private fun addPictureToProperty(pictureUrl: String, thumbnailUrl: String?){
+        pictures.add(Picture(
+                null, pictureUrl, thumbnailUrl, null, null,
+                "", pictures.size -1)
+        )
+        emitResultPictureModification()
+    }
+
+    private fun removePictureFromList(picture: Picture){
+        pictures.remove(picture)
+        createOrderNumberPictures()
+        emitResultPictureModification()
+    }
+
+    private fun movePictureInList(from: Int, to: Int){
+        val fromPhoto = pictures[from]
+        pictures.removeAt(from)
+        pictures.add(to, fromPhoto)
+        createOrderNumberPictures()
+        //emitResultPictureModification()
+    }
+
+    private fun addDescriptionToPicture(postion: Int, description: String){
+        pictures[postion].description = description
+    }
+
+    private fun createOrderNumberPictures(){
+        pictures.forEachIndexed { index, picture ->
+            picture.orderNumber = index
+        }
+    }
+
+    private fun emitResultPictureModification(){
+        val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.PictureResult(pictures))
+        resultToViewState(result)
     }
 
     //--------------------
@@ -212,8 +266,8 @@ BitmapDownloader.Listeners{
                                     description: String, address: String,
                                     neighborhood: String, onMarketSince: String,
                                     isSold: Boolean, sellOn: String?,
-                                    amenities: List<TypeAmenity>, pictures: List<Picture>,
-                                    contextApp: Context){
+                                    amenities: List<TypeAmenity>, contextApp: Context
+    ){
         fun setGlobalProperties() {
             context = contextApp
             this.type = type
@@ -229,7 +283,6 @@ BitmapDownloader.Listeners{
             this.isSold = isSold
             this.sellOn = sellOn
             this.amenities = amenities
-            this.pictures = pictures
         }
 
         listErrorInputs.clear()
@@ -284,7 +337,6 @@ BitmapDownloader.Listeners{
                 listErrors.add(ErrorSourceAddProperty.MISSING_DESCRIPTION)
             }
         }
-        Log.e("udpate", "${agentId}")
 
         return listErrors
     }
@@ -358,11 +410,7 @@ BitmapDownloader.Listeners{
 
         fun createObjectForDB(){
             if(pictures.isNotEmpty()){
-                pictures.forEachIndexed { index, picture ->
-                    picture.orderNumber = index
-                    picture.property = propertyId
-
-                }
+                pictures.forEach{ it.property = propertyId }
             }
 
             amenities.forEach {
@@ -456,43 +504,48 @@ BitmapDownloader.Listeners{
     private fun fetchExistingPropertyFromDB(){
         if(searchAgentsJob?.isActive == true) searchAgentsJob?.cancel()
 
-        var property: PropertyWithAllData? = null
         var agent: Agent? = null
 
         fun emitResult(){
             val result: Lce<AddPropertyResult>
-            result = if(property == null){
+            result = if(propertyFetched == null){
                 val errors = listOf(ErrorSourceAddProperty.ERROR_FETCHING_PROPERTY)
                 Lce.Error(AddPropertyResult.FetchedPropertyResult(
-                        null, null, null, null, null, errors
+                        null, null, null, null, errors
                 ))
             } else {
                 Lce.Content(AddPropertyResult.FetchedPropertyResult(
-                        property!!.property, property!!.amenities.map { it.type },
-                        property!!.pictures.sortedBy { it.orderNumber }, agent,
-                        property!!.address[0], null
+                        propertyFetched!!.property, propertyFetched!!.amenities.map { it.type },
+                        agent, propertyFetched!!.address[0], null
                 ))
             }
             resultToViewState(result)
         }
 
         fun fetchAgent(){
-            agentId = property!!.property.agent
+            agentId = propertyFetched!!.property.agent
             searchAgentsJob = launch {
-                agent = agentRepository.getAgent(property!!.property.agent)[0]
+                agent = agentRepository.getAgent(propertyFetched!!.property.agent)[0]
                 emitResult()
             }
         }
 
         fun fetchProperty(){
-            property = propertyRepository.propertyPicked!!
-            propertyId = property!!.property.id
+            propertyFetched = propertyRepository.propertyPicked!!
+            propertyId = propertyFetched!!.property.id
         }
 
         fetchProperty()
         fetchAgent()
 
 
+    }
+
+    private fun fetchPictureExistingPictureFromDB(){
+        propertyFetched?.let{ property ->
+            pictures = property.pictures.sortedBy { it.orderNumber }.toMutableList()
+            emitResultPictureModification()
+        }
     }
 
 

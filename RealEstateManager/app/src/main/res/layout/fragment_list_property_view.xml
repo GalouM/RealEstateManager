@@ -15,7 +15,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_property_view_rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/list_view_item"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

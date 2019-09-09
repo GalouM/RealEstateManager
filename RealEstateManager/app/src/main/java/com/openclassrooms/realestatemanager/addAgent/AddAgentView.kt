@@ -148,6 +148,8 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
     private fun chooseProfilePictureFromPhone(){
         if(requestPermissionStorage(this)) {
             startActivityForResult(intentSinglePicture(), RC_CHOOSE_PHOTO)
+        } else {
+            return
         }
 
     }

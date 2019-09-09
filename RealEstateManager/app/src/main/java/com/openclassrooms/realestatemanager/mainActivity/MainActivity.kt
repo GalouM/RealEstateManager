@@ -34,6 +34,7 @@ import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList
 import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
+import java.lang.ref.WeakReference
 
 
 class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
@@ -43,10 +44,16 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         fun onListPropertiesChange()
     }
 
-    private lateinit var callbackListPropertiesRefresh: OnListPropertiesChangeListener
-    private lateinit var callbackMapPropertiesRefresh: OnListPropertiesChangeListener
+    interface OnTabSelectedListener{
+        fun onMapSelectedListener()
+    }
 
-    private lateinit var viewModel: MainActivityViewModel
+    var callbackListPropertiesRefresh: WeakReference<OnListPropertiesChangeListener>? = null
+    var callbackMapPropertiesRefresh: WeakReference<OnListPropertiesChangeListener>? = null
+    var callbackTabListener: WeakReference<OnTabSelectedListener>? = null
+
+
+            private lateinit var viewModel: MainActivityViewModel
 
     @BindView(R.id.main_activity_toolbar) lateinit var toolbar: Toolbar
     @BindView(R.id.main_activity_tablayout_viewpager) lateinit var viewPager: MainActivityViewPager
@@ -62,14 +69,6 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
     var isDoubleScreenMode = false
-
-    fun setListPropertiesChangeList(callback: OnListPropertiesChangeListener){
-        this.callbackListPropertiesRefresh = callback
-    }
-
-    fun setListPropertiesChangeMap(callback: OnListPropertiesChangeListener){
-        this.callbackMapPropertiesRefresh = callback
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,8 +99,8 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         if(requestCode == RC_CODE_ADD_PROPERTY){
             if(resultCode == Activity.RESULT_OK){
                 showSnackBarMessage(getString(R.string.property_added))
-                callbackListPropertiesRefresh.onListPropertiesChange()
-                callbackMapPropertiesRefresh.onListPropertiesChange()
+                callbackListPropertiesRefresh?.get()?.onListPropertiesChange()
+                callbackMapPropertiesRefresh?.get()?.onListPropertiesChange()
             }
         }
     }
@@ -170,6 +169,9 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     val tabIconColor = ContextCompat.getColor(applicationContext, R.color.colorTextPrimary)
                     tab?.icon?.setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN)
+
+                    if(viewPager.currentItem == 0) callbackTabListener?.get()?.onMapSelectedListener()
+
                 }
             })
             viewPager.currentItem = 1

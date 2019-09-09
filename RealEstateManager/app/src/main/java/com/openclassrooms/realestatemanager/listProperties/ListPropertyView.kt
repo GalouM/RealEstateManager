@@ -23,6 +23,7 @@ import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.ItemClickSupport
+import java.lang.ref.WeakReference
 
 /**
  * A simple [Fragment] subclass.
@@ -62,7 +63,7 @@ class ListPropertyView : BaseViewListProperties(),
 
     private fun setupRefreshPropertiesListener(){
         if(activity is MainActivity){
-            (activity as MainActivity).setListPropertiesChangeList(this)
+            (activity as MainActivity).callbackListPropertiesRefresh = WeakReference(this)
         }
     }
 

@@ -1,9 +1,9 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 
+import android.content.Context
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,10 +30,7 @@ import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.extensions.*
-import pub.devrel.easypermissions.AfterPermissionGranted
-import pub.devrel.easypermissions.EasyPermissions
-import java.math.RoundingMode
-import kotlin.math.roundToLong
+import java.lang.ref.WeakReference
 
 
 /**
@@ -41,7 +38,8 @@ import kotlin.math.roundToLong
  *
  */
 class MapPropertyView : BaseViewListProperties(),
-       MainActivity.OnListPropertiesChangeListener, MapboxMap.OnInfoWindowClickListener {
+       MainActivity.OnListPropertiesChangeListener, MapboxMap.OnInfoWindowClickListener,
+MainActivity.OnTabSelectedListener{
 
     @BindView(R.id.map_view_map) lateinit var mapView: MapView
     @BindView(R.id.map_view_button) lateinit var buttonCenter: Button
@@ -52,6 +50,7 @@ class MapPropertyView : BaseViewListProperties(),
     private var propertiesNearBy = mutableListOf<PropertyWithAllData>()
 
     private var mapBoxMap: MapboxMap? = null
+    private lateinit var contextApp: Context
 
 
     companion object {
@@ -66,23 +65,38 @@ class MapPropertyView : BaseViewListProperties(),
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_map_property_view, container, false)
         ButterKnife.bind(this, view)
+        contextApp = activity!!
         configureViewModel()
-        configureActionType()
-        currencyObserver()
-        mapView.onCreate(savedInstanceState)
-        fetchUserLocation()
-        setupRefreshPropertiesListener()
+        setupCallbackToActivity()
+        displayMap(savedInstanceState)
+
         return view
     }
 
-    private fun setupRefreshPropertiesListener(){
+    private fun setupCallbackToActivity(){
         if(activity is MainActivity){
-            (activity as MainActivity).setListPropertiesChangeMap(this)
+            (activity as MainActivity).callbackMapPropertiesRefresh = WeakReference(this)
+            (activity as MainActivity).callbackTabListener = WeakReference(this)
         }
     }
 
     override fun onListPropertiesChange() {
         viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
+    }
+
+    private fun displayMap(savedInstanceState: Bundle?){
+        if(isInternetAvailable(contextApp) && isGPSAvailable(contextApp)) {
+            configureActionType()
+            currencyObserver()
+            mapView.onCreate(savedInstanceState)
+            displayData()
+        }
+    }
+
+    private fun displayData(){
+        if(requestPermissionLocation(this)){
+            displayUserLocation()
+        }
     }
 
     //--------------------
@@ -124,7 +138,7 @@ class MapPropertyView : BaseViewListProperties(),
     private fun displayPropertiesAround(currency: Currency) {
         mapBoxMap?.clear()
         mapBoxMap?.onInfoWindowClickListener = this
-        val iconFactory = IconFactory.getInstance(activity!!.applicationContext)
+        val iconFactory = IconFactory.getInstance(contextApp.applicationContext)
         propertiesNearBy.forEach {
             val positionProperty = LatLng(it.address[0].latitude, it.address[0].longitude)
             val drawable = if (it.property.sold) R.drawable.icon_location_sold else R.drawable.icon_location_normal
@@ -143,18 +157,6 @@ class MapPropertyView : BaseViewListProperties(),
 
     }
 
-    @AfterPermissionGranted(RC_LOCATION_PERMS)
-    fun fetchUserLocation(){
-        if(! EasyPermissions.hasPermissions(context!!, PERMS_LOCALISATION)) {
-            EasyPermissions.requestPermissions(
-                    this, getString(R.string.storage_perm_request), RC_LOCATION_PERMS, PERMS_LOCALISATION)
-            return
-        }
-
-        displayUserLocation()
-
-    }
-
     private fun displayUserLocation(){
         mapView.getMapAsync {
             mapBoxMap = it
@@ -162,7 +164,7 @@ class MapPropertyView : BaseViewListProperties(),
 
                 fun getAndDisplayUserLocation(): LocationComponent{
                     return mapBoxMap!!.locationComponent.apply {
-                        activateLocationComponent(LocationComponentActivationOptions.builder(activity!!.applicationContext, style).build())
+                        activateLocationComponent(LocationComponentActivationOptions.builder(contextApp.applicationContext, style).build())
                         isLocationComponentEnabled = true
                         cameraMode = CameraMode.TRACKING
                         renderMode = RenderMode.COMPASS
@@ -220,6 +222,12 @@ class MapPropertyView : BaseViewListProperties(),
         return false
     }
 
+    override fun onMapSelectedListener() {
+        if(!isInternetAvailable(contextApp) || !isGPSAvailable(contextApp)){
+            showSnackBarMessage(getString(R.string.no_gps_data))
+        }
+
+    }
 
     //--------------------
     // LIFE STATE MAP

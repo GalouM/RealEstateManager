@@ -89,8 +89,12 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
     private fun onPropertyModified(resultCode: Int){
         when(resultCode){
-            RESULT_OK -> {
+            RESULT_SAVED_TO_DB -> {
                 showSnackBarMessage(getString(R.string.property_modified))
+                viewModel.actionFromIntent(DetailsPropertyIntent.FetchDetailsIntent)
+            }
+            RESULT_SAVED_TO_DRAFT -> {
+                showSnackBarMessage(getString(R.string.modif_draft))
                 viewModel.actionFromIntent(DetailsPropertyIntent.FetchDetailsIntent)
             }
             else -> showSnackBarMessage(getString(R.string.error_modification))

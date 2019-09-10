@@ -1,15 +1,19 @@
 package com.openclassrooms.realestatemanager.data.repository
 
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.KEY_PREF
 import com.openclassrooms.realestatemanager.utils.KEY_PREF_CURRENCY
 
 /**
  * Created by galou on 2019-08-11
  */
-class CurrencyRepository(private val sharedPreferences: SharedPreferences?) {
+class CurrencyRepository(context: Context) {
+
+    private val sharedPreferences = context.getSharedPreferences(KEY_PREF, Context.MODE_PRIVATE)
 
     private val currencyLD = MutableLiveData<Currency>()
     val currency: LiveData<Currency>
@@ -41,10 +45,10 @@ class CurrencyRepository(private val sharedPreferences: SharedPreferences?) {
     companion object{
         @Volatile
         private var INSTANCE: CurrencyRepository? = null
-        fun getCurrencyRepository(sharedPreferences: SharedPreferences): CurrencyRepository {
+        fun getCurrencyRepository(context: Context): CurrencyRepository {
             return INSTANCE
                     ?: synchronized(this){
-                        val instance = CurrencyRepository(sharedPreferences)
+                        val instance = CurrencyRepository(context)
                         INSTANCE = instance
                         return instance
                     }

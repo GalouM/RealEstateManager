@@ -97,10 +97,13 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
             }
         }
         if(requestCode == RC_CODE_ADD_PROPERTY){
-            if(resultCode == Activity.RESULT_OK){
+            if(resultCode == RESULT_SAVED_TO_DB){
                 showSnackBarMessage(getString(R.string.property_added))
                 callbackListPropertiesRefresh?.get()?.onListPropertiesChange()
                 callbackMapPropertiesRefresh?.get()?.onListPropertiesChange()
+            }
+            if(resultCode == RESULT_SAVED_TO_DRAFT){
+                showSnackBarMessage(getString(R.string.saved_as_draft))
             }
         }
     }

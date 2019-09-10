@@ -17,7 +17,10 @@ import com.openclassrooms.realestatemanager.utils.TypeAmenity
 data class AddPropertyViewState(
         val isModifyProperty: Boolean = false,
         val isLoading: Boolean = false,
-        val isSaved: Boolean = false,
+        val isSavedToDB: Boolean = false,
+        val isSavedToDraft: Boolean = false,
+        val isADraft: Boolean = false,
+        val isOriginalAvailable: Boolean = false,
         val errors: List<ErrorSourceAddProperty>? = null,
         val listAgents: List<Agent>? = null,
         val type: String = "",
@@ -25,7 +28,7 @@ data class AddPropertyViewState(
         val bedrooms: Int? = null, val rooms: Int? = null,
         val bathrooms: Int? = null, val description: String? = null,
         val address: String = "", val neighborhood: String = "",
-        val onMarketSince: String = "", val isSold: Boolean = false,
+        val onMarketSince: String = "", val isSold: Boolean? = false,
         val sellDate: String? = null, val agentId: Int? = null,
         val amenities: List<TypeAmenity>? = null, val pictures: List<Picture>? = null,
         val agentFirstName: String = "", val agentLastName: String = ""
@@ -49,22 +52,50 @@ sealed class AddPropertyIntent : REMIntent{
 
     object OpenListAgentsIntent : AddPropertyIntent()
 
-    data class AddPictureToList(val pictureUrl: String, val thumbnailUrl: String?) : AddPropertyIntent()
+    data class AddPictureToListIntent(val pictureUrl: String, val thumbnailUrl: String?) : AddPropertyIntent()
 
-    data class RemovePictureFromList(val picture: Picture) : AddPropertyIntent()
+    data class RemovePictureFromListIntent(val picture: Picture) : AddPropertyIntent()
 
-    data class MovePictureInListPosition(val from: Int, val to: Int) : AddPropertyIntent()
+    data class MovePictureInListPositionIntent(val from: Int, val to: Int) : AddPropertyIntent()
 
     data class AddDescriptionToPicture(val position: Int, val description: String) : AddPropertyIntent()
+
+    data class SaveDraftIntent(
+            val type: String, val price: Double?,
+            val surface: Double?, val rooms: Int?,
+            val bedrooms: Int?, val bathrooms: Int?,
+            val description: String, val address: String,
+            val neighborhood: String, val onMarketSince: String,
+            val isSold: Boolean, val sellDate: String?,
+            val amenities: List<TypeAmenity>
+    ) : AddPropertyIntent()
+
+    object DisplayDataFromDB : AddPropertyIntent()
 
 }
 
 sealed class AddPropertyResult : REMResult{
-    data class AddPropertyToDBResult(val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
-    data class FetchedPropertyResult(
-            val property: Property?, val amenities: List<TypeAmenity>?,
-            val agent: Agent?, val address: Address?, val errorSource: List<ErrorSourceAddProperty>?
+    data class PropertyAddedToDBResult(val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
+    object PropertyAddedToDraftResult : AddPropertyResult()
+    data class PropertyFromDBResult(
+            val type: String, val price: Double?,
+            val surface: Double?, val rooms: Int?,
+            val bedrooms: Int?, val bathrooms: Int?,
+            val description: String?, val address: String,
+            val neighborhood: String, val onMarketSince: String,
+            val isSold: Boolean?, val sellOn: String?, val amenities: List<TypeAmenity>?,
+            val agent: Agent?, val errorSource: List<ErrorSourceAddProperty>?
+    ) : AddPropertyResult()
+    data class PropertyFromDraftResult(
+            val type: String, val price: Double?,
+            val surface: Double?, val rooms: Int?,
+            val bedrooms: Int?, val bathrooms: Int?,
+            val description: String?, val address: String,
+            val neighborhood: String, val onMarketSince: String,
+            val isSold: Boolean?, val sellOn: String?, val amenities: List<TypeAmenity>?,
+            val agent: Agent?, val originalAvailable: Boolean
     ) : AddPropertyResult()
     data class ListAgentsResult(val listAgents: List<Agent>?, val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
     data class PictureResult(val pictures: List<Picture>) : AddPropertyResult()
+
 }

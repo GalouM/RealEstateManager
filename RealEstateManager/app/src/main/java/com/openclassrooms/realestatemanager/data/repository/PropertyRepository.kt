@@ -37,59 +37,51 @@ class PropertyRepository(
     // API ADDRESS REQUEST
     //-----------------
 
-    fun getLocationFromAddress(address: String): Observable<GeocodingApiResponse>{
-        return geocodingApiService.getLocationFromAddress(address, BuildConfig.GoogleMapApiKey)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .timeout(10, TimeUnit.SECONDS)
-    }
+    fun getLocationFromAddress(address: String): Observable<GeocodingApiResponse> = geocodingApiService
+            .getLocationFromAddress(address, BuildConfig.GoogleMapApiKey)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .timeout(10, TimeUnit.SECONDS)
 
-    fun getMapLocation(lat: String, lng: String): String{
-        return "${BASE_URL_MAP_API}staticmap?zoom=${MAP_ICON_ZOOM}&size=${MAP_ICON_SIZE}x${MAP_ICON_SIZE}&maptype=roadmap&markers=color:${MAP_ICON_MARKER_COLOR}%7C${lat},${lng}&key=${BuildConfig.GoogleMapApiKey}"
-    }
+
+    fun getMapLocation(lat: String, lng: String): String =  "${BASE_URL_MAP_API}staticmap?zoom=${MAP_ICON_ZOOM}&size=${MAP_ICON_SIZE}x${MAP_ICON_SIZE}&maptype=roadmap&markers=color:${MAP_ICON_MARKER_COLOR}%7C${lat},${lng}&key=${BuildConfig.GoogleMapApiKey}"
+
 
     //-----------------
     // DB REQUEST
     //-----------------
     //------get--------
-    suspend fun getAllProperties(): List<PropertyWithAllData>{
-        return propertyDao.getAllProperties()
-    }
+    suspend fun getAllProperties() = propertyDao.getAllProperties()
 
-    suspend fun getProperty(idProperty: Int): List<PropertyWithAllData>{
-        return propertyDao.getProperty(idProperty)
-    }
+
+    suspend fun getProperty(idProperty: Int) = propertyDao.getProperty(idProperty)
 
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPictures: List<Int>, afterDate: Date
-    ): List<PropertyWithAllData>{
-        return propertyDao.getPropertiesQuery(
-                minPrice, maxPrice, minSurface, maxSurface,
-                minNbRoom, minNbBedrooms, minNbBathrooms,
-                listAgents, listTypes, neighborhood, isSold, hasPictures, afterDate
-        )
-    }
+    ) = propertyDao.getPropertiesQuery(
+            minPrice, maxPrice, minSurface, maxSurface,
+            minNbRoom, minNbBedrooms, minNbBathrooms,
+            listAgents, listTypes, neighborhood, isSold, hasPictures, afterDate
+    )
+
 
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
             listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPictures: List<Int>, afterDate: Date, listAmenities: List<TypeAmenity>
-    ): List<PropertyWithAllData>{
-        return propertyDao.getPropertiesQuery(
-                minPrice, maxPrice, minSurface, maxSurface,
-                minNbRoom, minNbBedrooms, minNbBathrooms,
-                listAgents, listTypes, neighborhood, isSold, hasPictures, afterDate, listAmenities
-        )
-    }
+    ) = propertyDao.getPropertiesQuery(
+            minPrice, maxPrice, minSurface, maxSurface,
+            minNbRoom, minNbBedrooms, minNbBathrooms,
+            listAgents, listTypes, neighborhood, isSold, hasPictures, afterDate, listAmenities
+    )
+
 
     //------create--------
-    suspend fun createProperty(property: Property): Long{
-        return propertyDao.createProperty(property)
-    }
+    suspend fun createProperty(property: Property) =  propertyDao.createProperty(property)
 
     suspend fun createDataProperty(
             amenities: List<Amenity>, pictures: List<Picture>, address: Address, actionType: ActionType

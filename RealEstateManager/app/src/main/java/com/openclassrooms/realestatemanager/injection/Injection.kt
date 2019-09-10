@@ -6,6 +6,7 @@ import com.openclassrooms.realestatemanager.data.database.REMDatabase
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
+import com.openclassrooms.realestatemanager.data.repository.SaveDataRepository
 import com.openclassrooms.realestatemanager.utils.KEY_PREF
 
 /**
@@ -27,16 +28,18 @@ class Injection {
                     database.pictureDao(), database.addressDao(), geocodingApi)
         }
 
-        private fun providesCurrencyRepository(context: Context): CurrencyRepository{
-            val sharedPreferences = context.getSharedPreferences(KEY_PREF, Context.MODE_PRIVATE)
-            return CurrencyRepository.getCurrencyRepository(sharedPreferences)
-        }
+        private fun providesCurrencyRepository(context: Context) = CurrencyRepository.getCurrencyRepository(context)
+
+
+        private fun providesSaveDataRepository(context: Context) = SaveDataRepository.getSaveDataRepository(context)
+
 
         fun providesViewModelFactory(context: Context): ViewModelFactory {
             val agentRepository = providesAgentRepository(context)
             val propertyRepository = providesPropertyRepository(context)
             val currencyRepository = providesCurrencyRepository(context)
-            return ViewModelFactory(agentRepository, propertyRepository, currencyRepository)
+            val saveDataRepository = providesSaveDataRepository(context)
+            return ViewModelFactory(agentRepository, propertyRepository, currencyRepository, saveDataRepository)
         }
     }
 }

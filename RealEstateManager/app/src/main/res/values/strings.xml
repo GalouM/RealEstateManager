@@ -102,4 +102,14 @@
     <string name="price_euro_details">%s€</string>
     <string name="price_dollar_details">$%s</string>
     <string name="no_gps_data">Turn on data and GPS to display the map</string>
+    <string name="offline_add_property_message">You are currently offline, you can\'t save a new property. Do you wish to save these modifications as a draft?</string>
+    <string name="offline_mode">Offline mode</string>
+    <string name="offline_mode_message">You are offline, all modifications will be saved as a draft</string>
+    <string name="show_original">Show original</string>
+    <string name="save_draft">Save as draft</string>
+    <string name="error_saving">Erro with your request, your property can\'t be saved</string>
+    <string name="seeing_draft">You are seeing a draft of your latest modifications</string>
+    <string name="saved_as_draft">You are offline, modification were saved as a draft</string>
+    <string name="modif_draft">Modification saved as draft</string>
+
 </resources>

@@ -46,7 +46,8 @@ import java.util.*
  *
  */
 class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
-        PickDateDialogView.OnOkButtonListener, ListAgentsDialogView.OnAgentSelected, ListPictureAdapter.Listener {
+        PickDateDialogView.OnOkButtonListener, ListAgentsDialogView.OnAgentSelected, ListPictureAdapter.Listener,
+SnackBarListener{
 
     @BindView(R.id.add_property_view_dropdown_type) lateinit var dropdowPropertyType: AutoCompleteTextView
     @BindView(R.id.add_property_view_price) lateinit var priceText: EditText
@@ -83,6 +84,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
     private lateinit var viewModel: AddPropertyViewModel
     private var currentCurrency: Currency? = null
+    private lateinit var actionType: ActionType
 
     private var openAgentWindowHandled = true
 
@@ -97,7 +99,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 val adapter = recyclerView.adapter as ListPictureAdapter
                 val from = viewHolder.adapterPosition
                 val to = target.adapterPosition
-                viewModel.actionFromIntent(AddPropertyIntent.MovePictureInListPosition(from, to))
+                viewModel.actionFromIntent(AddPropertyIntent.MovePictureInListPositionIntent(from, to))
                 adapter.notifyItemMoved(from, to)
                 adapter.updateForegroundViewHolder()
 
@@ -113,7 +115,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val toDelete = (viewHolder as ListPictureViewHolder).picture
-                viewModel.actionFromIntent(AddPropertyIntent.RemovePictureFromList(toDelete))
+                viewModel.actionFromIntent(AddPropertyIntent.RemovePictureFromListIntent(toDelete))
             }
 
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
@@ -137,11 +139,12 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         val view = inflater.inflate(R.layout.fragment_add_property_view, container, false)
         ButterKnife.bind(this, view)
         configureViewModel()
-        currencyObserver()
         configureTypeDropdownOptions()
         configureRecyclerViewPictures()
         configureSellDateVisibility()
         configureActionType()
+        showWarningMessage()
+        currencyObserver()
 
         return view
 
@@ -163,13 +166,10 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         }
     }
 
-    private fun configureActionType(){
-        val argument = arguments?.getString(ACTION_TYPE_ADD_PROPERTY, "")
-        argument?.let{
-            val actionType = ActionType.valueOf(it)
-            viewModel.actionFromIntent(AddPropertyIntent.InitialIntent(actionType))
+    private fun showWarningMessage(){
+        if(!isInternetAvailable(activity!!)){
+            showSnackBarMessage(getString(R.string.offline_mode_message))
         }
-
     }
 
     //--------------------
@@ -177,7 +177,13 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     //--------------------
 
     fun toolBarValidateClickListener(){
-        fetchInfoPropertyFromUI()
+        disableAllErrors()
+
+        if(isInternetAvailable(activity!!)){
+            emitSaveToDBIntent()
+        } else {
+            emitSaveDraftIntent()
+        }
     }
 
     override fun onOkButtonListener(calendar: Calendar, view: View) {
@@ -229,11 +235,18 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     }
 
     override fun onClickDeleteButton(picture: Picture) {
-        viewModel.actionFromIntent(AddPropertyIntent.RemovePictureFromList(picture))
+        viewModel.actionFromIntent(AddPropertyIntent.RemovePictureFromListIntent(picture))
     }
 
     override fun onDragItemRV(viewHolder: ListPictureViewHolder) {
         itemTouchHelper.startDrag(viewHolder)
+    }
+
+    override fun onSnackBarButtonClick(action: SnackBarAction) {
+        when(action){
+            SnackBarAction.SHOW_ORIGINAL -> viewModel.actionFromIntent(AddPropertyIntent.DisplayDataFromDB)
+            SnackBarAction.SAVE_DRAFT -> emitSaveDraftIntent()
+        }
     }
 
     //--------------------
@@ -287,19 +300,78 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         viewModel.currency.observe(this, Observer {currency ->
             currentCurrency = currency
             renderChangeCurrency(currentCurrency!!)
+            viewModel.actionFromIntent(AddPropertyIntent.InitialIntent(actionType))
         })
     }
+
+    private fun configureActionType(){
+        val argument = arguments?.getString(ACTION_TYPE_ADD_PROPERTY, "")
+        argument?.let{
+            actionType = ActionType.valueOf(it)
+        }
+
+    }
+
+    private fun emitSaveToDBIntent(){
+        val typeProperty = dropdowPropertyType.text.toString()
+        val soldOn = if(soldSwithch.isChecked) soldOnText.text.toString() else null
+        viewModel.actionFromIntent(AddPropertyIntent.AddPropertyToDBIntent(
+                typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
+                bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
+                addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
+                soldSwithch.isChecked, soldOn, getAmenitiesSelected(), activity!!.applicationContext
+        )
+        )
+    }
+
+    private fun emitSaveDraftIntent(){
+        val typeProperty = dropdowPropertyType.text.toString()
+        val soldOn = if(soldSwithch.isChecked) soldOnText.text.toString() else null
+        viewModel.actionFromIntent(AddPropertyIntent.SaveDraftIntent(
+                typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
+                bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
+                addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
+                soldSwithch.isChecked, soldOn, getAmenitiesSelected()
+        ))
+    }
+
+    private fun addPicturePickedToList(data: Intent){
+        getPicturesPathFromData(data).forEach {
+            viewModel.actionFromIntent(AddPropertyIntent.AddPictureToListIntent(it, null))
+        }
+    }
+
+    private fun addPictureTakenToList(){
+        lastPhotoTakenPath?.let {
+            viewModel.actionFromIntent(AddPropertyIntent.AddPictureToListIntent(it, getThumbnailFromPicture(it, activity!!)))
+            addPictureToGallery(activity!!, it)
+        }
+    }
+
+    override fun onPictureDescriptionEntered(position: Int, description: String) {
+        viewModel.actionFromIntent(AddPropertyIntent.AddDescriptionToPicture(position, description))
+    }
+
 
     //--------------------
     // STATE AND INTENT
     //--------------------
 
     override fun render(state: AddPropertyViewState?){
+        Log.e("update", "state : $state")
+        Log.e("update", "$currentCurrency")
         if (state == null) return
-        if(state.isSaved) {
+        if(state.isSavedToDB) {
             renderPropertyAddedToDB()
             return
         }
+
+        if(state.isSavedToDraft){
+            renderPropertyAddedToDraft()
+            return
+        }
+
+        if(state.isADraft) renderShowingADraft(state.isOriginalAvailable)
 
         if(state.isLoading) return
 
@@ -314,7 +386,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
 
         if(state.isModifyProperty && currentCurrency != null){
             renderDataFetchedProperty(
-                    state.type, state.price!!, state.surface!!, state.rooms!!,
+                    state.type, state.price, state.surface, state.rooms,
                     state.bedrooms, state.bathrooms, state.description, state.address,
                     state.neighborhood, state.onMarketSince, state.isSold, state.sellDate,
                     state.amenities!!, state.agentFirstName, state.agentLastName
@@ -337,6 +409,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 priceLayout.hint = getString(R.string.price_dollar)
             }
         }
+        Log.e("update", "new currency")
     }
 
 
@@ -362,6 +435,7 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
                 ErrorSourceAddProperty.MISSING_DESCRIPTION -> adapter.showErrorViewHolder(getString(R.string.no_description))
             }
         }
+        showSnackBarWithAction(getString(R.string.error_saving), SnackBarAction.SAVE_DRAFT)
     }
 
     private fun renderAgentDialog(agents: List<Agent>){
@@ -374,36 +448,43 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
     }
 
     private fun renderPropertyAddedToDB(){
-        activity!!.setResult(RESULT_OK)
+        activity!!.setResult(RESULT_SAVED_TO_DB)
         activity!!.finish()
     }
 
-    private fun renderDataFetchedProperty(type: String, price: Double,
-                                          surface: Double, rooms: Int,
+    private fun renderPropertyAddedToDraft(){
+        activity!!.setResult(RESULT_SAVED_TO_DRAFT)
+        activity!!.finish()
+    }
+
+    private fun renderDataFetchedProperty(type: String, price: Double?,
+                                          surface: Double?, rooms: Int?,
                                           bedrooms: Int?, bathrooms: Int?,
                                           description: String?, address: String,
                                           neighborhood: String?, onMarketSince: String,
-                                          isSold: Boolean, sellOn: String?,
+                                          isSold: Boolean?, sellOn: String?,
                                           amenities: List<TypeAmenity>, agentFirstName: String,
                                           agentLastName: String
     ){
+        Log.e("update", "________________________________")
+        Log.e("update", "RENDER FETCHED")
         val priceToDisplay = when(currentCurrency!!){
-            Currency.EURO -> price.toString()
-            Currency.DOLLAR -> price.toDollar().toString()
+            Currency.EURO -> price?.toString()
+            Currency.DOLLAR -> price?.toDollar().toString()
         }
         val surfaceToDisplay = when(currentCurrency!!){
-            Currency.EURO -> surface.toString()
-            Currency.DOLLAR -> surface.toSqFt().toString()
+            Currency.EURO -> surface?.toString()
+            Currency.DOLLAR -> surface?.toSqFt().toString()
         }
-        priceText.setText(priceToDisplay)
-        surfaceText.setText(surfaceToDisplay)
-        roomText.setText(rooms.toString())
+        priceToDisplay?.let{ priceText.setText(it) }
+        surfaceToDisplay?.let{ surfaceText.setText(it) }
+        rooms?.let{ roomText.setText(it.toString()) }
         bedrooms?.let { bedroomText.setText(it.toString()) }
         bathrooms?.let { bathroomText.setText(it.toString()) }
         description?.let{ descriptionText.setText(it)}
         addressText.setText(address)
         neighborhood?.let { neighbourhoodText.setText(it) }
-        soldSwithch.isChecked = isSold
+        soldSwithch.isChecked = isSold ?: false
         configureSellDateVisibility()
         sellOn?.let{
             soldOnText.setText(sellOn)
@@ -430,6 +511,12 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         recyclerViewPictures.scrollToPosition(pictures.size - 1)
     }
 
+    private fun renderShowingADraft(originalAvailable: Boolean){
+        if(originalAvailable){
+            showSnackBarWithAction(getString(R.string.seeing_draft), SnackBarAction.SHOW_ORIGINAL)
+        }
+    }
+
     private fun disableAllErrors(){
         priceLayout.isErrorEnabled = false
         surfaceLayout.isErrorEnabled = false
@@ -440,21 +527,10 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         soldOnLayout.isErrorEnabled = false
     }
 
-    private fun fetchInfoPropertyFromUI(){
-        disableAllErrors()
 
-        val typeProperty = dropdowPropertyType.text.toString()
-        val soldOn = if(soldSwithch.isChecked) soldOnText.text.toString() else null
-
-        viewModel.actionFromIntent(AddPropertyIntent.AddPropertyToDBIntent(
-                typeProperty, priceText.toDouble(), surfaceText.toDouble(), roomText.toInt(),
-                bedroomText.toInt(), bathroomText.toInt(), descriptionText.text.toString(),
-                addressText.text.toString(), neighbourhoodText.text.toString(), onMarketSinceText.text.toString(),
-                soldSwithch.isChecked, soldOn, getAmenitiesSelected(), activity!!.applicationContext
-        )
-        )
-    }
-
+    //--------------------
+    // UTILS
+    //--------------------
     private fun getAmenitiesSelected(): List<TypeAmenity>{
         val listAmenities = mutableListOf<TypeAmenity>()
         if(schoolBox.isChecked) listAmenities.add(TypeAmenity.SCHOOL)
@@ -467,10 +543,19 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         return listAmenities
     }
 
+    //--------------------
+    // WARNING MESSAGE
+    //--------------------
+
     private fun showSnackBarMessage(message: String){
         val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
         showSnackBar(viewLayout, message)
 
+    }
+
+    private fun showSnackBarWithAction(message: String, action: SnackBarAction){
+        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
+        showSnackBarWithButonview(viewLayout, message, this, action)
     }
 
     //--------------------
@@ -526,20 +611,4 @@ class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
         }
     }
 
-    private fun addPicturePickedToList(data: Intent){
-        getPicturesPathFromData(data).forEach {
-            viewModel.actionFromIntent(AddPropertyIntent.AddPictureToList(it, null))
-        }
-    }
-
-    private fun addPictureTakenToList(){
-        lastPhotoTakenPath?.let {
-            viewModel.actionFromIntent(AddPropertyIntent.AddPictureToList(it, getThumbnailFromPicture(it, activity!!)))
-            addPictureToGallery(activity!!, it)
-        }
-    }
-
-    override fun onPictureDescriptionEntered(position: Int, description: String) {
-        viewModel.actionFromIntent(AddPropertyIntent.AddDescriptionToPicture(position, description))
-    }
 }

@@ -358,8 +358,6 @@ SnackBarListener{
     //--------------------
 
     override fun render(state: AddPropertyViewState?){
-        Log.e("update", "state : $state")
-        Log.e("update", "$currentCurrency")
         if (state == null) return
         if(state.isSavedToDB) {
             renderPropertyAddedToDB()
@@ -409,7 +407,6 @@ SnackBarListener{
                 priceLayout.hint = getString(R.string.price_dollar)
             }
         }
-        Log.e("update", "new currency")
     }
 
 
@@ -466,8 +463,6 @@ SnackBarListener{
                                           amenities: List<TypeAmenity>, agentFirstName: String,
                                           agentLastName: String
     ){
-        Log.e("update", "________________________________")
-        Log.e("update", "RENDER FETCHED")
         val priceToDisplay = when(currentCurrency!!){
             Currency.EURO -> price?.toString()
             Currency.DOLLAR -> price?.toDollar().toString()

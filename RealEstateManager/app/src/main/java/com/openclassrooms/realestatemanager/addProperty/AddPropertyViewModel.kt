@@ -126,7 +126,6 @@ BitmapDownloader.Listeners{
     }
 
     override fun resultToViewState(result: Lce<AddPropertyResult>) {
-        Log.e("update", "result: $result")
         currentViewState = when (result){
             is Lce.Content ->{
                 when(result.packet){

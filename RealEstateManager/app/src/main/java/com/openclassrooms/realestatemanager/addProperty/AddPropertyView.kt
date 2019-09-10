@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.ContentFrameLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -543,13 +544,13 @@ SnackBarListener{
     //--------------------
 
     private fun showSnackBarMessage(message: String){
-        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
+        val viewLayout = activity!!.findViewById<CoordinatorLayout>(R.id.base_activity_main_layout)
         showSnackBar(viewLayout, message)
 
     }
 
     private fun showSnackBarWithAction(message: String, action: SnackBarAction){
-        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
+        val viewLayout = activity!!.findViewById<CoordinatorLayout>(R.id.base_activity_main_layout)
         showSnackBarWithButonview(viewLayout, message, this, action)
     }
 

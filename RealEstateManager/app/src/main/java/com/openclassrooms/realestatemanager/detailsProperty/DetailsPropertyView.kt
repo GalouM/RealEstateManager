@@ -237,7 +237,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
 
 
     private fun showSnackBarMessage(message: String){
-        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
+        val viewLayout = activity!!.findViewById<CoordinatorLayout>(R.id.base_activity_main_layout)
         showSnackBar(viewLayout, message)
 
     }

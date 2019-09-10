@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.appcompat.widget.Toolbar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -320,7 +321,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     }
 
     private fun showSnackBarMessage(message: String){
-        val viewLayout = findViewById<ContentFrameLayout>(android.R.id.content)
+        val viewLayout = findViewById<CoordinatorLayout>(R.id.base_activity_main_layout)
         showSnackBar(viewLayout, message)
 
     }

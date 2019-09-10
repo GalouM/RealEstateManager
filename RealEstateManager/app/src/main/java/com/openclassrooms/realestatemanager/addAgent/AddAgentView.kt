@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.ContentFrameLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -168,7 +169,7 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
     }
 
     private fun showSnackBarMessage(message: String){
-        val viewLayout = activity!!.findViewById<ContentFrameLayout>(android.R.id.content)
+        val viewLayout = activity!!.findViewById<CoordinatorLayout>(R.id.base_activity_main_layout)
         showSnackBar(viewLayout, message)
 
     }

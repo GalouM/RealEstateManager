@@ -35,6 +35,29 @@ data class AddPropertyViewState(
 
 ) : REMViewState
 
+sealed class AddPropertyViewEffect {
+    data class PropertyFromDBEffect(
+            val type: String, val price: Double?, val surface: Double?,
+            val bedrooms: Int?, val rooms: Int?,
+            val bathrooms: Int?, val description: String?,
+            val address: String, val neighborhood: String,
+            val onMarketSince: String, val isSold: Boolean,
+            val sellDate: String, val agentId: Int?,
+            val amenities: List<TypeAmenity>?, val agentFirstName: String,
+            val agentLastName: String
+    ) : AddPropertyViewEffect()
+    data class PropertyfromDraftEffect(
+            val type: String, val price: Double?, val surface: Double?,
+            val bedrooms: Int?, val rooms: Int?,
+            val bathrooms: Int?, val description: String?,
+            val address: String, val neighborhood: String,
+            val onMarketSince: String, val isSold: Boolean,
+            val sellDate: String, val agentId: Int?,
+            val amenities: List<TypeAmenity>?, val agentFirstName: String,
+            val agentLastName: String, val isOriginalAvailable: Boolean
+    ) : AddPropertyViewEffect()
+}
+
 sealed class AddPropertyIntent : REMIntent{
     data class AddPropertyToDBIntent(
             val type: String, val price: Double?,

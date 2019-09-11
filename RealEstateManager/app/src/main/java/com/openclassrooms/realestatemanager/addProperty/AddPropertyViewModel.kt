@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.data.TempProperty
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.Converters
@@ -15,10 +16,7 @@ import com.openclassrooms.realestatemanager.data.repository.SaveDataRepository
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
-import com.openclassrooms.realestatemanager.utils.BitmapDownloader
-import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.TypeAmenity
-import com.openclassrooms.realestatemanager.utils.TypeImage
+import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.extensions.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
@@ -42,6 +40,10 @@ BitmapDownloader.Listeners{
             field = value
             viewStateLD.value = value
         }
+
+    private val viewEffectLD = MutableLiveData<AddPropertyViewEffect>()
+    val viewEffect: LiveData<AddPropertyViewEffect>
+        get() = viewEffectLD
 
     val currency: LiveData<Currency>
         get() = currencyRepository.currency
@@ -91,6 +93,7 @@ BitmapDownloader.Listeners{
 
 
     override fun actionFromIntent(intent: AddPropertyIntent) {
+        dispayData("receive intent $intent")
         when(intent) {
             is AddPropertyIntent.AddPropertyToDBIntent -> {
                 receivePropertyData(
@@ -131,44 +134,23 @@ BitmapDownloader.Listeners{
                 when(result.packet){
                     is AddPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
+                                isADraft = false,
                                 listAgents = result.packet.listAgents,
                                 isLoading = false)
                     }
 
                     is AddPropertyResult.PropertyAddedToDBResult -> {
                         currentViewState.copy(
+                                isADraft = false,
                                 isSavedToDB = true,
                                 listAgents = null,
                                 errors = null,
                                 isLoading = false
                         )
                     }
-                    is AddPropertyResult.PropertyFromDBResult -> {
-                        currentViewState.copy(
-                                isADraft = false,
-                                errors = null,
-                                isLoading = false,
-                                isModifyProperty = true,
-                                price = result.packet.price,
-                                surface = result.packet.surface,
-                                rooms = result.packet.rooms,
-                                bedrooms = result.packet.bedrooms,
-                                bathrooms = result.packet.bathrooms,
-                                description = result.packet.description,
-                                type = result.packet.type,
-                                onMarketSince = result.packet.onMarketSince,
-                                isSold = result.packet.isSold,
-                                sellDate = result.packet.sellOn,
-                                address = result.packet.address,
-                                neighborhood = result.packet.neighborhood,
-                                amenities = result.packet.amenities,
-                                agentId = result.packet.agent!!.id,
-                                agentFirstName = result.packet.agent.firstName,
-                                agentLastName = result.packet.agent.lastName
-                        )
-                    }
                     is AddPropertyResult.PictureResult -> {
                         currentViewState.copy(
+                                isADraft = false,
                                 isSavedToDB = false,
                                 listAgents = null,
                                 errors = null,
@@ -176,44 +158,22 @@ BitmapDownloader.Listeners{
                                 pictures = result.packet.pictures
                         )
                     }
-                    is AddPropertyResult.PropertyFromDraftResult -> {
-                        currentViewState.copy(
-                                isADraft = true,
-                                isOriginalAvailable = result.packet.originalAvailable,
-                                errors = null,
-                                isLoading = false,
-                                isModifyProperty = true,
-                                price = result.packet.price,
-                                surface = result.packet.surface,
-                                rooms = result.packet.rooms,
-                                bedrooms = result.packet.bedrooms,
-                                bathrooms = result.packet.bathrooms,
-                                description = result.packet.description,
-                                type = result.packet.type,
-                                onMarketSince = result.packet.onMarketSince,
-                                isSold = result.packet.isSold,
-                                sellDate = result.packet.sellOn,
-                                address = result.packet.address,
-                                neighborhood = result.packet.neighborhood,
-                                amenities = result.packet.amenities,
-                                agentId = result.packet.agent?.id,
-                                agentFirstName = result.packet.agent?.firstName ?: "",
-                                agentLastName = result.packet.agent?.lastName ?: ""
-                        )
-                    }
                     AddPropertyResult.PropertyAddedToDraftResult -> {
                         currentViewState.copy(
+                                isADraft = false,
                                 isSavedToDraft = true,
                                 listAgents = null,
                                 errors = null,
                                 isLoading = false
                         )
                     }
+                    else -> return
                 }
             }
 
             is Lce.Loading ->{
                 currentViewState.copy(
+                        isADraft = false,
                         listAgents = null,
                         isLoading = true)
 
@@ -223,6 +183,7 @@ BitmapDownloader.Listeners{
                 when(result.packet){
                     is AddPropertyResult.PropertyAddedToDBResult -> {
                         currentViewState.copy(
+                                isADraft = false,
                                 listAgents = null,
                                 errors = result.packet.errorSource,
                                 isLoading = false)
@@ -230,6 +191,7 @@ BitmapDownloader.Listeners{
 
                     is AddPropertyResult.ListAgentsResult -> {
                         currentViewState.copy(
+                                isADraft = false,
                                 listAgents = null,
                                 isLoading = false,
                                 errors = result.packet.errorSource
@@ -237,6 +199,7 @@ BitmapDownloader.Listeners{
                     }
                     is AddPropertyResult.PropertyFromDBResult -> {
                         currentViewState.copy(
+                                isADraft = false,
                                 listAgents = null,
                                 isLoading = false,
                                 errors = result.packet.errorSource
@@ -249,6 +212,31 @@ BitmapDownloader.Listeners{
         }
     }
 
+    private fun resultToViewEffect(result: Lce<AddPropertyResult>){
+        dispayData("emit effect $result")
+        if(result is Lce.Content){
+            when(result.packet){
+                is AddPropertyResult.PropertyFromDBResult -> {
+                    viewEffectLD.value = AddPropertyViewEffect.PropertyFromDBEffect(
+                            result.packet.type, result.packet.price, result.packet.surface, result.packet.bedrooms,
+                            result.packet.rooms, result.packet.bathrooms, result.packet.description, result.packet.address,
+                            result.packet.neighborhood, result.packet.onMarketSince, result.packet.isSold ?: false,
+                            result.packet.sellOn ?: "", result.packet.agent?.id, result.packet.amenities,
+                            result.packet.agent?.firstName ?: "",result.packet.agent?.lastName ?: ""
+                    )
+                }
+                is AddPropertyResult.PropertyFromDraftResult -> viewEffectLD.value = AddPropertyViewEffect.PropertyfromDraftEffect(
+                        result.packet.type, result.packet.price, result.packet.surface, result.packet.bedrooms,
+                        result.packet.rooms, result.packet.bathrooms, result.packet.description, result.packet.address,
+                        result.packet.neighborhood, result.packet.onMarketSince, result.packet.isSold ?: false,
+                        result.packet.sellOn ?: "", result.packet.agent?.id, result.packet.amenities,
+                        result.packet.agent?.firstName ?: "",result.packet.agent?.lastName ?: "",
+                        result.packet.originalAvailable
+                )
+            }
+        }
+    }
+
     //--------------------
     // INITIAL INTENT
     //--------------------
@@ -256,8 +244,6 @@ BitmapDownloader.Listeners{
     private fun setActionType(actionType: ActionType){
         if(!initalIntentHandled) {
             this.actionType = actionType
-            propertyFetched = propertyRepository.propertyPicked
-            propertyFetched?.let{ propertyId = it.property.id }
             fetchSavedProperty()
             initalIntentHandled = true
         }
@@ -581,7 +567,7 @@ BitmapDownloader.Listeners{
                         agent,  null
                 ))
             }
-            resultToViewState(result)
+            resultToViewEffect(result)
         }
 
         fun fetchAgent(){
@@ -639,6 +625,12 @@ BitmapDownloader.Listeners{
     //--------------------
     private fun fetchSavedProperty(){
         resultToViewState(Lce.Loading())
+
+        if(actionType == ActionType.MODIFY_PROPERTY) {
+            propertyFetched = propertyRepository.propertyPicked
+            propertyFetched?.let { propertyId = it.property.id }
+        }
+
         val savedProperty = when(actionType){
             ActionType.NEW_PROPERTY -> saveDataRepository.tempProperty
             ActionType.MODIFY_PROPERTY -> saveDataRepository.getSavedModifyProperty(propertyId)
@@ -654,7 +646,7 @@ BitmapDownloader.Listeners{
                     savedProperty.sellDate, savedProperty.amenities,
                     agent, isOriginalAvailable
             ))
-        resultToViewState(result)
+        resultToViewEffect(result)
         }
 
         if(savedProperty == null && actionType == ActionType.MODIFY_PROPERTY){

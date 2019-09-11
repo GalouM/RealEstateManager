@@ -19,7 +19,7 @@ fun showSnackBar(view: View, message: String){
     }
 }
 
-fun showSnackBarWithButonview(view: View, message: String, listener: SnackBarListener, action: SnackBarAction){
+fun showSnackBarWithAction(view: View, message: String, listener: SnackBarListener, action: SnackBarAction){
     Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
         config(view.context)
         setAction(action.actionName) {listener.onSnackBarButtonClick(action)}

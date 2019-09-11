@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.widget.ContentFrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
@@ -295,12 +294,14 @@ SnackBarListener{
         ).get(AddPropertyViewModel::class.java)
 
         viewModel.viewState.observe(this, Observer { render(it) })
+        viewModel.viewEffect.observe(this, Observer { takeActionOn(it) })
     }
 
     private fun currencyObserver(){
         viewModel.currency.observe(this, Observer {currency ->
             currentCurrency = currency
             renderChangeCurrency(currentCurrency!!)
+            dispayData("change currency, emit intent")
             viewModel.actionFromIntent(AddPropertyIntent.InitialIntent(actionType))
         })
     }
@@ -370,8 +371,6 @@ SnackBarListener{
             return
         }
 
-        if(state.isADraft) renderShowingADraft(state.isOriginalAvailable)
-
         if(state.isLoading) return
 
         if(state.errors != null){
@@ -381,15 +380,6 @@ SnackBarListener{
 
         state.listAgents?.let{
             renderAgentDialog(it)
-        }
-
-        if(state.isModifyProperty && currentCurrency != null){
-            renderDataFetchedProperty(
-                    state.type, state.price, state.surface, state.rooms,
-                    state.bedrooms, state.bathrooms, state.description, state.address,
-                    state.neighborhood, state.onMarketSince, state.isSold, state.sellDate,
-                    state.amenities!!, state.agentFirstName, state.agentLastName
-            )
         }
 
         state.pictures?.let { renderPictures(it) }
@@ -455,6 +445,49 @@ SnackBarListener{
         activity!!.finish()
     }
 
+    private fun renderPictures(pictures: List<Picture>){
+        adapter.update(pictures)
+        recyclerViewPictures.scrollToPosition(pictures.size - 1)
+    }
+
+    private fun disableAllErrors(){
+        priceLayout.isErrorEnabled = false
+        surfaceLayout.isErrorEnabled = false
+        roomLayout.isErrorEnabled = false
+        addressLayout.isErrorEnabled = false
+        neighbourhoodLayout.isErrorEnabled = false
+        onMarketSinceLayout.isErrorEnabled = false
+        soldOnLayout.isErrorEnabled = false
+    }
+
+    //--------------------
+    // VIEW EFFECT
+    //--------------------
+    private fun takeActionOn(viewEffect: AddPropertyViewEffect?){
+        dispayData("receive effect: $viewEffect")
+        if (viewEffect == null) return
+        if(currentCurrency == null) return
+        when(viewEffect){
+            is AddPropertyViewEffect.PropertyFromDBEffect -> {
+                renderDataFetchedProperty(
+                        viewEffect.type, viewEffect.price, viewEffect.surface, viewEffect.rooms,
+                        viewEffect.bedrooms, viewEffect.bathrooms, viewEffect.description, viewEffect.address,
+                        viewEffect.neighborhood, viewEffect.onMarketSince, viewEffect.isSold, viewEffect.sellDate,
+                        viewEffect.amenities!!, viewEffect.agentFirstName, viewEffect.agentLastName
+                )
+            }
+            is AddPropertyViewEffect.PropertyfromDraftEffect -> {
+                renderDataFetchedProperty(
+                        viewEffect.type, viewEffect.price, viewEffect.surface, viewEffect.rooms,
+                        viewEffect.bedrooms, viewEffect.bathrooms, viewEffect.description, viewEffect.address,
+                        viewEffect.neighborhood, viewEffect.onMarketSince, viewEffect.isSold, viewEffect.sellDate,
+                        viewEffect.amenities!!, viewEffect.agentFirstName, viewEffect.agentLastName
+                )
+                renderShowingADraft(viewEffect.isOriginalAvailable)
+            }
+        }
+    }
+
     private fun renderDataFetchedProperty(type: String, price: Double?,
                                           surface: Double?, rooms: Int?,
                                           bedrooms: Int?, bathrooms: Int?,
@@ -502,25 +535,10 @@ SnackBarListener{
 
     }
 
-    private fun renderPictures(pictures: List<Picture>){
-        adapter.update(pictures)
-        recyclerViewPictures.scrollToPosition(pictures.size - 1)
-    }
-
     private fun renderShowingADraft(originalAvailable: Boolean){
         if(originalAvailable){
             showSnackBarWithAction(getString(R.string.seeing_draft), SnackBarAction.SHOW_ORIGINAL)
         }
-    }
-
-    private fun disableAllErrors(){
-        priceLayout.isErrorEnabled = false
-        surfaceLayout.isErrorEnabled = false
-        roomLayout.isErrorEnabled = false
-        addressLayout.isErrorEnabled = false
-        neighbourhoodLayout.isErrorEnabled = false
-        onMarketSinceLayout.isErrorEnabled = false
-        soldOnLayout.isErrorEnabled = false
     }
 
 
@@ -551,7 +569,7 @@ SnackBarListener{
 
     private fun showSnackBarWithAction(message: String, action: SnackBarAction){
         val viewLayout = activity!!.findViewById<CoordinatorLayout>(R.id.base_activity_main_layout)
-        showSnackBarWithButonview(viewLayout, message, this, action)
+        showSnackBarWithAction(viewLayout, message, this, action)
     }
 
     //--------------------

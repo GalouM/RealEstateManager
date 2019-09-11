@@ -1,10 +1,8 @@
 package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
-import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Picture
-import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.mviBase.REMIntent
 import com.openclassrooms.realestatemanager.mviBase.REMResult
 import com.openclassrooms.realestatemanager.mviBase.REMViewState

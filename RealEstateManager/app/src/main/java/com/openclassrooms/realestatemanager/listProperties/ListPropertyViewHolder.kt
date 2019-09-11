@@ -1,12 +1,8 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat.getColor
@@ -21,7 +17,6 @@ import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.utils.extensions.toEuroDisplay
-import java.lang.Exception
 
 /**
  * Created by galou on 2019-08-12

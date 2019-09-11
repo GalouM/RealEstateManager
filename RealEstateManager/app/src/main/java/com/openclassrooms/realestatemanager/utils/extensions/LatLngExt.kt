@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.utils.extensions
 
 import android.location.Location
-import android.view.View
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import java.math.RoundingMode

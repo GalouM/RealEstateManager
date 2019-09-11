@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.data.repository
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.utils.Currency

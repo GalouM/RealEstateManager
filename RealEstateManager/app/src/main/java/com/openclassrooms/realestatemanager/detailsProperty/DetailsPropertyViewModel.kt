@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.detailsProperty
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
@@ -92,7 +91,7 @@ class DetailsPropertyViewModel(
 
         fun fetchProperty(){
             searchPropertyJob = launch {
-                val property = propertyRepository.getProperty(propertyId!!)[0]
+                val property = propertyRepository.getProperty(propertyId)[0]
                 propertyRepository.propertyPicked = property
                 emitResult(property)
             }

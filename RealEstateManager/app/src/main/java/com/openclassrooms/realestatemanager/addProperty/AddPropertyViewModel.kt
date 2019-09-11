@@ -18,7 +18,6 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.*
-import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.extensions.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
@@ -606,8 +605,10 @@ BitmapDownloader.Listeners{
         resultToViewState(Lce.Loading())
 
         val tempProperty = TempProperty(
-                propertyId, type, price, surface, rooms, bedrooms, bathrooms, description, onMarketSince, isSold,
-                sellOn, agentId, address, neighborhood, pictures, amenities
+                id = propertyId, type = type, price = price, surface = surface, rooms = rooms,
+                bedrooms = bedrooms, bathrooms = bathrooms, description = description, onMarketSince = onMarketSince,
+                isSold = isSold, sellDate = sellOn, agent = agentId, address = address, neighborhood = neighborhood,
+                pictures = pictures, amenities = amenities
         )
 
         when(actionType){

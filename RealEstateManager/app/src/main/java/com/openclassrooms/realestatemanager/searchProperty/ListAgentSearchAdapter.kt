@@ -11,7 +11,7 @@ import com.openclassrooms.realestatemanager.data.entity.Agent
  * Created by galou on 2019-08-29
  */
 class ListAgentSearchAdapter(
-        var agents: List<Agent>, private val glide: RequestManager, val callback: ListenerCheckBox
+        var agents: List<Agent>, private val glide: RequestManager, private val callback: ListenerCheckBox
 ) :
         RecyclerView.Adapter<ListAgentsSearchViewHolder>(){
 

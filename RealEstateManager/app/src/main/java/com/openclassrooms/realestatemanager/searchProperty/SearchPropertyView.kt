@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
-import androidx.appcompat.widget.ContentFrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -29,6 +28,7 @@ import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.Currency.*
 import com.openclassrooms.realestatemanager.utils.extensions.*
 import java.util.*
 
@@ -74,7 +74,6 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
     private var allAgents: List<String>? = null
     private var adapter: ListAgentSearchAdapter?= null
     private lateinit var currentCurrency: Currency
-    private var datePosted: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -229,18 +228,18 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
         adapter = ListAgentSearchAdapter(agents, Glide.with(this), this)
         recyclerViewAgents.adapter = adapter
         recyclerViewAgents.layoutManager = LinearLayoutManager(activity)
-        allAgents = agents.map{it.id!!}
+        allAgents = agents.map{it.id}
         agentsSelectedId.clear()
         agentsSelectedId.addAll(allAgents!!)
     }
 
     private fun renderChangeCurrency(currency: Currency){
         when(currency){
-            Currency.EURO -> {
+            EURO -> {
                 surfaceTitle.text = getString(R.string.surface_m2)
                 priceTitle.text = getString(R.string.price_euros)
             }
-            Currency.DOLLAR -> {
+            DOLLAR -> {
                 surfaceTitle.text = getString(R.string.surface_ft2)
                 priceTitle.text = getString(R.string.price_dollar)
             }

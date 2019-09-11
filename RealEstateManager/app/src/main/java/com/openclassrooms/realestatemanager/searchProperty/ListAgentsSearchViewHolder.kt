@@ -48,7 +48,7 @@ class ListAgentsSearchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     @OnClick(R.id.list_agent_search_check)
     fun onClickCheckbox(checkBox: CheckBox){
         val callback = callbackWeakRef?.get()
-        callback?.let { callback.onClickCheckBox(agent!!.id!!, checkBox.isChecked) }
+        callback?.let { callback.onClickCheckBox(agent!!.id, checkBox.isChecked) }
     }
 
     fun selectOnSelectAll(){

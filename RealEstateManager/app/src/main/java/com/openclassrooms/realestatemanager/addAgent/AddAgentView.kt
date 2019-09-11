@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.appcompat.widget.ContentFrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -28,7 +27,6 @@ import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.extensions.saveToInternalStorage
 import pub.devrel.easypermissions.EasyPermissions
 
-// TODO: Rename parameter arguments, choose names that match
 
 /**
  * A simple [Fragment] subclass.

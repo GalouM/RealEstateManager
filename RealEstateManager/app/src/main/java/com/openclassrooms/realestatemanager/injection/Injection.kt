@@ -7,7 +7,6 @@ import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
 import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
 import com.openclassrooms.realestatemanager.data.repository.SaveDataRepository
-import com.openclassrooms.realestatemanager.utils.KEY_PREF
 
 /**
  * Created by galou on 2019-07-24

@@ -35,6 +35,8 @@ import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.Currency.*
+import com.openclassrooms.realestatemanager.utils.TypeAmenity.*
 import com.openclassrooms.realestatemanager.utils.extensions.*
 import kotlinx.android.synthetic.main.dialog_photo_source.view.*
 import java.io.File
@@ -217,7 +219,7 @@ SnackBarListener{
     override fun onAgentSelected(agent: Agent) {
         val displayNameAgent = "${agent.firstName} ${agent.lastName}"
         dropdowAgent.setText(displayNameAgent)
-        viewModel.actionFromIntent(AddPropertyIntent.SelectAgentIntent(agent.id!!))
+        viewModel.actionFromIntent(AddPropertyIntent.SelectAgentIntent(agent.id))
         openAgentWindowHandled = true
     }
 
@@ -388,11 +390,11 @@ SnackBarListener{
 
     private fun renderChangeCurrency(currency: Currency){
         when(currency){
-            Currency.EURO -> {
+            EURO -> {
                 surfaceLayout.hint = getString(R.string.surface_m2)
                 priceLayout.hint = getString(R.string.price_euros)
             }
-            Currency.DOLLAR -> {
+            DOLLAR -> {
                 surfaceLayout.hint = getString(R.string.surface_ft2)
                 priceLayout.hint = getString(R.string.price_dollar)
             }
@@ -496,12 +498,12 @@ SnackBarListener{
                                           agentLastName: String
     ){
         val priceToDisplay = when(currentCurrency!!){
-            Currency.EURO -> price?.toString()
-            Currency.DOLLAR -> price?.toDollar().toString()
+            EURO -> price?.toString()
+            DOLLAR -> price?.toDollar().toString()
         }
         val surfaceToDisplay = when(currentCurrency!!){
-            Currency.EURO -> surface?.toString()
-            Currency.DOLLAR -> surface?.toSqFt().toString()
+            EURO -> surface?.toString()
+            DOLLAR -> surface?.toSqFt().toString()
         }
         priceToDisplay?.let{ priceText.setText(it) }
         surfaceToDisplay?.let{ surfaceText.setText(it) }
@@ -522,12 +524,12 @@ SnackBarListener{
         dropdowAgent.setText(displayNameAgent)
         amenities.forEach {
             when(it){
-                TypeAmenity.SCHOOL -> schoolBox.isChecked = true
-                TypeAmenity.PLAYGROUND -> playgroundBox.isChecked = true
-                TypeAmenity.SHOP -> shopBox.isChecked = true
-                TypeAmenity.BUSES -> busesBox.isChecked = true
-                TypeAmenity.SUBWAY -> subwayBox.isChecked = true
-                TypeAmenity.PARK -> parkBox.isChecked = true
+                SCHOOL -> schoolBox.isChecked = true
+                PLAYGROUND -> playgroundBox.isChecked = true
+                SHOP -> shopBox.isChecked = true
+                BUSES -> busesBox.isChecked = true
+                SUBWAY -> subwayBox.isChecked = true
+                PARK -> parkBox.isChecked = true
             }
         }
 
@@ -545,12 +547,12 @@ SnackBarListener{
     //--------------------
     private fun getAmenitiesSelected(): List<TypeAmenity>{
         val listAmenities = mutableListOf<TypeAmenity>()
-        if(schoolBox.isChecked) listAmenities.add(TypeAmenity.SCHOOL)
-        if(parkBox.isChecked) listAmenities.add(TypeAmenity.PARK)
-        if(busesBox.isChecked) listAmenities.add(TypeAmenity.BUSES)
-        if(subwayBox.isChecked) listAmenities.add(TypeAmenity.SUBWAY)
-        if(shopBox.isChecked) listAmenities.add(TypeAmenity.SHOP)
-        if(playgroundBox.isChecked) listAmenities.add(TypeAmenity.PLAYGROUND)
+        if(schoolBox.isChecked) listAmenities.add(SCHOOL)
+        if(parkBox.isChecked) listAmenities.add(PARK)
+        if(busesBox.isChecked) listAmenities.add(BUSES)
+        if(subwayBox.isChecked) listAmenities.add(SUBWAY)
+        if(shopBox.isChecked) listAmenities.add(SHOP)
+        if(playgroundBox.isChecked) listAmenities.add(PLAYGROUND)
 
         return listAmenities
     }

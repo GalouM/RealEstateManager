@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +15,7 @@ import com.openclassrooms.realestatemanager.utils.Currency
 
 class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
                           var currency: Currency?,
-                          val glide: RequestManager, var isDoubleScreen: Boolean)
+                          val glide: RequestManager, private var isDoubleScreen: Boolean)
     : RecyclerView.Adapter<ListPropertyViewHolder>(){
 
     private lateinit var context: Context

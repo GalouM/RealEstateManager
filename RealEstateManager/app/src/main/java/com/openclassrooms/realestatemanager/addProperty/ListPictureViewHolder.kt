@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.addProperty
 import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
@@ -44,9 +43,8 @@ class ListPictureViewHolder(view: View) : RecyclerView.ViewHolder(view){
         callbackWeakRef = WeakReference(callback)
         val pictureToDisplay = picture.thumbnailUrl ?: picture.url
         glide.load(pictureToDisplay).apply(RequestOptions.centerCropTransform()).into(pictureImage)
-        picture.description?.let {
-            description.setText(it)
-        }
+        description.setText(picture.description)
+
         updateForeground()
         setDragButtonListener()
 

@@ -1,8 +1,6 @@
 package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Intent
-import android.util.Log
-import androidx.appcompat.widget.ContentFrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer

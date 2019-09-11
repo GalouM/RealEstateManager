@@ -65,10 +65,10 @@ class ListAgentsDialogView(private val agents: List<Agent>) : DialogFragment() {
 
     private fun configureClickRecyclerView(){
         ItemClickSupport.addTo(recyclerView, R.layout.list_agent_dialog_item)
-                .setOnItemClickListener{ recyclerView, position, v ->  setAgentSelected(adapter.getAgent(position), v)}
+                .setOnItemClickListener{ _, position, _ ->  setAgentSelected(adapter.getAgent(position))}
     }
 
-    private fun setAgentSelected(agent: Agent, view: View){
+    private fun setAgentSelected(agent: Agent){
         callback.onAgentSelected(agent)
         dismiss()
 

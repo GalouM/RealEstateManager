@@ -301,7 +301,6 @@ SnackBarListener{
         viewModel.currency.observe(this, Observer {currency ->
             currentCurrency = currency
             renderChangeCurrency(currentCurrency!!)
-            dispayData("change currency, emit intent")
             viewModel.actionFromIntent(AddPropertyIntent.InitialIntent(actionType))
         })
     }
@@ -464,7 +463,6 @@ SnackBarListener{
     // VIEW EFFECT
     //--------------------
     private fun takeActionOn(viewEffect: AddPropertyViewEffect?){
-        dispayData("receive effect: $viewEffect")
         if (viewEffect == null) return
         if(currentCurrency == null) return
         when(viewEffect){

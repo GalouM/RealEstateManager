@@ -2,7 +2,6 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.openclassrooms.realestatemanager.data.TempProperty
@@ -93,7 +92,6 @@ BitmapDownloader.Listeners{
 
 
     override fun actionFromIntent(intent: AddPropertyIntent) {
-        dispayData("receive intent $intent")
         when(intent) {
             is AddPropertyIntent.AddPropertyToDBIntent -> {
                 receivePropertyData(
@@ -213,7 +211,6 @@ BitmapDownloader.Listeners{
     }
 
     private fun resultToViewEffect(result: Lce<AddPropertyResult>){
-        dispayData("emit effect $result")
         if(result is Lce.Content){
             when(result.packet){
                 is AddPropertyResult.PropertyFromDBResult -> {

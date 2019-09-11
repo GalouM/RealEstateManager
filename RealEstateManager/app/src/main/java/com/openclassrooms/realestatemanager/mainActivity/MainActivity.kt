@@ -104,7 +104,11 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
                 callbackMapPropertiesRefresh?.get()?.onListPropertiesChange()
             }
             if(resultCode == RESULT_SAVED_TO_DRAFT){
-                showSnackBarMessage(getString(R.string.saved_as_draft))
+                when(isInternetAvailable(this)){
+                    true -> showSnackBarMessage(getString(R.string.modif_draft))
+                    false -> showSnackBarMessage(getString(R.string.saved_as_draft))
+                }
+
             }
         }
     }

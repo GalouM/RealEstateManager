@@ -29,7 +29,7 @@ data class AddPropertyViewState(
         val bathrooms: Int? = null, val description: String? = null,
         val address: String = "", val neighborhood: String = "",
         val onMarketSince: String = "", val isSold: Boolean? = false,
-        val sellDate: String? = null, val agentId: Int? = null,
+        val sellDate: String? = null, val agentId: String? = null,
         val amenities: List<TypeAmenity>? = null, val pictures: List<Picture>? = null,
         val agentFirstName: String = "", val agentLastName: String = ""
 
@@ -42,7 +42,7 @@ sealed class AddPropertyViewEffect {
             val bathrooms: Int?, val description: String?,
             val address: String, val neighborhood: String,
             val onMarketSince: String, val isSold: Boolean,
-            val sellDate: String, val agentId: Int?,
+            val sellDate: String, val agentId: String?,
             val amenities: List<TypeAmenity>?, val agentFirstName: String,
             val agentLastName: String
     ) : AddPropertyViewEffect()
@@ -52,7 +52,7 @@ sealed class AddPropertyViewEffect {
             val bathrooms: Int?, val description: String?,
             val address: String, val neighborhood: String,
             val onMarketSince: String, val isSold: Boolean,
-            val sellDate: String, val agentId: Int?,
+            val sellDate: String, val agentId: String?,
             val amenities: List<TypeAmenity>?, val agentFirstName: String,
             val agentLastName: String, val isOriginalAvailable: Boolean
     ) : AddPropertyViewEffect()
@@ -69,7 +69,7 @@ sealed class AddPropertyIntent : REMIntent{
             val amenities: List<TypeAmenity>, val context: Context
     ) : AddPropertyIntent()
 
-    data class SelectAgentIntent(val agentId: Int): AddPropertyIntent()
+    data class SelectAgentIntent(val agentId: String): AddPropertyIntent()
 
     data class InitialIntent(val actionType: ActionType) : AddPropertyIntent()
 

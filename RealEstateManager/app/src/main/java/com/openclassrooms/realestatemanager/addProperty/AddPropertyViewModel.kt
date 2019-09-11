@@ -16,12 +16,14 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.extensions.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.net.URL
+import java.util.*
 
 /**
  * Created by galou on 2019-07-27
@@ -52,7 +54,7 @@ BitmapDownloader.Listeners{
 
     private lateinit var actionType: ActionType
     private lateinit var context: Context
-    private var propertyId: Int? = null
+    private var propertyId: String? = null
     private lateinit var idFromApi: String
     private var propertyFetched: PropertyWithAllData? = null
 
@@ -75,7 +77,7 @@ BitmapDownloader.Listeners{
     private lateinit var onMarketSince: String
     private var isSold: Boolean = false
     private var sellOn: String? = null
-    private var agentId: Int? = null
+    private var agentId: String? = null
     private lateinit var amenities: List<TypeAmenity>
     private var pictures = mutableListOf<Picture>()
     private var map = ""
@@ -250,13 +252,13 @@ BitmapDownloader.Listeners{
     // SET DATA
     //--------------------
 
-    private fun setAgentSelected(agentId: Int){
+    private fun setAgentSelected(agentId: String){
         this.agentId = agentId
     }
 
     private fun addPictureToProperty(pictureUrl: String, thumbnailUrl: String?){
         pictures.add(Picture(
-                null, pictureUrl, thumbnailUrl, null, null,
+                idGenerated, pictureUrl, thumbnailUrl, null, null,
                 "", pictures.size -1)
         )
         emitResultPictureModification()
@@ -452,7 +454,7 @@ BitmapDownloader.Listeners{
             }
 
             amenities.forEach {
-                amenitiesForDB.add(Amenity(null, propertyId!!, it))
+                amenitiesForDB.add(Amenity(idGenerated, propertyId!!, it))
             }
 
             address = Address(
@@ -474,14 +476,15 @@ BitmapDownloader.Listeners{
             addPropertyJob = launch {
                 val currency = currencyRepository.currency.value!!
                 val hasPicture = pictures.isNotEmpty()
+                propertyId = propertyId ?: idGenerated
                 val propertyForDB = Property(
-                        propertyId, Converters.toTypeProperty(type), price!!.toEuro(currency),
+                        propertyId!!, Converters.toTypeProperty(type), price!!.toEuro(currency),
                         surface!!.toSqMeter(currency), rooms!!,
                         bedrooms, bathrooms,
                         description, onMarketSince.toDate()!!,
                         isSold, sellOn?.toDate(), agentId!!, hasPicture)
                 when(actionType){
-                    ActionType.NEW_PROPERTY -> propertyId = propertyRepository.createProperty(propertyForDB).toInt()
+                    ActionType.NEW_PROPERTY -> propertyRepository.createProperty(propertyForDB)
                     ActionType.MODIFY_PROPERTY -> propertyRepository.updateProperty(propertyForDB)
                 }
 
@@ -661,6 +664,7 @@ BitmapDownloader.Listeners{
                 }
                 pictures = it.pictures.sortedBy { picture -> picture.orderNumber }.toMutableList()
                 emitResultPictureModification()
+
             }
         }
     }

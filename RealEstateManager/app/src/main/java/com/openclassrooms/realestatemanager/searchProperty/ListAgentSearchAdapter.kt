@@ -18,7 +18,7 @@ class ListAgentSearchAdapter(
     private val holders = mutableListOf<ListAgentsSearchViewHolder>()
 
     interface ListenerCheckBox{
-        fun onClickCheckBox(id: Int, isChecked: Boolean)
+        fun onClickCheckBox(id: String, isChecked: Boolean)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListAgentsSearchViewHolder {

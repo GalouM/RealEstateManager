@@ -151,7 +151,7 @@ MainActivity.OnTabSelectedListener{
                     .position(positionProperty)
                     .snippet(snippet)
                     .icon(iconFactory.fromResource(drawable))
-            markerREM.idRem = it.property.id!!
+            markerREM.idRem = it.property.id
             mapBoxMap?.addMarker(markerREM)
         }
 

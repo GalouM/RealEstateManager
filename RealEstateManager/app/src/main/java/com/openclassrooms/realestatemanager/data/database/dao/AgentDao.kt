@@ -16,7 +16,7 @@ interface AgentDao {
     suspend fun getAllAgents(): List<Agent>
 
     @Query("SELECT * FROM agents WHERE agent_id = :agentId")
-    suspend fun getAgent(agentId: Int): List<Agent>
+    suspend fun getAgent(agentId: String): List<Agent>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createAgent(agent: Agent)

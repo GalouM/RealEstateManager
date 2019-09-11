@@ -15,7 +15,7 @@ import java.util.*
 interface PropertyDao {
 
     @Query("SELECT * FROM properties WHERE property_id = :propertyId")
-    suspend fun getProperty(propertyId: Int): List<PropertyWithAllData>
+    suspend fun getProperty(propertyId: String): List<PropertyWithAllData>
 
     @Query("SELECT * FROM properties ORDER BY on_market_since")
     suspend fun getAllProperties(): List<PropertyWithAllData>
@@ -44,7 +44,7 @@ interface PropertyDao {
             minPrice: Double, maxPrice: Double,
             minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
+            listAgents: List<String>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPicture: List<Int>, afterDate: Date
     ): List<PropertyWithAllData>
 
@@ -68,7 +68,7 @@ interface PropertyDao {
             minPrice: Double, maxPrice: Double,
             minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
+            listAgents: List<String>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPicture: List<Int>, afterDate: Date, listAmenities: List<TypeAmenity>
     ): List<PropertyWithAllData>
 }

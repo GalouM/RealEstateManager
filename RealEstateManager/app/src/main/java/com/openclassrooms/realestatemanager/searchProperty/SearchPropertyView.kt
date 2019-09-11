@@ -70,8 +70,8 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
 
     private lateinit var viewModel: SearchPropertyViewModel
 
-    private val agentsSelectedId = mutableListOf<Int>()
-    private var allAgents: List<Int>? = null
+    private val agentsSelectedId = mutableListOf<String>()
+    private var allAgents: List<String>? = null
     private var adapter: ListAgentSearchAdapter?= null
     private lateinit var currentCurrency: Currency
     private var datePosted: String? = null
@@ -117,7 +117,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
 
     }
 
-    override fun onClickCheckBox(id: Int, isChecked: Boolean) {
+    override fun onClickCheckBox(id: String, isChecked: Boolean) {
         if(isChecked){
             agentsSelectedId.add(id)
             if(agentsSelectedId.size == allAgents?.size) selectAllAgents.isChecked = true

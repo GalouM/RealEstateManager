@@ -31,7 +31,7 @@ class SaveDataRepository (context: Context){
             field = value
         }
 
-    fun saveModifiedProperty(modifiedProperty: TempProperty?, idProperty: Int){
+    fun saveModifiedProperty(modifiedProperty: TempProperty?, idProperty: String){
         val gson = Gson()
         val json = gson.toJson(modifiedProperty)
         val editor = sharedPreferences.edit()
@@ -39,13 +39,13 @@ class SaveDataRepository (context: Context){
         editor.apply()
     }
 
-    fun getSavedModifyProperty(idProperty: Int?): TempProperty?{
+    fun getSavedModifyProperty(idProperty: String?): TempProperty?{
         val gson = Gson()
         val json = sharedPreferences.getString(getKeyProperty(idProperty), null)
         return gson.fromJson(json, TempProperty::class.java)
     }
 
-    private fun getKeyProperty(idProperty: Int?)
+    private fun getKeyProperty(idProperty: String?)
             = if(idProperty!= null) "${KEY_PREF_TEMP_PROPERTY}_$idProperty" else KEY_PREF_TEMP_PROPERTY
 
 

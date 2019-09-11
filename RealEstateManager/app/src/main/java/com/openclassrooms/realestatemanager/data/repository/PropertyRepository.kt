@@ -54,12 +54,12 @@ class PropertyRepository(
     suspend fun getAllProperties() = propertyDao.getAllProperties()
 
 
-    suspend fun getProperty(idProperty: Int) = propertyDao.getProperty(idProperty)
+    suspend fun getProperty(idProperty: String) = propertyDao.getProperty(idProperty)
 
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
+            listAgents: List<String>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPictures: List<Int>, afterDate: Date
     ) = propertyDao.getPropertiesQuery(
             minPrice, maxPrice, minSurface, maxSurface,
@@ -71,7 +71,7 @@ class PropertyRepository(
     suspend fun getPropertiesQuery(
             minPrice: Double, maxPrice: Double, minSurface: Double, maxSurface: Double,
             minNbRoom: Int, minNbBedrooms: Int, minNbBathrooms: Int,
-            listAgents: List<Int>, listTypes: List<TypeProperty>, neighborhood: String,
+            listAgents: List<String>, listTypes: List<TypeProperty>, neighborhood: String,
             isSold: List<Int>, hasPictures: List<Int>, afterDate: Date, listAmenities: List<TypeAmenity>
     ) = propertyDao.getPropertiesQuery(
             minPrice, maxPrice, minSurface, maxSurface,
@@ -108,7 +108,7 @@ class PropertyRepository(
     }
 
     //------delete--------
-    suspend fun deletePreviousData(idProperty: Int){
+    suspend fun deletePreviousData(idProperty: String){
         amenityDao.deleteAmenities(idProperty)
         pictureDao.deletePictures(idProperty)
     }

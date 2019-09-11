@@ -17,5 +17,5 @@ interface AmenityDao {
     suspend fun insertAmenity(amenities: List<Amenity>)
 
     @Query("DELETE FROM amenities WHERE property = :idProperty")
-    suspend fun deleteAmenities(idProperty: Int)
+    suspend fun deleteAmenities(idProperty: String)
 }

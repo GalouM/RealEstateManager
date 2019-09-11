@@ -98,7 +98,6 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
                     true -> showSnackBarMessage(getString(R.string.modif_draft))
                     false -> showSnackBarMessage(getString(R.string.saved_as_draft))
                 }
-                viewModel.actionFromIntent(DetailsPropertyIntent.FetchDetailsIntent)
             }
             else -> showSnackBarMessage(getString(R.string.error_modification))
         }

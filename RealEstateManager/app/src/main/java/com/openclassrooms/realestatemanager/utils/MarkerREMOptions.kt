@@ -13,7 +13,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
  */
 class MarkerREMOptions() : BaseMarkerOptions<MarkerREM, MarkerREMOptions>(), Parcelable {
 
-    var idRem: Int = 0
+    var idRem: String = ""
 
     constructor(parcel: Parcel) : this()
 
@@ -37,7 +37,7 @@ class MarkerREMOptions() : BaseMarkerOptions<MarkerREM, MarkerREMOptions>(), Par
         out.writeParcelable(position, flags)
         out.writeString(snippet)
         out.writeString(title)
-        out.writeInt(idRem)
+        out.writeString(idRem)
         val icon = icon
         out.writeByte((if (icon != null) 1 else 0).toByte())
         if (icon != null) {

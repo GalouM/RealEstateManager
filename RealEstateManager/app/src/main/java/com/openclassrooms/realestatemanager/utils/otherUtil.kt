@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.utils
 
 import android.util.Log
+import java.util.*
 
 /**
  * Created by galou on 2019-09-10
@@ -9,3 +10,11 @@ import android.util.Log
 fun displayData(message: String){
     Log.e("REMData", message)
 }
+
+var idGenerated: String = ""
+    get() {
+        val uid = UUID.randomUUID().toString()
+        field = uid
+        displayData(field)
+        return uid
+    }

@@ -19,7 +19,7 @@ import java.util.*
             childColumns = ["agent"],
             onDelete = ForeignKey.NO_ACTION)])
 data class Property (
-        @ColumnInfo(name = "property_id") @PrimaryKey(autoGenerate = true) val id: Int?,
+        @ColumnInfo(name = "property_id") @PrimaryKey val id: String,
         @ColumnInfo(name = "type_property")var type: TypeProperty,
         var price: Double,
         var surface: Double,
@@ -30,5 +30,5 @@ data class Property (
         @ColumnInfo(name = "on_market_since") var onMarketSince: Date,
         var sold: Boolean,
         @ColumnInfo(name = "sell_date") var sellDate: Date?,
-        var agent: Int,
+        var agent: String,
         @ColumnInfo(name = "has_picture")var hasPictures: Boolean)

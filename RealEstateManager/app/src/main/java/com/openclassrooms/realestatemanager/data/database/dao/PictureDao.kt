@@ -17,5 +17,5 @@ interface PictureDao {
     suspend fun insertPicture(pictures: List<Picture>): List<Long>
 
     @Query("DELETE FROM pictures WHERE id_property = :propertyId")
-    suspend fun deletePictures(propertyId: Int)
+    suspend fun deletePictures(propertyId: String)
 }

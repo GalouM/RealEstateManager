@@ -9,8 +9,8 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "agents")
 data class Agent(
-        @PrimaryKey(autoGenerate = true)
-        @ColumnInfo(name = "agent_id")val id: Int?,
+        @PrimaryKey
+        @ColumnInfo(name = "agent_id")val id: String,
         @ColumnInfo(name = "first_name")val firstName: String,
         @ColumnInfo(name = "last_name")val lastName: String,
         val email: String,

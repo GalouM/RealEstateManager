@@ -7,7 +7,7 @@ import com.openclassrooms.realestatemanager.utils.TypeAmenity
  * Created by galou on 2019-09-09
  */
 data class TempProperty(
-        val id: Int?,
+        val id: String?,
         val type: String,
         val price: Double?,
         val surface: Double?,
@@ -18,7 +18,7 @@ data class TempProperty(
         val onMarketSince: String,
         val isSold: Boolean,
         val sellDate: String?,
-        val agent: Int?,
+        val agent: String?,
         val address: String,
         val neighborhood: String,
         val pictures: List<Picture>,

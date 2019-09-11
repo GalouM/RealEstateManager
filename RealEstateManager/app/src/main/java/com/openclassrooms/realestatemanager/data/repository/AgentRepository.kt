@@ -12,7 +12,7 @@ class AgentRepository (private val agentDao: AgentDao){
         return agentDao.getAllAgents()
     }
 
-    suspend fun getAgent(agentId: Int): List<Agent> {
+    suspend fun getAgent(agentId: String): List<Agent> {
         return agentDao.getAgent(agentId)
     }
 

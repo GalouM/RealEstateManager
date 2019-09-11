@@ -9,6 +9,7 @@ import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectEmail
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectName
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectPhoneNumber
+import com.openclassrooms.realestatemanager.utils.idGenerated
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -96,7 +97,7 @@ class AddAgentViewModel (
 
         if (listErrors.isEmpty()) {
             addAgentsJob = launch {
-                val agent = Agent(null, firstName, lastName, email, phoneNumber, urlPicture)
+                val agent = Agent(idGenerated, firstName, lastName, email, phoneNumber, urlPicture)
                 agentRepository.createAgent(agent)
                 resultToViewState(Lce.Content(AddAgentResult.AddAgentToDBResult(null)))
             }

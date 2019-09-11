@@ -50,7 +50,7 @@ class SearchPropertyViewModel(
     private var isSoldQuery = listOf(0, 1)
     private var hasPictureQuery = listOf(0, 1)
     private lateinit var typeQuery: List<TypeProperty>
-    private lateinit var agentsQuery: List<Int>
+    private lateinit var agentsQuery: List<String>
     private lateinit var amenitiesQuery: List<TypeAmenity>
     private lateinit var dateQuery: Date
 
@@ -124,7 +124,7 @@ class SearchPropertyViewModel(
             type: List<TypeProperty>, minPrice: Double?, maxPrice: Double?,
             minSurface: Double?, maxSurface: Double?, minNbRooms: Int?,
             minNbBedrooms: Int?, minNbBathrooms: Int?, neighborhood: String?,
-            stillOnMarket: Boolean?, manageBy: List<Int>?, amenitiesSelected: List<TypeAmenity>,
+            stillOnMarket: Boolean?, manageBy: List<String>?, amenitiesSelected: List<TypeAmenity>,
             maxDateOnMarket: String, hasPicture: Boolean?
     ){
         resultToViewState(Lce.Loading())

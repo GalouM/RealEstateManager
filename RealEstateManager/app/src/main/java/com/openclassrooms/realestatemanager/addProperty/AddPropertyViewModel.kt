@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.openclassrooms.realestatemanager.addProperty.ActionType.MODIFY_PROPERTY
+import com.openclassrooms.realestatemanager.addProperty.ActionType.NEW_PROPERTY
 import com.openclassrooms.realestatemanager.data.TempProperty
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.Converters
@@ -23,7 +25,6 @@ import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.net.URL
-import java.util.*
 
 /**
  * Created by galou on 2019-07-27
@@ -54,7 +55,7 @@ BitmapDownloader.Listeners{
 
     private lateinit var actionType: ActionType
     private lateinit var context: Context
-    private var propertyId: String? = null
+    private var propertyId: String = idGenerated
     private lateinit var idFromApi: String
     private var propertyFetched: PropertyWithAllData? = null
 
@@ -243,8 +244,16 @@ BitmapDownloader.Listeners{
     private fun setActionType(actionType: ActionType){
         if(!initalIntentHandled) {
             this.actionType = actionType
+            setPropertyFetched()
             fetchSavedProperty()
             initalIntentHandled = true
+        }
+    }
+
+    private fun setPropertyFetched(){
+        if(actionType == MODIFY_PROPERTY) {
+            propertyFetched = propertyRepository.propertyPicked
+            propertyFetched?.let { propertyId = it.property.id }
         }
     }
 
@@ -369,7 +378,7 @@ BitmapDownloader.Listeners{
         if(address.isEmpty()) listErrors.add(ErrorSourceAddProperty.NO_ADDRESS)
         if(agentId == null) listErrors.add(ErrorSourceAddProperty.NO_AGENT)
         pictures.forEach {
-            if(it.description.isNullOrBlank()){
+            if(it.description.isBlank()){
                 listErrors.add(ErrorSourceAddProperty.MISSING_DESCRIPTION)
             }
         }
@@ -436,78 +445,69 @@ BitmapDownloader.Listeners{
         if(addPropertyDataJob?.isActive == true) addPropertyDataJob?.cancel()
 
         val amenitiesForDB = mutableListOf<Amenity>()
-
         var address: Address? = null
+        var propertyForDB: Property? = null
 
         fun emitResult(){
             when(actionType){
-                ActionType.NEW_PROPERTY -> saveDataRepository.tempProperty = null
-                ActionType.MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(null, propertyId!!)
+                NEW_PROPERTY -> saveDataRepository.tempProperty = null
+                MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(null, propertyId)
             }
             val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.PropertyAddedToDBResult(null))
             resultToViewState(result)
         }
 
+        fun createPropertyAndDataInDB(){
+            addPropertyDataJob = launch {
+                propertyRepository.createPropertyAndData(
+                        propertyForDB!!, amenitiesForDB, pictures, address!!, actionType
+                )
+                emitResult()
+            }
+
+        }
+
         fun createObjectForDB(){
+            val currency = currencyRepository.currency.value!!
+            val hasPicture = pictures.isNotEmpty()
+            propertyForDB = Property(
+                    propertyId, Converters.toTypeProperty(type), price!!.toEuro(currency),
+                    surface!!.toSqMeter(currency), rooms!!,
+                    bedrooms, bathrooms,
+                    description, onMarketSince.toDate()!!,
+                    isSold, sellOn?.toDate(), agentId!!, hasPicture)
+
             if(pictures.isNotEmpty()){
                 pictures.forEach{ it.property = propertyId }
             }
 
             amenities.forEach {
-                amenitiesForDB.add(Amenity(idGenerated, propertyId!!, it))
+                amenitiesForDB.add(Amenity(idGenerated, propertyId, it))
             }
 
             address = Address(
-                    propertyId!!, street, city, postalCode, country, state,
+                    propertyId, street, city, postalCode, country, state,
                     longitude!!, latitude!!, neighborhood, map, addressForDisplay
             )
-
-            emitResult()
         }
 
-        fun createDataPropertyInDB(){
-            addPropertyDataJob = launch {
-                propertyRepository.createDataProperty(amenitiesForDB, pictures, address!!, actionType)
-            }
-
-        }
-
-        fun createNewPropertyInDB(){
-            addPropertyJob = launch {
-                val currency = currencyRepository.currency.value!!
-                val hasPicture = pictures.isNotEmpty()
-                propertyId = propertyId ?: idGenerated
-                val propertyForDB = Property(
-                        propertyId!!, Converters.toTypeProperty(type), price!!.toEuro(currency),
-                        surface!!.toSqMeter(currency), rooms!!,
-                        bedrooms, bathrooms,
-                        description, onMarketSince.toDate()!!,
-                        isSold, sellOn?.toDate(), agentId!!, hasPicture)
-                when(actionType){
-                    ActionType.NEW_PROPERTY -> propertyRepository.createProperty(propertyForDB)
-                    ActionType.MODIFY_PROPERTY -> propertyRepository.updateProperty(propertyForDB)
-                }
-
-                createObjectForDB()
-                createDataPropertyInDB()
-            }
-
-        }
-
-        fun deletePreviousAmenities(){
+        fun deletePreviousData(){
             if(deletePreviousDataJob?.isActive == true) deletePreviousDataJob?.cancel()
             deletePreviousDataJob = launch {
-                propertyRepository.deletePreviousData(propertyId!!)
-                createNewPropertyInDB()
+                propertyRepository.deletePreviousData(propertyId)
+                createObjectForDB()
+                createPropertyAndDataInDB()
             }
 
         }
 
+
         if(listErrorInputs.isEmpty()){
-            if(actionType == ActionType.MODIFY_PROPERTY){
-                deletePreviousAmenities()
+            if(actionType == MODIFY_PROPERTY){
+                deletePreviousData()
             } else{
-                createNewPropertyInDB()
+                createObjectForDB()
+                createPropertyAndDataInDB()
             }
         } else {
             val result: Lce<AddPropertyResult> = Lce.Error(AddPropertyResult.PropertyAddedToDBResult(listErrorInputs))
@@ -611,8 +611,8 @@ BitmapDownloader.Listeners{
         )
 
         when(actionType){
-            ActionType.NEW_PROPERTY -> saveDataRepository.tempProperty = tempProperty
-            ActionType.MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(tempProperty, propertyId!!)
+            NEW_PROPERTY -> saveDataRepository.tempProperty = tempProperty
+            MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(tempProperty, propertyId)
         }
 
         val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.PropertyAddedToDraftResult)
@@ -626,19 +626,14 @@ BitmapDownloader.Listeners{
     private fun fetchSavedProperty(){
         resultToViewState(Lce.Loading())
 
-        if(actionType == ActionType.MODIFY_PROPERTY) {
-            propertyFetched = propertyRepository.propertyPicked
-            propertyFetched?.let { propertyId = it.property.id }
-        }
-
         val savedProperty = when(actionType){
-            ActionType.NEW_PROPERTY -> saveDataRepository.tempProperty
-            ActionType.MODIFY_PROPERTY -> saveDataRepository.getSavedModifyProperty(propertyId)
+            NEW_PROPERTY -> saveDataRepository.tempProperty
+            MODIFY_PROPERTY -> saveDataRepository.getSavedModifyProperty(propertyId)
         }
         var agent: Agent? = null
 
         fun emitResult(){
-            val isOriginalAvailable = actionType == ActionType.MODIFY_PROPERTY
+            val isOriginalAvailable = actionType == MODIFY_PROPERTY
             val result: Lce<AddPropertyResult>  = Lce.Content(AddPropertyResult.PropertyFromDraftResult(
                     savedProperty!!.type, savedProperty.price, savedProperty.surface, savedProperty.rooms,
                     savedProperty.bedrooms, savedProperty. bathrooms, savedProperty.description, savedProperty.address,
@@ -649,7 +644,7 @@ BitmapDownloader.Listeners{
         resultToViewEffect(result)
         }
 
-        if(savedProperty == null && actionType == ActionType.MODIFY_PROPERTY){
+        if(savedProperty == null && actionType == MODIFY_PROPERTY){
             fetchExistingPropertyFromDB()
         } else {
             savedProperty?.let {

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.data.repository
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
@@ -81,17 +82,22 @@ class PropertyRepository(
 
 
     //------create--------
-    suspend fun createProperty(property: Property) =  propertyDao.createProperty(property)
-
-    suspend fun createDataProperty(
-            amenities: List<Amenity>, pictures: List<Picture>, address: Address, actionType: ActionType
+    suspend fun createPropertyAndData(
+            property: Property, amenities: List<Amenity>, pictures: List<Picture>,
+            address: Address, actionType: ActionType
     ){
         coroutineScope {
+            launch {
+                when(actionType){
+                    ActionType.NEW_PROPERTY -> propertyDao.createProperty(property)
+                    ActionType.MODIFY_PROPERTY -> propertyDao.updateProperty(property)
+                }
+            }
             launch {
                 amenityDao.insertAmenity(amenities)
             }
             launch {
-                val picId = pictureDao.insertPicture(pictures)
+                pictureDao.insertPicture(pictures)
             }
             launch {
                 when(actionType){
@@ -101,10 +107,6 @@ class PropertyRepository(
 
             }
         }
-    }
-
-    suspend fun updateProperty(property: Property){
-        propertyDao.updateProperty(property)
     }
 
     //------delete--------
@@ -132,5 +134,15 @@ class PropertyRepository(
                     }
         }
     }
+
+    //-----------------
+    // FIRESTORE REQUEST
+    //-----------------
+    val dbFirestore = FirebaseFirestore.getInstance()
+    val agentCollection = dbFirestore.collection(AGENT_COLLECTION)
+    val propertyCollection = dbFirestore.collection(PROPERTY_COLLECTION)
+    val pictureCollection = dbFirestore.collection(PICTURE_COLLECTION)
+    val amenityCollection = dbFirestore.collection(AMENITY_COLLECTION)
+    val addressCollection = dbFirestore.collection(ADDRESS_COLLECTION)
 
 }

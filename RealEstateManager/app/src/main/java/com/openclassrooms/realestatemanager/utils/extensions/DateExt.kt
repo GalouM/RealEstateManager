@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.utils.extensions
 
 import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
+import com.openclassrooms.realestatemanager.utils.DATE_FORMAT_WITH_TIME
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,4 +32,9 @@ fun Date.toCalendar(): Calendar?{
     calendar.time = this
 
     return calendar
+}
+
+fun Date.toStringWithTime(): String{
+    val formatter = SimpleDateFormat(DATE_FORMAT_WITH_TIME, Locale.CANADA)
+    return formatter.format(this.time)
 }

@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.utils.extensions
 
 import com.openclassrooms.realestatemanager.utils.DATE_FORMAT
+import com.openclassrooms.realestatemanager.utils.DATE_FORMAT_WITH_TIME
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -43,6 +44,15 @@ fun String.toDate(): Date?{
         null
     }
 
+}
+
+fun String.toDateWithTime(): Date?{
+    val formatter = SimpleDateFormat(DATE_FORMAT_WITH_TIME, Locale.CANADA)
+    return try {
+        formatter.parse(this)
+    } catch (e : Exception){
+        null
+    }
 }
 
 fun String.isExistingPropertyType(): Boolean{

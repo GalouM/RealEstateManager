@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.addProperty.ErrorSourceAddProperty.*
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.injection.Injection
@@ -405,23 +406,26 @@ SnackBarListener{
     private fun renderErrors(errors: List<ErrorSourceAddProperty>){
         errors.forEach{
             when(it){
-                ErrorSourceAddProperty.NO_TYPE_SELECTED -> typeLayout.error = getString(R.string.incorrect_type)
-                ErrorSourceAddProperty.NO_PRICE -> priceLayout.error = getString(R.string.can_t_be_empty)
-                ErrorSourceAddProperty.NO_SURFACE -> surfaceLayout.error = getString(R.string.can_t_be_empty)
-                ErrorSourceAddProperty.NO_ROOMS -> roomLayout.error = getString(R.string.can_t_be_empty)
-                ErrorSourceAddProperty.NO_ADDRESS -> addressLayout.error = getString(R.string.can_t_be_empty)
-                ErrorSourceAddProperty.NO_NEIGHBORHOOD -> neighbourhoodLayout.error = getString(R.string.can_t_be_empty)
-                ErrorSourceAddProperty.NO_ON_MARKET_DATE -> onMarketSinceLayout.error = getString(R.string.can_t_be_empty)
-                ErrorSourceAddProperty.NO_SOLD_DATE -> soldOnLayout.error = getString(R.string.can_t_be_empty)
-                ErrorSourceAddProperty.NO_AGENT -> agentLayout.error = getString(R.string.can_t_be_empty)
-                ErrorSourceAddProperty.INCORRECT_SOLD_DATE -> soldOnLayout.error = getString(R.string.incorrect_date)
-                ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE -> onMarketSinceLayout.error = getString(R.string.incorrect_date)
-                ErrorSourceAddProperty.ERROR_FETCHING_AGENTS -> showSnackBarMessage(getString(R.string.error_finding_agents))
-                ErrorSourceAddProperty.TOO_MANY_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
-                ErrorSourceAddProperty.INCORECT_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
-                ErrorSourceAddProperty.UNKNOW_ERROR -> showSnackBarMessage(getString(R.string.unknow_error))
-                ErrorSourceAddProperty.ERROR_FETCHING_PROPERTY -> showSnackBarMessage(getString(R.string.unknow_error))
-                ErrorSourceAddProperty.MISSING_DESCRIPTION -> adapter.showErrorViewHolder(getString(R.string.no_description))
+                NO_TYPE_SELECTED -> typeLayout.error = getString(R.string.incorrect_type)
+                NO_PRICE -> priceLayout.error = getString(R.string.can_t_be_empty)
+                NO_SURFACE -> surfaceLayout.error = getString(R.string.can_t_be_empty)
+                NO_ROOMS -> roomLayout.error = getString(R.string.can_t_be_empty)
+                NO_ADDRESS -> addressLayout.error = getString(R.string.can_t_be_empty)
+                NO_NEIGHBORHOOD -> neighbourhoodLayout.error = getString(R.string.can_t_be_empty)
+                NO_ON_MARKET_DATE -> onMarketSinceLayout.error = getString(R.string.can_t_be_empty)
+                NO_SOLD_DATE -> soldOnLayout.error = getString(R.string.can_t_be_empty)
+                NO_AGENT -> agentLayout.error = getString(R.string.can_t_be_empty)
+                INCORRECT_SOLD_DATE -> soldOnLayout.error = getString(R.string.incorrect_date)
+                INCORRECT_ON_MARKET_DATE -> onMarketSinceLayout.error = getString(R.string.incorrect_date)
+                ERROR_FETCHING_AGENTS -> showSnackBarMessage(getString(R.string.error_finding_agents))
+                TOO_MANY_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
+                INCORECT_ADDRESS -> addressLayout.error = getString(R.string.incorrect_address)
+                UNKNOW_ERROR -> showSnackBarMessage(getString(R.string.unknow_error))
+                ERROR_FETCHING_PROPERTY -> showSnackBarMessage(getString(R.string.unknow_error))
+                MISSING_DESCRIPTION -> adapter.showErrorViewHolder(getString(R.string.no_description))
+                ERROR_FETCHING_MAP -> showSnackBarMessage(getString(R.string.error_update_server))
+                UPLOAD_PICTURE -> showSnackBarMessage(getString(R.string.error_update_server))
+                UPLOAD_DATA -> showSnackBarMessage(getString(R.string.error_update_server))
             }
         }
         showSnackBarWithAction(getString(R.string.error_saving), SnackBarAction.SAVE_DRAFT)

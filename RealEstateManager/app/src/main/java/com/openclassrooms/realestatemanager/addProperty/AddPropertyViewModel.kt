@@ -2,10 +2,18 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import com.openclassrooms.realestatemanager.addProperty.ActionType.MODIFY_PROPERTY
 import com.openclassrooms.realestatemanager.addProperty.ActionType.NEW_PROPERTY
+import com.openclassrooms.realestatemanager.addProperty.ErrorSourceAddProperty.*
 import com.openclassrooms.realestatemanager.data.TempProperty
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
 import com.openclassrooms.realestatemanager.data.database.Converters
@@ -23,6 +31,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
 import java.net.URL
 
 /**
@@ -57,6 +68,8 @@ BitmapDownloader.Listeners{
     private var propertyId: String = idGenerated
     private lateinit var idFromApi: String
     private var propertyFetched: PropertyWithAllData? = null
+    private var previousPictures = listOf<Picture>()
+    private var previousAmenities = listOf<Amenity>()
 
     // data
     private val listErrorInputs = mutableListOf<ErrorSourceAddProperty>()
@@ -70,7 +83,7 @@ BitmapDownloader.Listeners{
     private lateinit var address: String
     private lateinit var street: String
     private lateinit var city: String
-    private lateinit var postalCode: String
+    private var postalCode: String = ""
     private lateinit var state: String
     private lateinit var country: String
     private lateinit var neighborhood: String
@@ -90,7 +103,6 @@ BitmapDownloader.Listeners{
     private var addPropertyJob: Job? = null
     private var addPropertyDataJob: Job? = null
     private var searchAgentsJob: Job? = null
-    private var deletePreviousDataJob: Job? = null
 
 
     override fun actionFromIntent(intent: AddPropertyIntent) {
@@ -252,7 +264,12 @@ BitmapDownloader.Listeners{
     private fun setPropertyFetched(){
         if(actionType == MODIFY_PROPERTY) {
             propertyFetched = propertyRepository.propertyPicked
-            propertyFetched?.let { propertyId = it.property.id }
+            propertyFetched?.let {
+                propertyId = it.property.id
+                previousAmenities = it.amenities
+                previousPictures = it.pictures
+            }
+
         }
     }
 
@@ -266,8 +283,7 @@ BitmapDownloader.Listeners{
 
     private fun addPictureToProperty(pictureUrl: String, thumbnailUrl: String?){
         pictures.add(Picture(
-                idGenerated, pictureUrl, thumbnailUrl, null, null,
-                "", pictures.size -1)
+                idGenerated, pictureUrl, thumbnailUrl,  null, propertyId, "", pictures.size -1)
         )
         emitResultPictureModification()
     }
@@ -340,21 +356,31 @@ BitmapDownloader.Listeners{
         val results = geocodingApi.results
         if(results.isNotEmpty()){
             configureAddressComponent(geocodingApi)
-            val mapUrl = fetchMapFromApi(latitude!!, longitude!!)
-            if( mapUrl != null){
+            val mapUrl = propertyRepository.getMapLocation(latitude!!.toString(), longitude!!.toString()).toUrl()
+            if(mapUrl != null) {
                 fetchBitmapMap(mapUrl)
+
             } else {
+                listErrorInputs.add(ERROR_FETCHING_MAP)
                 emitResultAddPropertyToView()
             }
+
+
         } else {
-            listErrorInputs.add(ErrorSourceAddProperty.TOO_MANY_ADDRESS)
+            listErrorInputs.add(TOO_MANY_ADDRESS)
             emitResultAddPropertyToView()
         }
     }
 
     override fun onBitmapDownloaded(bitmap: Bitmap) {
         map = bitmap.saveToInternalStorage(context, idFromApi, TypeImage.ICON_MAP).toString()
-        emitResultAddPropertyToView()
+        propertyRepository.uploadMapInNetwork(bitmap, propertyId)
+                .addOnSuccessListener { emitResultAddPropertyToView() }
+                .addOnFailureListener {
+                    listErrorInputs.add(ERROR_FETCHING_MAP)
+                    emitResultAddPropertyToView()
+                }
+
     }
 
     private fun checkErrorsFromUserInput(): List<ErrorSourceAddProperty>{
@@ -363,22 +389,22 @@ BitmapDownloader.Listeners{
         val sellDate = sellOn?.toDate()
 
         if(onMarketDate == null ||
-                !onMarketDate.isCorrectOnMarketDate()) listErrors.add(ErrorSourceAddProperty.INCORRECT_ON_MARKET_DATE)
+                !onMarketDate.isCorrectOnMarketDate()) listErrors.add(INCORRECT_ON_MARKET_DATE)
         if(isSold) {
             if (sellDate == null ||
                     onMarketDate != null
-                    && !sellDate.isCorrectSoldDate(onMarketDate)) listErrors.add(ErrorSourceAddProperty.INCORRECT_SOLD_DATE)
-            if (sellOn == null) listErrors.add(ErrorSourceAddProperty.NO_SOLD_DATE)
+                    && !sellDate.isCorrectSoldDate(onMarketDate)) listErrors.add(INCORRECT_SOLD_DATE)
+            if (sellOn == null) listErrors.add(NO_SOLD_DATE)
         }
-        if(!type.isExistingPropertyType()) listErrors.add(ErrorSourceAddProperty.NO_TYPE_SELECTED)
-        if(price == null) listErrors.add(ErrorSourceAddProperty.NO_PRICE)
-        if(surface == null) listErrors.add(ErrorSourceAddProperty.NO_SURFACE)
-        if(rooms == null) listErrors.add(ErrorSourceAddProperty.NO_ROOMS)
-        if(address.isEmpty()) listErrors.add(ErrorSourceAddProperty.NO_ADDRESS)
-        if(agentId == null) listErrors.add(ErrorSourceAddProperty.NO_AGENT)
+        if(!type.isExistingPropertyType()) listErrors.add(NO_TYPE_SELECTED)
+        if(price == null) listErrors.add(NO_PRICE)
+        if(surface == null) listErrors.add(NO_SURFACE)
+        if(rooms == null) listErrors.add(NO_ROOMS)
+        if(address.isEmpty()) listErrors.add(NO_ADDRESS)
+        if(agentId == null) listErrors.add(NO_AGENT)
         pictures.forEach {
             if(it.description.isBlank()){
-                listErrors.add(ErrorSourceAddProperty.MISSING_DESCRIPTION)
+                listErrors.add(MISSING_DESCRIPTION)
             }
         }
 
@@ -397,7 +423,7 @@ BitmapDownloader.Listeners{
             }
 
             override fun onError(e: Throwable) {
-                listErrorInputs.add(ErrorSourceAddProperty.INCORECT_ADDRESS)
+                listErrorInputs.add(INCORECT_ADDRESS)
                 emitResultAddPropertyToView()
             }
 
@@ -431,10 +457,6 @@ BitmapDownloader.Listeners{
         street = "$streetNumber $streetName"
     }
 
-    private fun fetchMapFromApi(lat: Double, lng: Double): URL? {
-        return propertyRepository.getMapLocation(lat.toString(), lng.toString()).toUrl()
-    }
-
     private fun fetchBitmapMap(mapUrl: URL){
         BitmapDownloader(this).execute(mapUrl)
     }
@@ -446,22 +468,36 @@ BitmapDownloader.Listeners{
         val amenitiesForDB = mutableListOf<Amenity>()
         var address: Address? = null
         var propertyForDB: Property? = null
+        val newPictures = mutableListOf<Picture>()
+        val picturesToUpdate = mutableListOf<Picture>()
+        val pictureToDelete = mutableListOf<Picture>()
+        val errorOnPropertyCreation = mutableListOf<ErrorSourceAddProperty>()
 
         fun emitResult(){
-            when(actionType){
-                NEW_PROPERTY -> saveDataRepository.tempProperty = null
-                MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(null, propertyId)
+            val result: Lce<AddPropertyResult> = if(errorOnPropertyCreation.isEmpty()) {
+                when (actionType) {
+                    NEW_PROPERTY -> saveDataRepository.tempProperty = null
+                    MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(null, propertyId)
+                }
+                Lce.Content(AddPropertyResult.PropertyAddedToDBResult(null))
+            } else {
+                Lce.Error(AddPropertyResult.PropertyAddedToDBResult(errorOnPropertyCreation))
             }
-            val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.PropertyAddedToDBResult(null))
+
             resultToViewState(result)
         }
 
         fun createPropertyAndDataInDB(){
             addPropertyDataJob = launch {
                 propertyRepository.createPropertyAndData(
-                        propertyForDB!!, amenitiesForDB, pictures, address!!, actionType
+                        propertyForDB!!, newPictures, pictureToDelete, picturesToUpdate, amenitiesForDB, address!!, actionType, previousAmenities
                 )
-                emitResult()
+                        .addOnSuccessListener { emitResult() }
+                        .addOnFailureListener{
+                            errorOnPropertyCreation.add(UPLOAD_DATA)
+                            emitResult()
+                        }
+
             }
 
         }
@@ -471,13 +507,25 @@ BitmapDownloader.Listeners{
             val hasPicture = pictures.isNotEmpty()
             propertyForDB = Property(
                     propertyId, Converters.toTypeProperty(type), price!!.toEuro(currency),
-                    surface!!.toSqMeter(currency), rooms!!,
-                    bedrooms, bathrooms,
-                    description, onMarketSince.toDate()!!,
-                    isSold, sellOn?.toDate(), agentId!!, hasPicture)
+                    surface!!.toSqMeter(currency), rooms!!, bedrooms, bathrooms, description,
+                    onMarketSince.toDate()!!, isSold, sellOn?.toDate(), agentId!!, hasPicture, todaysDate
+            )
 
-            if(pictures.isNotEmpty()){
-                pictures.forEach{ it.property = propertyId }
+            if(actionType == MODIFY_PROPERTY && previousPictures.isNotEmpty()){
+                pictures.forEach { picture ->
+                    val previousPicture = previousPictures.find{ it.id == picture.id}
+                    if(previousPicture != null){
+                        picturesToUpdate.add(picture)
+
+                    } else {
+                        newPictures.add(picture)
+                    }
+                }
+                previousPictures.forEach {picture ->
+                    if(!pictures.any { it.id == picture.id }) pictureToDelete.add(picture)
+                }
+            } else {
+                newPictures.addAll(pictures)
             }
 
             amenities.forEach {
@@ -490,24 +538,10 @@ BitmapDownloader.Listeners{
             )
         }
 
-        fun deletePreviousData(){
-            if(deletePreviousDataJob?.isActive == true) deletePreviousDataJob?.cancel()
-            deletePreviousDataJob = launch {
-                propertyRepository.deletePreviousData(propertyId)
-                createObjectForDB()
-                createPropertyAndDataInDB()
-            }
-
-        }
-
 
         if(listErrorInputs.isEmpty()){
-            if(actionType == MODIFY_PROPERTY){
-                deletePreviousData()
-            } else{
-                createObjectForDB()
-                createPropertyAndDataInDB()
-            }
+            createObjectForDB()
+            createPropertyAndDataInDB()
         } else {
             val result: Lce<AddPropertyResult> = Lce.Error(AddPropertyResult.PropertyAddedToDBResult(listErrorInputs))
             resultToViewState(result)
@@ -527,7 +561,7 @@ BitmapDownloader.Listeners{
         searchAgentsJob = launch {
             val agents: List<Agent>? = agentRepository.getAllAgents()
             val result: Lce<AddPropertyResult> = if(agents == null || agents.isEmpty()){
-                val listErrors = listOf(ErrorSourceAddProperty.ERROR_FETCHING_AGENTS)
+                val listErrors = listOf(ERROR_FETCHING_AGENTS)
                 Lce.Error(AddPropertyResult.ListAgentsResult(null, listErrors))
             } else{
                 Lce.Content(AddPropertyResult.ListAgentsResult(agents, null))
@@ -549,7 +583,7 @@ BitmapDownloader.Listeners{
         fun emitResult(){
             val result: Lce<AddPropertyResult>
             result = if(propertyFetched == null){
-                val errors = listOf(ErrorSourceAddProperty.ERROR_FETCHING_PROPERTY)
+                val errors = listOf(ERROR_FETCHING_PROPERTY)
                 Lce.Error(AddPropertyResult.PropertyFromDBResult(
                         "", null, null, null, null, null,
                         null, "", "", "", null,
@@ -584,8 +618,8 @@ BitmapDownloader.Listeners{
     }
 
     private fun fetchPictureExistingPictureFromDB(){
-        propertyFetched?.let{ property ->
-            pictures = property.pictures.sortedBy { it.orderNumber }.toMutableList()
+        propertyFetched?.let{ _ ->
+            pictures = previousPictures.sortedBy { it.orderNumber }.toMutableList()
             emitResultPictureModification()
         }
     }
@@ -649,6 +683,7 @@ BitmapDownloader.Listeners{
             fetchExistingPropertyFromDB()
         } else {
             savedProperty?.let {
+                propertyId = savedProperty.id
                 agentId = it.agent
                 if (agentId != null) {
                     searchAgentsJob = launch {

@@ -34,9 +34,16 @@ const val RC_CODE_TAKE_PHOTO = 800
 const val KEY_PREF_TEMP_PROPERTY = "tempProperty"
 const val RESULT_SAVED_TO_DB = 900
 const val RESULT_SAVED_TO_DRAFT = 1000
+const val KEY_PREF_LAST_UPDATE = "lastUpdateDate"
+const val DATE_FORMAT_WITH_TIME = "dd/MM/yyyy HH:mm:ss"
 
 const val AGENT_COLLECTION = "agentCollection"
 const val PROPERTY_COLLECTION = "propertyCollection"
 const val PICTURE_COLLECTION = "pictureCollection"
 const val ADDRESS_COLLECTION = "addressCollection"
 const val AMENITY_COLLECTION = "amenityCollection"
+
+const val STORAGE_PATH_AGENT_PICTURE = "images/agentsPicture/"
+const val STORAGE_PATH_PROPERTY_PICTURE = "images/propertyPicture/"
+const val STORAGE_PATH_PROPERTY_PICTURE_THUMBNAIL = "images/propertyPicture/thumbnail/"
+const val STORAGE_PATH_MAP = "map/"

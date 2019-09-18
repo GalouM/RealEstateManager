@@ -1,15 +1,17 @@
 package com.openclassrooms.realestatemanager.addAgent
 
-import android.util.Log
+import com.openclassrooms.realestatemanager.addAgent.ErrorSourceAddAgent.*
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
+import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectEmail
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectName
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectPhoneNumber
 import com.openclassrooms.realestatemanager.utils.idGenerated
+import com.openclassrooms.realestatemanager.utils.todaysDate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -33,6 +35,7 @@ class AddAgentViewModel (
             is AddAgentIntent.AddAgentToDBIntent -> {
                 addAgentToDBRequest(
                         intent.pictureUrl,
+                        intent.urlFromDevice,
                         intent.firstName,
                         intent.lastName,
                         intent.email,
@@ -73,37 +76,57 @@ class AddAgentViewModel (
         }
     }
 
-    private fun addAgentToDBRequest(urlPicture: String?,
-                                            firstName: String,
-                                            lastName: String,
-                                            email: String,
-                                            phoneNumber: String){
+    private fun addAgentToDBRequest(
+            urlPicture: String?,
+            urlFromDevice: String?,
+            firstName: String,
+            lastName: String,
+            email: String,
+            phoneNumber: String
+    ){
         resultToViewState(Lce.Loading())
 
         if(addAgentsJob?.isActive == true) addAgentsJob?.cancel()
 
         fun checkErrors(): List<ErrorSourceAddAgent>{
             val listErrorInputs = mutableListOf<ErrorSourceAddAgent>()
-            if(!firstName.isCorrectName()) listErrorInputs.add(ErrorSourceAddAgent.FIRST_NAME_INCORRECT)
-            if(!lastName.isCorrectName()) listErrorInputs.add(ErrorSourceAddAgent.LAST_NAME_INCORRECT)
-            if(!email.isCorrectEmail()) listErrorInputs.add(ErrorSourceAddAgent.EMAIL_INCORRECT)
-            if(!phoneNumber.isCorrectPhoneNumber()) listErrorInputs.add(ErrorSourceAddAgent.PHONE_INCORRECT)
+            if(!firstName.isCorrectName()) listErrorInputs.add(FIRST_NAME_INCORRECT)
+            if(!lastName.isCorrectName()) listErrorInputs.add(LAST_NAME_INCORRECT)
+            if(!email.isCorrectEmail()) listErrorInputs.add(EMAIL_INCORRECT)
+            if(!phoneNumber.isCorrectPhoneNumber()) listErrorInputs.add(PHONE_INCORRECT)
 
             return listErrorInputs
         }
+        val listErrors = checkErrors().toMutableList()
+        val agentId = idGenerated
 
-        val listErrors = checkErrors()
-        Log.e("errors", listErrors.toString())
-
-        if (listErrors.isEmpty()) {
-            addAgentsJob = launch {
-                val agent = Agent(idGenerated, firstName, lastName, email, phoneNumber, urlPicture)
-                agentRepository.createAgent(agent)
+        fun emitResult(){
+            if (listErrors.isEmpty()) {
                 resultToViewState(Lce.Content(AddAgentResult.AddAgentToDBResult(null)))
+            } else {
+                resultToViewState(Lce.Error(AddAgentResult.AddAgentToDBResult(listErrors)))
             }
         }
-        else{
-            resultToViewState(Lce.Error(AddAgentResult.AddAgentToDBResult(listErrors)))
+
+        fun createAgent(){
+            val agent = Agent(agentId, firstName, lastName, email, phoneNumber, urlPicture, todaysDate)
+            addAgentsJob = launch {
+                agentRepository.createAgent(agent)
+                        .addOnSuccessListener { emitResult() }
+            }
+        }
+
+        fun updatePictureToNetwork(pictureUrl: String){
+            agentRepository.uploadAgentPhotoInNetwork(pictureUrl, agentId)
+                    .addOnFailureListener { listErrors.add(UPDATING_PICTURE) }
+        }
+
+
+        if(listErrors.isEmpty()){
+            urlFromDevice?.let { updatePictureToNetwork(it) }
+            createAgent()
+        } else {
+            emitResult()
         }
 
     }

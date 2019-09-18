@@ -15,6 +15,7 @@ data class AddAgentViewState(
 
 sealed class AddAgentIntent : REMIntent{
     data class AddAgentToDBIntent(val pictureUrl: String?,
+                                  val urlFromDevice: String?,
                                   val firstName: String,
                                   val lastName: String,
                                   val email: String,

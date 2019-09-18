@@ -110,5 +110,6 @@
     <string name="seeing_draft">You are seeing a draft of your latest modifications</string>
     <string name="saved_as_draft">You are offline, modification were saved as a draft</string>
     <string name="modif_draft">Modification saved as draft</string>
+    <string name="error_update_server">Error updating data to server</string>
 
 </resources>

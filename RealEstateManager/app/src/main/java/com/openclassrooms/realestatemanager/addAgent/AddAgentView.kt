@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.addAgent.ErrorSourceAddAgent.*
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
@@ -46,6 +47,7 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
 
     private lateinit var viewModel: AddAgentViewModel
     private var uriProfileImage: String? = null
+    private var urlInDevice: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -79,6 +81,7 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
     fun clickListenerToolbar(){
         viewModel.actionFromIntent(AddAgentIntent.AddAgentToDBIntent(
                 uriProfileImage,
+                urlInDevice,
                 firstName.text.toString(),
                 lastName.text.toString(),
                 email.text.toString(),
@@ -128,11 +131,12 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
         disableAllErrors()
         errors.forEach{
             when(it){
-                ErrorSourceAddAgent.FIRST_NAME_INCORRECT -> firstNameLayout.error = getString(R.string.error_message_first_name)
-                ErrorSourceAddAgent.LAST_NAME_INCORRECT -> lastNameLayout.error = getString(R.string.error_message_last_name)
-                ErrorSourceAddAgent.EMAIL_INCORRECT -> emailLayout.error = getString(R.string.error_message_email)
-                ErrorSourceAddAgent.PHONE_INCORRECT -> phoneNumberLayout.error = getString(R.string.error_message_phone)
-                ErrorSourceAddAgent.UNKNOW_ERROR -> showSnackBarMessage(getString(R.string.unknow_error))
+                FIRST_NAME_INCORRECT -> firstNameLayout.error = getString(R.string.error_message_first_name)
+                LAST_NAME_INCORRECT -> lastNameLayout.error = getString(R.string.error_message_last_name)
+                EMAIL_INCORRECT -> emailLayout.error = getString(R.string.error_message_email)
+                PHONE_INCORRECT -> phoneNumberLayout.error = getString(R.string.error_message_phone)
+                UNKNOW_ERROR -> showSnackBarMessage(getString(R.string.unknow_error))
+                UPDATING_PICTURE -> showSnackBarMessage(getString(R.string.error_update_server))
             }
         }
     }
@@ -154,6 +158,7 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
     }
 
     private fun savePicturePicked(data: Intent){
+        urlInDevice = data.data?.toString()
         val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, data.data)
         val uriInternal = bitmap.saveToInternalStorage(
                 activity!!.applicationContext, generateName(), TypeImage.AGENT

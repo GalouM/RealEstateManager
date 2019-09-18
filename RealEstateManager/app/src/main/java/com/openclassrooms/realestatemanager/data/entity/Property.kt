@@ -31,4 +31,7 @@ data class Property (
         var sold: Boolean,
         @ColumnInfo(name = "sell_date") var sellDate: Date?,
         var agent: String,
-        @ColumnInfo(name = "has_picture")var hasPictures: Boolean)
+        @ColumnInfo(name = "has_picture") var hasPictures: Boolean,
+        @ColumnInfo(name = "creation_date") val creationDate: Date
+)
+

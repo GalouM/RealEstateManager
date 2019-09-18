@@ -16,6 +16,6 @@ interface AmenityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAmenity(amenities: List<Amenity>)
 
-    @Query("DELETE FROM amenities WHERE property = :idProperty")
-    suspend fun deleteAmenities(idProperty: String)
+    @Query("DELETE FROM amenities WHERE amenity_id IN (:amenitiesId)")
+    suspend fun deleteAmenities(amenitiesId: List<String>)
 }

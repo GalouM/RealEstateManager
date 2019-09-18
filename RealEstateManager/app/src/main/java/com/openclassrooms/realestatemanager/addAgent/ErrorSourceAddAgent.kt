@@ -8,5 +8,6 @@ enum class ErrorSourceAddAgent {
     LAST_NAME_INCORRECT,
     EMAIL_INCORRECT,
     PHONE_INCORRECT,
-    UNKNOW_ERROR
+    UNKNOW_ERROR,
+    UPDATING_PICTURE
 }

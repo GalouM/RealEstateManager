@@ -42,7 +42,7 @@ class PickDateDialogView(private val dateViewId: View, private var existingDate:
         val year = existingDate!!.get(Calendar.YEAR)
         val month = existingDate!!.get(Calendar.MONTH)
         val day = existingDate!!.get(Calendar.DAY_OF_MONTH)
-        datePickerDialog = DatePickerDialog(activity!!.applicationContext, this, year, month, day)
+        datePickerDialog = DatePickerDialog(context, this, year, month, day)
         datePickerDialog.setButton(BUTTON_POSITIVE, getString(R.string.ok_button), this)
         datePickerDialog.setButton(BUTTON_NEGATIVE, getString(R.string.cancel_button), this)
 

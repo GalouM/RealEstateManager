@@ -13,8 +13,8 @@ fun displayData(message: String){
 
 var idGenerated: String = ""
     get() {
-        val uid = UUID.randomUUID().toString()
-        field = uid
-        displayData(field)
-        return uid
+        field = UUID.randomUUID().toString()
+        return field
     }
+
+val todaysDate: Date = Calendar.getInstance(Locale.CANADA).time

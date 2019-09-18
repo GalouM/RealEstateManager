@@ -53,4 +53,7 @@ ext {
     liveDataKtxVersion = '2.2.0-alpha03'
     rfabVersion = '2.0.0'
     imageSliderVersion = '1.3.2'
+    firebaseAuthVersion = '19.0.0'
+    firebaseStorageVersion = '19.0.1'
+    firebaseFirestoreVersion = '21.1.0'
 }

@@ -1,6 +1,17 @@
 package com.openclassrooms.realestatemanager.data.repository
 
+import android.graphics.Bitmap
+import android.net.Uri
+import androidx.core.net.toUri
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
@@ -16,6 +27,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -34,6 +49,14 @@ class PropertyRepository(
 
     var propertyFromSearch: List<PropertyWithAllData>? = null
 
+    suspend fun createPropertyAndData(
+            property: Property, newPictures: List<Picture>, picturesToDelete: List<Picture>, picturesToUpdate: List<Picture>,
+            amenities: List<Amenity>, address: Address, actionType: ActionType, amenityToDelete: List<Amenity>
+    ): Task<Task<Void>> {
+        createPropertyAndDataInLocal(property, amenities, newPictures, picturesToDelete, picturesToUpdate, address, actionType, amenityToDelete)
+        return createPropertyAndDataInNetwork(property, newPictures, picturesToDelete, picturesToUpdate, amenities, address, amenityToDelete)
+    }
+
     //-----------------
     // API ADDRESS REQUEST
     //-----------------
@@ -49,7 +72,7 @@ class PropertyRepository(
 
 
     //-----------------
-    // DB REQUEST
+    // LOCAL DB REQUEST
     //-----------------
     //------get--------
     suspend fun getAllProperties() = propertyDao.getAllProperties()
@@ -82,9 +105,9 @@ class PropertyRepository(
 
 
     //------create--------
-    suspend fun createPropertyAndData(
-            property: Property, amenities: List<Amenity>, pictures: List<Picture>,
-            address: Address, actionType: ActionType
+    private suspend fun createPropertyAndDataInLocal(
+            property: Property, amenities: List<Amenity>, newPictures: List<Picture>, picturesToDelete: List<Picture>, picturesToUpdate: List<Picture>,
+            address: Address, actionType: ActionType, amenityToDelete: List<Amenity>
     ){
         coroutineScope {
             launch {
@@ -96,9 +119,19 @@ class PropertyRepository(
             launch {
                 amenityDao.insertAmenity(amenities)
             }
+
             launch {
-                pictureDao.insertPicture(pictures)
+                pictureDao.updatePicture(picturesToUpdate)
             }
+
+            launch {
+                pictureDao.insertPicture(newPictures)
+            }
+
+            launch {
+                pictureDao.deletePictures(picturesToDelete.map { it.id })
+            }
+
             launch {
                 when(actionType){
                     ActionType.NEW_PROPERTY -> addressDao.createAddress(address)
@@ -106,15 +139,148 @@ class PropertyRepository(
                 }
 
             }
+
+            launch {
+                amenityDao.deleteAmenities(amenityToDelete.map{ it.id })
+            }
+
+             launch {
+                 pictureDao.deletePictures(picturesToDelete.map{ it.id })
+             }
         }
     }
 
-    //------delete--------
-    suspend fun deletePreviousData(idProperty: String){
-        amenityDao.deleteAmenities(idProperty)
-        pictureDao.deletePictures(idProperty)
+    //-----------------
+    // NETWORK DB REQUEST
+    //-----------------
+    private val dbNetwork = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
+    private val propertyCollection = dbNetwork.collection(PROPERTY_COLLECTION)
+    private val pictureCollection = dbNetwork.collection(PICTURE_COLLECTION)
+    private val amenityCollection = dbNetwork.collection(AMENITY_COLLECTION)
+    private val addressCollection = dbNetwork.collection(ADDRESS_COLLECTION)
+
+    //------create--------
+    private fun createPropertyAndDataInNetwork(
+            property: Property, newPictures: List<Picture>, picturesToDelete: List<Picture>, picturesToUpdate: List<Picture>
+            , amenities: List<Amenity>, address: Address, amenityToDelete: List<Amenity>
+    ): Task<Task<Void>>{
+        val listOfTaskUploads = mutableListOf<Task<*>>()
+        val batch = dbNetwork.batch()
+
+        val propertyRef = propertyCollection.document(property.id)
+        batch.set(propertyRef, property)
+
+        val addressRef = addressCollection.document(address.propertyId)
+        batch.set(addressRef, address)
+
+        amenities.forEach {
+            val amenityRef = amenityCollection.document(it.id)
+            batch.set(amenityRef, it)
+        }
+
+        amenityToDelete.forEach {
+            val amenityRef = amenityCollection.document(it.id)
+            batch.delete(amenityRef)
+        }
+
+        newPictures.forEach {
+            val pictureRef = pictureCollection.document(it.id)
+            val uriTask = uploadPictureToStorageAndGetUrl(it)
+                    .addOnCompleteListener{ task ->
+                        if(task.isSuccessful){
+                            it.serverUrl = task.result.toString()
+                        }
+                        batch.set(pictureRef, it)
+                    }
+            listOfTaskUploads.add(uriTask)
+        }
+
+        picturesToUpdate.forEach {
+            val pictureRef = pictureCollection.document(it.id)
+            batch.update(pictureRef, "description", it.description,
+                    "orderNumber", it.orderNumber)
+        }
+
+        picturesToDelete.forEach {
+            val pictureRef = pictureCollection.document(it.id)
+            val deleteInStorageTask = storage.reference
+                    .child("${STORAGE_PATH_PROPERTY_PICTURE}${it.id}").delete()
+            listOfTaskUploads.add(deleteInStorageTask)
+            batch.delete(pictureRef)
+        }
+
+        val uploadAllPictures = Tasks.whenAllComplete(listOfTaskUploads)
+        return uploadAllPictures.continueWith { batch.commit() }
+
     }
 
+
+    fun uploadMapInNetwork(map: Bitmap, addressId: String): UploadTask {
+        val baos = ByteArrayOutputStream()
+        map.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+        return storage.reference
+                .child("${STORAGE_PATH_MAP}${addressId}")
+                .putBytes(data)
+    }
+
+    private fun uploadPictureToStorageAndGetUrl(picture: Picture): Task<Uri>{
+        val uploadPictureTask: UploadTask
+        val storageRef = storage.reference
+                .child("${STORAGE_PATH_PROPERTY_PICTURE}${picture.id}")
+        uploadPictureTask = if(picture.thumbnailUrl != null){
+            val thumbnailRef = storage.reference
+                    .child("${STORAGE_PATH_PROPERTY_PICTURE_THUMBNAIL}${picture.id}")
+            val streamPicture = FileInputStream(File(picture.url))
+            val streamThumbnail = FileInputStream(File(picture.thumbnailUrl))
+            val uploadThumbnail = thumbnailRef.putStream(streamThumbnail)
+            storageRef.putStream(streamPicture)
+        } else {
+            storageRef.putFile(picture.url.toUri())
+        }
+
+        return uploadPictureTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+            if(!task.isSuccessful){
+                task.exception?.let{ exception ->
+                    throw exception
+                }
+            }
+            return@Continuation storageRef.downloadUrl
+        })
+
+
+
+    }
+
+    //------get--------
+    fun getAllPropertiesFromNetwork(latestUpdate: Date?): Task<QuerySnapshot>{
+        return if(latestUpdate != null) {
+            propertyCollection
+                    .whereGreaterThanOrEqualTo("creationDate", latestUpdate)
+                    .get()
+        } else {
+            propertyCollection.orderBy("creationDate").get()
+        }
+    }
+
+    fun getAddressFromNetwork(idProperty: String): Task<DocumentSnapshot> = addressCollection.document(idProperty).get()
+
+    fun getPicturesFromNetwork(idProperty: String): Task<QuerySnapshot> = pictureCollection
+            .whereEqualTo("property", idProperty)
+            .get()
+
+    fun getAmenitiesFromNetwork(idProperty: String): Task<QuerySnapshot> = amenityCollection
+            .whereEqualTo("property", idProperty)
+            .get()
+
+    fun getUrlPicturesFromNetwork(pictureId: String): Task<Uri> = storage.reference
+            .child("${STORAGE_PATH_PROPERTY_PICTURE}${pictureId}")
+            .downloadUrl
+
+    fun getMapUrlFromNetwork(addressId: String): Task<Uri> = storage.reference
+            .child("${STORAGE_PATH_MAP}${addressId}")
+            .downloadUrl
 
 
     companion object{
@@ -135,14 +301,8 @@ class PropertyRepository(
         }
     }
 
-    //-----------------
-    // FIRESTORE REQUEST
-    //-----------------
-    val dbFirestore = FirebaseFirestore.getInstance()
-    val agentCollection = dbFirestore.collection(AGENT_COLLECTION)
-    val propertyCollection = dbFirestore.collection(PROPERTY_COLLECTION)
-    val pictureCollection = dbFirestore.collection(PICTURE_COLLECTION)
-    val amenityCollection = dbFirestore.collection(AMENITY_COLLECTION)
-    val addressCollection = dbFirestore.collection(ADDRESS_COLLECTION)
+
+
+
 
 }

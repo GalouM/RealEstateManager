@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.FirebaseAuth
 import com.mapbox.mapboxsdk.Mapbox
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
@@ -82,6 +83,9 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         configureToolbar()
         configureViewPagerAndTablayout()
         configureRapidFloatingActionButton()
+        val auth = FirebaseAuth.getInstance()
+        auth.signInAnonymously()
+
     }
 
     override fun onResume() {

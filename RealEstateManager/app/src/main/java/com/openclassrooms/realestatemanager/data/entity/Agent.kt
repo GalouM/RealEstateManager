@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.data.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 /**
  * Created by galou on 2019-07-03
@@ -15,5 +16,6 @@ data class Agent(
         @ColumnInfo(name = "last_name")val lastName: String,
         val email: String,
         @ColumnInfo(name = "phone_number")val phoneNumber: String,
-        @ColumnInfo(name = "url_picture")val urlProfilePicture: String?
+        @ColumnInfo(name = "url_picture")var urlProfilePicture: String?,
+        @ColumnInfo(name = "creation_date") val creationDate: Date
 )

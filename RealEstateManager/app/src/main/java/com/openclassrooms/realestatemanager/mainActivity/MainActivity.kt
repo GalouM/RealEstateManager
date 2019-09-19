@@ -106,9 +106,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         }
         if(requestCode == RC_CODE_ADD_PROPERTY){
             if(resultCode == RESULT_SAVED_TO_DB){
-                showSnackBarMessage(getString(R.string.property_added))
-                callbackListPropertiesRefresh?.get()?.onListPropertiesChange()
-                callbackMapPropertiesRefresh?.get()?.onListPropertiesChange()
+                updatePropertiesShown()
             }
             if(resultCode == RESULT_SAVED_TO_DRAFT){
                 when(isInternetAvailable(this)){
@@ -130,7 +128,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        downloadNewDataFromNetwork()
+        if(requestCode == RC_IMAGE_PERMS) downloadNewDataFromNetwork()
     }
 
     //--------------------
@@ -317,6 +315,8 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
             state.errorSource?.let { renderErrorOpeningActivity(it) }
         }
 
+        if(state.newDataUploaded) renderNewPropertyAdded()
+
         if(state.isLoading) {
             displayData("loading")
         } else {
@@ -345,6 +345,10 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     }
 
+    private fun renderNewPropertyAdded(){
+        updatePropertiesShown()
+    }
+
     private fun renderChangeCurrency(currency: Currency){
         menuToolbar?.let {
             when(currency){
@@ -359,6 +363,12 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
             }
         }
 
+    }
+
+    private fun updatePropertiesShown(){
+        showSnackBarMessage(getString(R.string.property_added))
+        callbackListPropertiesRefresh?.get()?.onListPropertiesChange()
+        callbackMapPropertiesRefresh?.get()?.onListPropertiesChange()
     }
 
     private fun showSnackBarMessage(message: String){

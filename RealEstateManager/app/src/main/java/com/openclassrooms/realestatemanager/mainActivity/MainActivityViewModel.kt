@@ -69,12 +69,14 @@ class MainActivityViewModel(
                 when(result.packet){
                     is MainActivityResult.OpenAddPropertyResult ->{
                         currentViewState.copy(
+                                newDataUploaded = false,
                                 isOpenAddProperty = true,
                                 errorSource = null,
                                 isLoading = false)
                     }
                     is MainActivityResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
+                                newDataUploaded = false,
                                 isOpenAddProperty = false,
                                 currency = result.packet.currency
                                 )
@@ -92,6 +94,7 @@ class MainActivityViewModel(
 
             is Lce.Loading -> {
                 currentViewState.copy(
+                        newDataUploaded = false,
                         isLoading = true,
                         errorSource = null,
                         isOpenAddProperty = false)
@@ -100,6 +103,7 @@ class MainActivityViewModel(
                 when(result.packet){
                     is MainActivityResult.OpenAddPropertyResult -> {
                         currentViewState.copy(
+                                newDataUploaded = false,
                                 isOpenAddProperty = false,
                                 errorSource = NO_AGENT_IN_DB,
                                 isLoading = false
@@ -107,11 +111,13 @@ class MainActivityViewModel(
                     }
                     is MainActivityResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
+                                newDataUploaded = false,
                                 isOpenAddProperty = false
                         )
                     }
                     is MainActivityResult.UpdataDataFromNetwork -> {
                         currentViewState.copy(
+                                newDataUploaded = false,
                                 isOpenAddProperty = false,
                                 errorSource = result.packet.errorSource,
                                 isLoading = false

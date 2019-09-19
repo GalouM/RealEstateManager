@@ -84,7 +84,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        displayUserLocation()
+        if (requestCode == RC_LOCATION_PERMS) displayUserLocation()
     }
 
     private fun setupCallbackToActivity(){

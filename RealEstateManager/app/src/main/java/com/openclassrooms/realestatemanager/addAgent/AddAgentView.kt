@@ -79,7 +79,7 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState>, EasyPermissions.Per
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        chooseProfilePictureFromPhone()
+        if(requestCode == RC_IMAGE_PERMS) chooseProfilePictureFromPhone()
     }
 
     //--------------------

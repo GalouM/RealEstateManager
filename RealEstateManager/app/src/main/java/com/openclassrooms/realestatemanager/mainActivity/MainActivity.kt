@@ -26,6 +26,7 @@ import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.detailsProperty.DetailsPropertyView
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mainActivity.ErrorSourceMainActivity.*
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.searchProperty.SearchActivity
 import com.openclassrooms.realestatemanager.utils.*
@@ -146,8 +147,12 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
             R.id.menu_main_activity_search -> openSearchActivity()
             R.id.menu_details_property_modify -> detailsView?.toolBarModifyClickListener()
             R.id.menu_main_activity_refresh -> {
-                if(isWifiAvailable(this))
-                viewModel.actionFromIntent(MainActivityIntent.UpdatePropertyFromNetwork(this.applicationContext))
+                if(isWifiAvailable(this)){
+                    if(requestPermissionStorage(this)) {
+                        viewModel.actionFromIntent(MainActivityIntent.UpdatePropertyFromNetwork(this.applicationContext))
+                    }
+                }
+
             }
         }
         return super.onOptionsItemSelected(item)
@@ -293,6 +298,12 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         } else{
             state.errorSource?.let { renderErrorOpeningActivity(it) }
         }
+
+        if(state.isLoading) {
+            displayData("loading")
+        } else {
+            displayData("done")
+        }
         renderChangeCurrency(state.currency)
 
     }
@@ -310,7 +321,8 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     private fun renderErrorOpeningActivity(errorSource: ErrorSourceMainActivity){
         when(errorSource){
-            ErrorSourceMainActivity.NO_AGENT_IN_DB -> showSnackBarMessage(getString(R.string.create_agent_first))
+            NO_AGENT_IN_DB -> showSnackBarMessage(getString(R.string.create_agent_first))
+            ERROR_FETCHING_NEW_FROM_NETWORK -> showSnackBarMessage(getString(R.string.error_fetching))
         }
 
     }

@@ -1,12 +1,13 @@
 package com.openclassrooms.realestatemanager.data.repository
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.arch.core.executor.TaskExecutor
 import androidx.core.net.toUri
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -27,10 +28,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -144,11 +145,21 @@ class PropertyRepository(
                 amenityDao.deleteAmenities(amenityToDelete.map{ it.id })
             }
 
-             launch {
-                 pictureDao.deletePictures(picturesToDelete.map{ it.id })
-             }
         }
     }
+
+    suspend fun createDownloadedDataLocally(
+            properties: List<Property>, addresses: List<Address>, pictures: List<Picture>, amenities: List<Amenity>
+    ){
+        coroutineScope {
+            launch { propertyDao.createProperties(properties) }
+            launch { addressDao.createAddresses(addresses) }
+            launch { pictureDao.insertPicture(pictures) }
+            launch { amenityDao.insertAmenity(amenities) }
+        }
+
+    }
+
 
     //-----------------
     // NETWORK DB REQUEST
@@ -204,8 +215,7 @@ class PropertyRepository(
 
         picturesToDelete.forEach {
             val pictureRef = pictureCollection.document(it.id)
-            val deleteInStorageTask = storage.reference
-                    .child("${STORAGE_PATH_PROPERTY_PICTURE}${it.id}").delete()
+            val deleteInStorageTask = getPictureStorageReference(it.id).delete()
             listOfTaskUploads.add(deleteInStorageTask)
             batch.delete(pictureRef)
         }
@@ -220,21 +230,17 @@ class PropertyRepository(
         val baos = ByteArrayOutputStream()
         map.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
-        return storage.reference
-                .child("${STORAGE_PATH_MAP}${addressId}")
+        return getMapStorageReference(addressId)
                 .putBytes(data)
     }
 
     private fun uploadPictureToStorageAndGetUrl(picture: Picture): Task<Uri>{
         val uploadPictureTask: UploadTask
-        val storageRef = storage.reference
-                .child("${STORAGE_PATH_PROPERTY_PICTURE}${picture.id}")
+        val storageRef = getPictureStorageReference(picture.id)
         uploadPictureTask = if(picture.thumbnailUrl != null){
-            val thumbnailRef = storage.reference
-                    .child("${STORAGE_PATH_PROPERTY_PICTURE_THUMBNAIL}${picture.id}")
             val streamPicture = FileInputStream(File(picture.url))
             val streamThumbnail = FileInputStream(File(picture.thumbnailUrl))
-            val uploadThumbnail = thumbnailRef.putStream(streamThumbnail)
+            val uploadThumbnail = getThumbnailStorageReference(picture.id).putStream(streamThumbnail)
             storageRef.putStream(streamPicture)
         } else {
             storageRef.putFile(picture.url.toUri())
@@ -249,8 +255,6 @@ class PropertyRepository(
             return@Continuation storageRef.downloadUrl
         })
 
-
-
     }
 
     //------get--------
@@ -264,59 +268,26 @@ class PropertyRepository(
         }
     }
 
-    fun getPropertyDataFromNetwork(idProperty: String): Task<List<Task<*>>>{
-        val dataFromProperty = mutableListOf<Task<*>>()
-        val address = getAddressFromNetwork(idProperty)
-                .addOnCompleteListener { task ->
-                    if(task.isSuccessful){
-                        task.result?.toObject(Address::class.java)?.let { val newAddress = it }
-                    }
-                }
-        val newPicture = mutableListOf<Picture>()
-        val picture = getPicturesFromNetwork(idProperty)
-                .addOnCompleteListener {task ->
-                    if(task.isSuccessful){
-                        task.result?.documents?.forEach { document ->
-                            document.toObject(Picture::class.java)?.let { newPicture.add(it) }
-                        }
-                    }
+    fun getAddressFromNetwork(idProperty: String): Task<DocumentSnapshot> = addressCollection.document(idProperty).get()
 
-                }
-        val newAmenities = mutableListOf<Amenity>()
-        val amenities = getAmenitiesFromNetwork(idProperty)
-                .addOnCompleteListener { task ->
-                    if(task.isSuccessful){
-                        task.result?.documents?.forEach { document ->
-                            document.toObject(Amenity::class.java)?.let { newAmenities.add(it)  }
-                        }
-                    }
-
-                }
-
-        dataFromProperty.add(address)
-        dataFromProperty.add(picture)
-        dataFromProperty.add(amenities)
-
-        return Tasks.whenAllComplete(dataFromProperty)
-    }
-
-    private fun getAddressFromNetwork(idProperty: String): Task<DocumentSnapshot> = addressCollection.document(idProperty).get()
-
-    private fun getPicturesFromNetwork(idProperty: String): Task<QuerySnapshot> = pictureCollection
+    fun getPicturesFromNetwork(idProperty: String): Task<QuerySnapshot> = pictureCollection
             .whereEqualTo("property", idProperty)
             .get()
 
-    private fun getAmenitiesFromNetwork(idProperty: String): Task<QuerySnapshot> = amenityCollection
+    fun getAmenitiesFromNetwork(idProperty: String): Task<QuerySnapshot> = amenityCollection
             .whereEqualTo("property", idProperty)
             .get()
 
-    fun getUrlPicturesFromNetwork(pictureId: String): Task<Uri> = storage.reference
-            .child("${STORAGE_PATH_PROPERTY_PICTURE}${pictureId}")
-            .downloadUrl
+    //------storage reference path--------
 
-    fun getMapUrlFromNetwork(addressId: String): Task<Uri> = storage.reference
+    fun getMapStorageReference(addressId: String) = storage.reference
             .child("${STORAGE_PATH_MAP}${addressId}")
-            .downloadUrl
+
+    fun getPictureStorageReference(pictureId: String) = storage.reference
+            .child("${STORAGE_PATH_PROPERTY_PICTURE}${pictureId}")
+
+    fun getThumbnailStorageReference(pictureId: String) = storage.reference
+            .child("${STORAGE_PATH_PROPERTY_PICTURE_THUMBNAIL}${pictureId}")
 
 
     companion object{

@@ -21,7 +21,10 @@ interface PropertyDao {
     suspend fun getAllProperties(): List<PropertyWithAllData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createProperty(agent: Property): Long
+    suspend fun createProperty(property: Property): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun createProperties(properties: List<Property>)
 
     @Update
     suspend fun updateProperty(property: Property)

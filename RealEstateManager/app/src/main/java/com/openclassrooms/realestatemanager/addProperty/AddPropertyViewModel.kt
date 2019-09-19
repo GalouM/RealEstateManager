@@ -66,7 +66,6 @@ BitmapDownloader.Listeners{
     private lateinit var actionType: ActionType
     private lateinit var context: Context
     private var propertyId: String = idGenerated
-    private lateinit var idFromApi: String
     private var propertyFetched: PropertyWithAllData? = null
     private var previousPictures = listOf<Picture>()
     private var previousAmenities = listOf<Amenity>()
@@ -373,7 +372,7 @@ BitmapDownloader.Listeners{
     }
 
     override fun onBitmapDownloaded(bitmap: Bitmap) {
-        map = bitmap.saveToInternalStorage(context, idFromApi, TypeImage.ICON_MAP).toString()
+        map = bitmap.saveToInternalStorage(context, propertyId, TypeImage.ICON_MAP).toString()
         propertyRepository.uploadMapInNetwork(bitmap, propertyId)
                 .addOnSuccessListener { emitResultAddPropertyToView() }
                 .addOnFailureListener {
@@ -453,7 +452,6 @@ BitmapDownloader.Listeners{
             }
         }
         neighborhood = if(neighborhood.isEmpty()) city else neighborhood
-        idFromApi = result.placeId
         street = "$streetNumber $streetName"
     }
 
@@ -576,6 +574,7 @@ BitmapDownloader.Listeners{
     //--------------------
 
     private fun fetchExistingPropertyFromDB(){
+        resultToViewState(Lce.Loading())
         if(searchAgentsJob?.isActive == true) searchAgentsJob?.cancel()
 
         var agent: Agent? = null
@@ -618,6 +617,7 @@ BitmapDownloader.Listeners{
     }
 
     private fun fetchPictureExistingPictureFromDB(){
+        resultToViewState(Lce.Loading())
         propertyFetched?.let{ _ ->
             pictures = previousPictures.sortedBy { it.orderNumber }.toMutableList()
             emitResultPictureModification()

@@ -11,11 +11,11 @@ import java.util.*
 @Entity(tableName = "agents")
 data class Agent(
         @PrimaryKey
-        @ColumnInfo(name = "agent_id")val id: String,
-        @ColumnInfo(name = "first_name")val firstName: String,
-        @ColumnInfo(name = "last_name")val lastName: String,
-        val email: String,
-        @ColumnInfo(name = "phone_number")val phoneNumber: String,
-        @ColumnInfo(name = "url_picture")var urlProfilePicture: String?,
-        @ColumnInfo(name = "creation_date") val creationDate: Date
+        @ColumnInfo(name = "agent_id")val id: String = "",
+        @ColumnInfo(name = "first_name")val firstName: String = "",
+        @ColumnInfo(name = "last_name")val lastName: String = "",
+        val email: String = "",
+        @ColumnInfo(name = "phone_number")val phoneNumber: String = "",
+        @ColumnInfo(name = "url_picture")var urlProfilePicture: String? = null,
+        @ColumnInfo(name = "creation_date") val creationDate: Date = Date()
 )

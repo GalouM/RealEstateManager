@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.utils.extensions.toEuroDisplay
@@ -48,8 +49,12 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             property: PropertyWithAllData, glide: RequestManager,
             currency: Currency?, context: Context, isDoubleScreen: Boolean
     ){
+        displayData("${property}")
+        /*
+
         this.context = context
         isSold = property.property.sold
+
 
         if(property.pictures.isNotEmpty()){
             val firstPicture = property.pictures.minBy{it.orderNumber!!}
@@ -59,6 +64,8 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             } catch (e: Exception) {
             }
         }
+
+
 
         type.text = property.property.type.typeName
         neighborhood.text = property.address[0].neighbourhood
@@ -71,6 +78,10 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         if(!isDoubleScreen || !isSelected){
             configureCardToNormalState()
         }
+        
+         */
+
+
     }
 
     fun displaySelection(positionSelected: Int?){

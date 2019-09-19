@@ -18,15 +18,15 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
     )]
 )
-data class Address (@PrimaryKey @ColumnInfo(name = "address_id") val propertyId: String,
-                    var street: String,
-                    var city: String,
-                    @ColumnInfo(name = "postal_code") var postalCode: String,
-                    var country: String,
-                    @ColumnInfo(name = "address_state") var state: String,
-                    var longitude: Double,
-                    var latitude: Double,
-                    var neighbourhood: String,
-                    @ColumnInfo(name = "map_icon_url") var mapIconUrl: String,
-                    @ColumnInfo(name = "address_for_display") var addressForDisplay: String
+data class Address (@PrimaryKey @ColumnInfo(name = "address_id") val propertyId: String = "",
+                    var street: String = "",
+                    var city: String = "",
+                    @ColumnInfo(name = "postal_code") var postalCode: String = "",
+                    var country: String = "",
+                    @ColumnInfo(name = "address_state") var state: String = "",
+                    var longitude: Double = 0.0,
+                    var latitude: Double = 0.0,
+                    var neighbourhood: String = "",
+                    @ColumnInfo(name = "map_icon_url") var mapIconUrl: String = "",
+                    @ColumnInfo(name = "address_for_display") var addressForDisplay: String = ""
 )

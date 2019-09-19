@@ -84,6 +84,7 @@ SnackBarListener{
     @BindView(R.id.add_property_view_dropdown_agent_inputlayout) lateinit var agentLayout: TextInputLayout
     @BindView(R.id.add_property_view_type_inputlayout) lateinit var typeLayout: TextInputLayout
     @BindView(R.id.add_property_view_picture_rv) lateinit var recyclerViewPictures: RecyclerView
+    @BindView(R.id.add_property_view_progress_bar) lateinit var progressBar: ProgressBar
 
     private lateinit var viewModel: AddPropertyViewModel
     private var currentCurrency: Currency? = null
@@ -373,7 +374,10 @@ SnackBarListener{
             return
         }
 
-        if(state.isLoading) return
+        if(state.isLoading){
+            renderIsLoading(state.isLoading)
+            return
+        }
 
         if(state.errors != null){
             renderErrors(state.errors)
@@ -453,6 +457,10 @@ SnackBarListener{
     private fun renderPictures(pictures: List<Picture>){
         adapter.update(pictures)
         recyclerViewPictures.scrollToPosition(pictures.size - 1)
+    }
+
+    private fun renderIsLoading(loading: Boolean){
+        progressBar.visibility = if(loading) View.VISIBLE else View.INVISIBLE
     }
 
     private fun disableAllErrors(){
@@ -610,7 +618,7 @@ SnackBarListener{
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
             intent.resolveActivity(packageManager!!)?.also {
                 val photoFile: File? = try {
-                    createImageFileFromCamera().apply {
+                    createImageFileInExtStorage().apply {
                         lastPhotoTakenPath = absolutePath
                     }
                 } catch (e: IOException){

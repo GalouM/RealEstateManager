@@ -91,7 +91,7 @@ class AgentRepository (private val agentDao: AgentDao) {
 
     }
 
-    private fun getReferenceAgentPicture(idAgent: String) = storage.reference
+    fun getReferenceAgentPicture(idAgent: String) = storage.reference
             .child("${STORAGE_PATH_AGENT_PICTURE}$idAgent")
 
 

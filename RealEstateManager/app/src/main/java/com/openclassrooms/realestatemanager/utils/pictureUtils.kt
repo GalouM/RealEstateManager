@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -48,8 +49,8 @@ fun addPictureToGallery(context: Context, photoPath: String){
 }
 
 @Throws(IOException::class)
-fun createImageFileFromCamera(): File{
-    val name = generateName()
+fun createImageFileInExtStorage(): File{
+    val name = generateName() + idGenerated
     val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
     return File.createTempFile("JPEG_${TypeImage.PROPERTY}_$name",".jpeg", directory)
 
@@ -60,6 +61,17 @@ fun requestPermissionStorage(fragment: Fragment): Boolean {
     if (!EasyPermissions.hasPermissions(fragment.activity!!, PERMS_EXT_STORAGE)) {
         EasyPermissions.requestPermissions(
                 fragment, fragment.activity!!.getString(R.string.storage_perm_request), RC_IMAGE_PERMS, PERMS_EXT_STORAGE)
+        return false
+    }
+
+    return true
+}
+
+@AfterPermissionGranted(RC_IMAGE_PERMS)
+fun requestPermissionStorage(activity: Activity): Boolean {
+    if (!EasyPermissions.hasPermissions(activity, PERMS_EXT_STORAGE)) {
+        EasyPermissions.requestPermissions(
+                activity, activity.getString(R.string.storage_perm_request), RC_IMAGE_PERMS, PERMS_EXT_STORAGE)
         return false
     }
 

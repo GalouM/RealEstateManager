@@ -20,7 +20,7 @@ import com.openclassrooms.realestatemanager.utils.TypeAmenity
         ]
 )
 data class Amenity (
-        @ColumnInfo(name = "amenity_id") @PrimaryKey val id: String,
-        val property: String,
-        @ColumnInfo(name = "type_amenity")val type: TypeAmenity
+        @ColumnInfo(name = "amenity_id") @PrimaryKey val id: String = "",
+        val property: String = "",
+        @ColumnInfo(name = "type_amenity")val type: TypeAmenity = TypeAmenity.BUSES
 )

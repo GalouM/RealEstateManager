@@ -19,19 +19,19 @@ import java.util.*
             childColumns = ["agent"],
             onDelete = ForeignKey.NO_ACTION)])
 data class Property (
-        @ColumnInfo(name = "property_id") @PrimaryKey val id: String,
-        @ColumnInfo(name = "type_property")var type: TypeProperty,
-        var price: Double,
-        var surface: Double,
-        var rooms: Int,
-        var bedrooms: Int?,
-        var bathrooms: Int?,
-        var description: String?,
-        @ColumnInfo(name = "on_market_since") var onMarketSince: Date,
-        var sold: Boolean,
-        @ColumnInfo(name = "sell_date") var sellDate: Date?,
-        var agent: String,
-        @ColumnInfo(name = "has_picture") var hasPictures: Boolean,
-        @ColumnInfo(name = "creation_date") val creationDate: Date
+        @ColumnInfo(name = "property_id") @PrimaryKey val id: String = "",
+        @ColumnInfo(name = "type_property")var type: TypeProperty = TypeProperty.HOUSE,
+        var price: Double = 0.0,
+        var surface: Double = 0.0,
+        var rooms: Int = 0,
+        var bedrooms: Int? = null,
+        var bathrooms: Int? = null,
+        var description: String? = null,
+        @ColumnInfo(name = "on_market_since") var onMarketSince: Date = Date(),
+        var sold: Boolean = false,
+        @ColumnInfo(name = "sell_date") var sellDate: Date? = null,
+        var agent: String = "",
+        @ColumnInfo(name = "has_picture") var hasPictures: Boolean = false,
+        @ColumnInfo(name = "creation_date") val creationDate: Date = Date()
 )
 

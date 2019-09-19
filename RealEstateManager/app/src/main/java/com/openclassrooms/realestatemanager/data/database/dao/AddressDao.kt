@@ -16,6 +16,9 @@ interface AddressDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createAddress(address: Address): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun createAddresses(addresses: List<Address>)
+
     @Update
     suspend fun updateAddress(address: Address)
 

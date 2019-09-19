@@ -20,11 +20,11 @@ import androidx.room.PrimaryKey
         ]
 )
 data class Picture(
-        @PrimaryKey @ColumnInfo(name = "picture_id") val id: String,
-        val url: String,
-        @ColumnInfo(name = "thumbnail_url") var thumbnailUrl: String?,
-        @ColumnInfo(name = "server_url") var serverUrl: String?,
-        @ColumnInfo(name = "id_property") var property: String?,
-        var description: String,
-        @ColumnInfo(name = "order_number") var orderNumber: Int?
+        @PrimaryKey @ColumnInfo(name = "picture_id") val id: String = "",
+        var url: String = "",
+        @ColumnInfo(name = "thumbnail_url") var thumbnailUrl: String? = null,
+        @ColumnInfo(name = "server_url") var serverUrl: String? = null,
+        @ColumnInfo(name = "id_property") var property: String? = null,
+        var description: String = "",
+        @ColumnInfo(name = "order_number") var orderNumber: Int? = null
 )

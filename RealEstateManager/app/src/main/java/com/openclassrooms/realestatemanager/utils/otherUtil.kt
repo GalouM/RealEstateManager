@@ -17,4 +17,4 @@ var idGenerated: String = ""
         return field
     }
 
-val todaysDate: Date = Calendar.getInstance(Locale.CANADA).time
+var todaysDate: Date = Calendar.getInstance(Locale.CANADA).time

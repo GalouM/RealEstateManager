@@ -19,6 +19,7 @@ import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.*
 
 /**
  * Created by galou on 2019-07-04
@@ -41,7 +42,13 @@ class MainActivityViewModel(
     private val newAmenities = mutableListOf<Amenity>()
     private val newPictures = mutableListOf<Picture>()
     private val newAddresses = mutableListOf<Address>()
-    private val latestUpdate = saveDataRepository.lastUpdateFromNetwork
+    private var latestUpdate: Date?
+        get() = saveDataRepository.lastUpdateFromNetwork
+        set(value){
+            saveDataRepository.lastUpdateFromNetwork = value
+        }
+
+
 
     private var searchAgentsJob: Job? = null
     private var createPropertiesAndDataJob: Job? = null
@@ -146,8 +153,6 @@ class MainActivityViewModel(
 
     private fun downloadLatestDataFromNetwork(context: Context){
         resultToViewState(Lce.Loading())
-
-        displayData("last update : $latestUpdate")
 
         propertyRepository.getAllPropertiesFromNetwork(latestUpdate)
                 .addOnCompleteListener { task ->

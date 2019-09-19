@@ -174,31 +174,11 @@ class MainActivityViewModel(
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result?.documents?.forEach { document ->
-                            val agent = document.toObject(Agent::class.java)
-                            agent?.let {
-                                displayData("pic before ${agent.urlProfilePicture}")
-                                agent.urlProfilePicture?.let {
-                                    val tempFile = filePathToInternalStorage(context, generateName(), TypeImage.AGENT)
-                                    val picAgentDownload = agentRepository.getReferenceAgentPicture(agent.id).getFile(tempFile)
-                                            .addOnCompleteListener { storageTask ->
-                                                displayData("${storageTask.isSuccessful}")
-                                                agent.urlProfilePicture = if(storageTask.isSuccessful){
-                                                    tempFile.absolutePath
-                                                } else null
-                                                displayData("pic after ${agent.urlProfilePicture}")
-
-                                            }
-                                    networkOperations.add(picAgentDownload)
-                                }
-                                newAgents.add(it)
-                            }
+                            document.toObject(Agent::class.java)?.let { newAgents.add(it) }
                         }
                     }
                 }
-
         networkOperations.add(agentsDownload)
-
-
 
         newProperty.forEach {property ->
             val propertyId = property.id
@@ -211,61 +191,21 @@ class MainActivityViewModel(
                         }
                     }
             networkOperations.add(amenitiesDownload)
+
             val addressDownload = propertyRepository.getAddressFromNetwork(propertyId)
                     .addOnCompleteListener { task ->
                         if(task.isSuccessful) {
-                            displayData("address fetched")
-                            val address: Address? = task.result?.toObject(Address::class.java)
-                            address?.let {
-                                newAddresses.add(it)
-                                val tempFileMap = filePathToInternalStorage(context, generateName(), TypeImage.ICON_MAP)
-                                val mapDownload = propertyRepository.getMapStorageReference(it.propertyId).getFile(tempFileMap)
-                                        .addOnCompleteListener{ taskStorage->
-                                            displayData("map fetched")
-                                            if(taskStorage.isSuccessful) {
-                                                it.mapIconUrl = tempFileMap.absolutePath
-                                            }
-                                        }
-                                networkOperations.add(mapDownload)
-                            }
+                            task.result?.toObject(Address::class.java)?.let{ newAddresses.add(it) }
                         }
                     }
 
             networkOperations.add(addressDownload)
+
             val picturesDownload = propertyRepository.getPicturesFromNetwork(propertyId)
                     .addOnCompleteListener {task ->
                         if(task.isSuccessful){
-                            displayData("picture fetched form FB")
                             task.result?.documents?.forEach { document ->
-                                val picture = document.toObject(Picture::class.java)
-                                picture?.let {
-                                    newPictures.add(it)
-                                    val tempFilePicture = createImageFileInExtStorage()
-                                    val pictureDownload = propertyRepository.getPictureStorageReference(it.id).getFile(tempFilePicture)
-                                            .addOnCompleteListener{ task ->
-                                                displayData("picture fetched from storage")
-                                                if(task.isSuccessful){
-                                                    it.url = tempFilePicture.absolutePath
-                                                    addPictureToGallery(context, tempFilePicture.absolutePath)
-                                                }
-                                            }
-                                    networkOperations.add(pictureDownload)
-                                    it.thumbnailUrl?.let { _ ->
-                                        val tempFileThumbnail = filePathToInternalStorage(
-                                                context, generateName(), TypeImage.PROPERTY
-                                        )
-                                        val thumbnailDownload = propertyRepository.getThumbnailStorageReference(it.id).getFile(tempFileThumbnail)
-                                                .addOnCompleteListener{ storageTask ->
-                                                    it.thumbnailUrl = if(storageTask.isSuccessful) {
-                                                        tempFileThumbnail.absolutePath
-                                                    } else null
-
-                                                }
-                                        networkOperations.add(thumbnailDownload)
-
-                                    }
-
-                                }
+                                document.toObject(Picture::class.java)?.let { newPictures.add(it) }
                             }
 
                         }
@@ -275,13 +215,74 @@ class MainActivityViewModel(
 
         Tasks.whenAll(networkOperations).addOnCompleteListener {
             if(it.isSuccessful){
-                createNewDataInDBLocally()
-                saveDataRepository.lastUpdateFromNetwork = todaysDate
+                getDataFromStorage(context)
             } else emitResultNetworkRequestFailure()
 
         }
+    }
 
+    private fun getDataFromStorage(context: Context){
+        val storageOperation = mutableListOf<Task<*>>()
+        newAgents.forEach { agent ->
+            agent.urlProfilePicture?.let {
+                val tempFile = filePathToInternalStorage(context, generateName(), TypeImage.AGENT)
+                val picAgentDownload = agentRepository.getReferenceAgentPicture(agent.id).getFile(tempFile)
+                        .addOnCompleteListener { storageTask ->
+                            displayData("${storageTask.isSuccessful}")
+                            agent.urlProfilePicture = if(storageTask.isSuccessful){
+                                tempFile.absolutePath
+                            } else null
 
+                        }
+                storageOperation.add(picAgentDownload)
+            }
+        }
+        newPictures.forEach { picture ->
+            val tempFilePicture = createImageFileInExtStorage()
+            val pictureDownload = propertyRepository.getPictureStorageReference(picture.id).getFile(tempFilePicture)
+                    .addOnCompleteListener{ task ->
+                        if(task.isSuccessful){
+                            picture.url = tempFilePicture.absolutePath
+                            addPictureToGallery(context, tempFilePicture.absolutePath)
+                        } else displayData("picture failed ${picture.serverUrl}")
+                    }
+            storageOperation.add(pictureDownload)
+            picture.thumbnailUrl?.let { _ ->
+                val tempFileThumbnail = filePathToInternalStorage(
+                        context, generateName(), TypeImage.PROPERTY
+                )
+                val thumbnailDownload = propertyRepository.getThumbnailStorageReference(picture.id).getFile(tempFileThumbnail)
+                        .addOnCompleteListener{ storageTask ->
+                            picture.thumbnailUrl = if(storageTask.isSuccessful) {
+                                tempFileThumbnail.absolutePath
+                            } else null
+
+                        }
+                storageOperation.add(thumbnailDownload)
+
+            }
+
+        }
+
+        newAddresses.forEach { address ->
+            val tempFileMap = filePathToInternalStorage(context, generateName(), TypeImage.ICON_MAP)
+            val mapDownload = propertyRepository.getMapStorageReference(address.propertyId).getFile(tempFileMap)
+                    .addOnCompleteListener{ taskStorage->
+                        if(taskStorage.isSuccessful) {
+                            address.mapIconUrl = tempFileMap.absolutePath
+                        } else displayData("address failed" + address.propertyId)
+                    }
+            storageOperation.add(mapDownload)
+
+        }
+
+        Tasks.whenAll(storageOperation).addOnCompleteListener {
+            if(it.isSuccessful){
+                createNewDataInDBLocally()
+                saveDataRepository.lastUpdateFromNetwork = todaysDate
+            } else it.exception?.let { message -> displayData("$message") }
+
+        }
     }
 
     private fun emitResultNetworkRequestFailure(){

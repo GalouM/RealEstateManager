@@ -61,7 +61,7 @@ fun requestPermissionStorage(fragment: Fragment): Boolean {
     if (!EasyPermissions.hasPermissions(fragment.activity!!, PERMS_EXT_STORAGE)) {
         EasyPermissions.requestPermissions(
                 fragment, fragment.activity!!.getString(R.string.storage_perm_request), RC_IMAGE_PERMS, PERMS_EXT_STORAGE)
-        return false
+        return (EasyPermissions.hasPermissions(fragment.activity!!, PERMS_EXT_STORAGE))
     }
 
     return true
@@ -72,7 +72,7 @@ fun requestPermissionStorage(activity: Activity): Boolean {
     if (!EasyPermissions.hasPermissions(activity, PERMS_EXT_STORAGE)) {
         EasyPermissions.requestPermissions(
                 activity, activity.getString(R.string.storage_perm_request), RC_IMAGE_PERMS, PERMS_EXT_STORAGE)
-        return false
+        return(EasyPermissions.hasPermissions(activity, PERMS_EXT_STORAGE))
     }
 
     return true

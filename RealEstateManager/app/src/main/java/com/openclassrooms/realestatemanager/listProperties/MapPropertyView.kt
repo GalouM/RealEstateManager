@@ -30,6 +30,7 @@ import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.extensions.*
+import pub.devrel.easypermissions.EasyPermissions
 import java.lang.ref.WeakReference
 
 
@@ -39,7 +40,7 @@ import java.lang.ref.WeakReference
  */
 class MapPropertyView : BaseViewListProperties(),
        MainActivity.OnListPropertiesChangeListener, MapboxMap.OnInfoWindowClickListener,
-MainActivity.OnTabSelectedListener{
+MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
 
     @BindView(R.id.map_view_map) lateinit var mapView: MapView
     @BindView(R.id.map_view_button) lateinit var buttonCenter: Button
@@ -73,6 +74,19 @@ MainActivity.OnTabSelectedListener{
         return view
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        showSnackBarMessage(getString(R.string.allow_gps))
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        displayUserLocation()
+    }
+
     private fun setupCallbackToActivity(){
         if(activity is MainActivity){
             (activity as MainActivity).callbackMapPropertiesRefresh = WeakReference(this)
@@ -89,11 +103,11 @@ MainActivity.OnTabSelectedListener{
             configureActionType()
             currencyObserver()
             mapView.onCreate(savedInstanceState)
-            displayData()
+            requestPermission()
         }
     }
 
-    private fun displayData(){
+    private fun requestPermission(){
         if(requestPermissionLocation(this)){
             displayUserLocation()
         }

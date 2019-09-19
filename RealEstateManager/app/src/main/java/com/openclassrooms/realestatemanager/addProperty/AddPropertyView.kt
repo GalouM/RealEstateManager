@@ -233,6 +233,7 @@ SnackBarListener{
 
     @OnClick(R.id.add_property_view_add_picture_button)
     fun onClickAddPicture(){
+        requestPermissionStorage(this)
         if(requestPermissionStorage(this)){
             openChoosePhotoSourceDialog()
         }

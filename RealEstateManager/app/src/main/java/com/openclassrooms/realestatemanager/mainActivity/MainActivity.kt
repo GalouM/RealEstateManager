@@ -36,11 +36,14 @@ import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList
 import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil
+import pub.devrel.easypermissions.EasyPermissions
 import java.lang.ref.WeakReference
 
 
 class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
-        RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>{
+        RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener<RFACLabelItem<Int>>,
+        EasyPermissions.PermissionCallbacks
+{
 
     interface OnListPropertiesChangeListener{
         fun onListPropertiesChange()
@@ -117,6 +120,19 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         }
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        showSnackBarMessage(getString(R.string.allow_storage))
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        downloadNewDataFromNetwork()
+    }
+
     //--------------------
     // CONFIGURE UI
     //--------------------
@@ -140,20 +156,10 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
-            R.id.menu_toolbar_currency -> {
-                viewModel.actionFromIntent(MainActivityIntent.ChangeCurrencyIntent)
-                return true
-            }
+            R.id.menu_toolbar_currency -> changeCurrency()
             R.id.menu_main_activity_search -> openSearchActivity()
             R.id.menu_details_property_modify -> detailsView?.toolBarModifyClickListener()
-            R.id.menu_main_activity_refresh -> {
-                if(isWifiAvailable(this)){
-                    if(requestPermissionStorage(this)) {
-                        viewModel.actionFromIntent(MainActivityIntent.UpdatePropertyFromNetwork(this.applicationContext))
-                    }
-                }
-
-            }
+            R.id.menu_main_activity_refresh -> downloadNewDataFromNetwork()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -285,6 +291,18 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         ).get(MainActivityViewModel::class.java)
 
         viewModel.viewState.observe(this, Observer { render(it) })
+    }
+
+    private fun downloadNewDataFromNetwork(){
+        if(isWifiAvailable(this)){
+            if(requestPermissionStorage(this)) {
+                viewModel.actionFromIntent(MainActivityIntent.UpdatePropertyFromNetwork(this.applicationContext))
+            }
+        }
+    }
+
+    private fun changeCurrency(){
+        viewModel.actionFromIntent(MainActivityIntent.ChangeCurrencyIntent)
     }
 
     //--------------------

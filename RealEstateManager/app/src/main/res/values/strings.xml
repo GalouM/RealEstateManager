@@ -113,5 +113,7 @@
     <string name="error_update_server">Error updating data to server</string>
     <string name="refresh">Refresh</string>
     <string name="error_fetching">Error fetching data from network</string>
+    <string name="allow_gps">Allow GPS permission to use the map feature</string>
+    <string name="allow_storage">Allow storage permission to add pictures</string>
 
 </resources>

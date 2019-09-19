@@ -33,7 +33,7 @@ import pub.devrel.easypermissions.EasyPermissions
  * A simple [Fragment] subclass.
  *
  */
-class AddAgentView : Fragment(), REMView<AddAgentViewState> {
+class AddAgentView : Fragment(), REMView<AddAgentViewState>, EasyPermissions.PermissionCallbacks {
 
     @BindView(R.id.add_agent_view_firstname) lateinit var firstName: EditText
     @BindView(R.id.add_agent_view_lastname) lateinit var lastName: EditText
@@ -72,6 +72,14 @@ class AddAgentView : Fragment(), REMView<AddAgentViewState> {
                 }
             }
         }
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        showSnackBarMessage(getString(R.string.allow_storage))
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        chooseProfilePictureFromPhone()
     }
 
     //--------------------

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
+import android.content.Context
 import com.openclassrooms.realestatemanager.mviBase.REMIntent
 import com.openclassrooms.realestatemanager.mviBase.REMResult
 import com.openclassrooms.realestatemanager.mviBase.REMViewState
@@ -25,5 +26,6 @@ sealed class MainActivityIntent : REMIntent{
     object OpenAddPropertyActivityIntent : MainActivityIntent()
     object ChangeCurrencyIntent : MainActivityIntent()
     object GetCurrentCurrencyIntent : MainActivityIntent()
+    data class UpdatePropertyFromNetwork(val context: Context) : MainActivityIntent()
 }
 

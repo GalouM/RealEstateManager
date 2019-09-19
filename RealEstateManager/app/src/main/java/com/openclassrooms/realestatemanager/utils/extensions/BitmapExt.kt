@@ -1,12 +1,10 @@
 package com.openclassrooms.realestatemanager.utils.extensions
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.net.Uri
 import com.openclassrooms.realestatemanager.utils.TypeImage
-import java.io.File
+import com.openclassrooms.realestatemanager.utils.filePathToInternalStorage
 import java.io.FileOutputStream
 import java.io.IOException
 
@@ -15,9 +13,7 @@ import java.io.IOException
  */
 
 fun Bitmap.saveToInternalStorage(context: Context?, name: String, type: TypeImage): Uri{
-    val wrapper = ContextWrapper(context)
-    val directory = wrapper.getDir(type.folder, MODE_PRIVATE)
-    val file = File(directory, "JPEG_${type}_$name.jpeg")
+    val file = filePathToInternalStorage(context!!, name, type)
 
     try {
         val stream = FileOutputStream(file)

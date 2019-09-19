@@ -1,11 +1,17 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
+import android.content.Context
 import com.openclassrooms.realestatemanager.data.entity.Agent
+import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
+import com.openclassrooms.realestatemanager.data.repository.PropertyRepository
+import com.openclassrooms.realestatemanager.data.repository.SaveDataRepository
+import com.openclassrooms.realestatemanager.mainActivity.ErrorSourceMainActivity.*
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
+import com.openclassrooms.realestatemanager.utils.todaysDate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -14,7 +20,9 @@ import kotlinx.coroutines.launch
  */
 class MainActivityViewModel(
         private val agentRepository: AgentRepository,
-        private val currencyRepository: CurrencyRepository
+        private val currencyRepository: CurrencyRepository,
+        private val propertyRepository: PropertyRepository,
+        private val saveDataRepository: SaveDataRepository
 ) : BaseViewModel<MainActivityViewState>(), REMViewModel<MainActivityIntent, MainActivityResult>{
 
     private var currentViewState = MainActivityViewState()
@@ -30,6 +38,7 @@ class MainActivityViewModel(
             is MainActivityIntent.OpenAddPropertyActivityIntent -> onOpenAddPropertyRequest()
             is MainActivityIntent.ChangeCurrencyIntent -> changeCurrency()
             is MainActivityIntent.GetCurrentCurrencyIntent -> emitCurrentCurrency()
+            is MainActivityIntent.UpdatePropertyFromNetwork -> downloadLastestDataFromNetwork(intent.context)
         }
 
     }
@@ -64,7 +73,7 @@ class MainActivityViewModel(
                     is MainActivityResult.OpenAddPropertyResult ->{
                         currentViewState.copy(
                                 isOpenAddProperty = false,
-                                errorSource = ErrorSourceMainActivity.NO_AGENT_IN_DB,
+                                errorSource = NO_AGENT_IN_DB,
                                 isLoading = false)
                     }
                     is MainActivityResult.ChangeCurrencyResult -> {
@@ -104,6 +113,51 @@ class MainActivityViewModel(
         val result: Lce<MainActivityResult> = Lce.Content(MainActivityResult.ChangeCurrencyResult(currency))
 
         resultToViewState(result)
+    }
+
+    private fun downloadLastestDataFromNetwork(context: Context){
+        val listErrors = mutableListOf<ErrorSourceMainActivity>()
+        val newAgents = mutableListOf<Agent>()
+        val latestUpdate = saveDataRepository.lastUpdateFromNetwork
+        agentRepository.getAgentsFromNetwork(latestUpdate)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        task.result?.documents?.forEach { document ->
+                            document.toObject(Agent::class.java)?.let {
+                                newAgents.add(it)
+                            }
+
+                        }
+                        agentRepository.getAgentPictureFromStorage(newAgents, context)
+                                .addOnCompleteListener {
+                                    if (task.isSuccessful){
+                                        launch { agentRepository.createAllNewAgents(newAgents) }
+                                    } else {
+                                        listErrors.add(ERRORFETCHING_NEW_AGENTS)
+                                    }
+                                }
+                    } else {
+                        listErrors.add(ERRORFETCHING_NEW_AGENTS)
+                    }
+                }
+
+
+        val newProperty = mutableListOf<Property>()
+        propertyRepository.getAllPropertiesFromNetwork(latestUpdate)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful){
+                        task.result?.documents?.forEach { document ->
+                            document.toObject(Property::class.java)?.let {
+                                newProperty.add(it)
+                            }
+                        }
+                    }
+                }
+
+
+        saveDataRepository.lastUpdateFromNetwork = todaysDate
+
+
     }
 
 }

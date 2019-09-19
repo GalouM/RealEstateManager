@@ -1,17 +1,22 @@
 package com.openclassrooms.realestatemanager.data.repository
 
+import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
+import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.openclassrooms.realestatemanager.data.database.dao.AgentDao
 import com.openclassrooms.realestatemanager.data.entity.Agent
-import com.openclassrooms.realestatemanager.utils.AGENT_COLLECTION
-import com.openclassrooms.realestatemanager.utils.STORAGE_PATH_AGENT_PICTURE
+import com.openclassrooms.realestatemanager.utils.*
 import kotlinx.coroutines.*
+import java.io.File
 import java.util.*
 
 /**
@@ -40,6 +45,10 @@ class AgentRepository (private val agentDao: AgentDao) {
         agentDao.createAgent(agent)
     }
 
+    suspend fun createAllNewAgents(agents: List<Agent>){
+        agentDao.createAgents(agents)
+    }
+
     //-----------------
     // NETWORK REQUEST
     //-----------------
@@ -50,8 +59,7 @@ class AgentRepository (private val agentDao: AgentDao) {
 
     private fun createAgentInNetwork(agent: Agent): Task<Void> = agentCollection.document(agent.id).set(agent)
 
-    fun uploadAgentPhotoInNetwork(urlPhoto: String, idAgent: String): UploadTask = storage.reference
-            .child("${STORAGE_PATH_AGENT_PICTURE}$idAgent")
+    fun uploadAgentPhotoInNetwork(urlPhoto: String, idAgent: String): UploadTask = getReferenceAgentPicture(idAgent)
             .putFile(urlPhoto.toUri())
 
     fun getAgentsFromNetwork(latestUpdate: Date?): Task<QuerySnapshot> {
@@ -60,14 +68,31 @@ class AgentRepository (private val agentDao: AgentDao) {
                     .whereGreaterThanOrEqualTo("creationDate", latestUpdate)
                     .get()
         } else {
-            agentCollection.orderBy("lastName").get()
+            agentCollection.get()
         }
 
     }
 
-    fun getUrlPicturesFromNetwork(idAgent: String): Task<Uri> = storage.reference
-            .child("${STORAGE_PATH_AGENT_PICTURE}/$idAgent")
-            .downloadUrl
+    fun getAgentPictureFromStorage(agents: List<Agent>, context: Context): Task<List<Task<*>>>{
+        val listDownload = mutableListOf<Task<*>>()
+        agents.forEach {agent ->
+            val pathReference = getReferenceAgentPicture(agent.id)
+            val tempFile = filePathToInternalStorage(context, generateName(), TypeImage.AGENT)
+            val download = pathReference.getFile(tempFile)
+                    .addOnSuccessListener {
+                        agent.urlProfilePicture = tempFile.absolutePath
+                    }
+            listDownload.add(download)
+
+        }
+
+
+        return Tasks.whenAllComplete(listDownload)
+
+    }
+
+    private fun getReferenceAgentPicture(idAgent: String) = storage.reference
+            .child("${STORAGE_PATH_AGENT_PICTURE}$idAgent")
 
 
 

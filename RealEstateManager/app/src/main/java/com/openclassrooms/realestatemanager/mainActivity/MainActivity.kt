@@ -145,6 +145,10 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
             }
             R.id.menu_main_activity_search -> openSearchActivity()
             R.id.menu_details_property_modify -> detailsView?.toolBarModifyClickListener()
+            R.id.menu_main_activity_refresh -> {
+                if(isWifiAvailable(this))
+                viewModel.actionFromIntent(MainActivityIntent.UpdatePropertyFromNetwork(this.applicationContext))
+            }
         }
         return super.onOptionsItemSelected(item)
     }

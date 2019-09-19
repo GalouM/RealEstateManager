@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.utils
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
@@ -92,5 +93,11 @@ fun getPicturesPathFromData(data: Intent): List<String>{
 
 fun generateName(): String{
     return SimpleDateFormat(DATE_FORMAT_FOR_NAME).format(Date())
+}
+
+fun filePathToInternalStorage(context: Context, name: String, type: TypeImage): File{
+    val wrapper = ContextWrapper(context)
+    val directory = wrapper.getDir(type.folder, Context.MODE_PRIVATE)
+    return File(directory, "JPEG_${type}_$name.jpeg")
 }
 

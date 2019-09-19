@@ -20,4 +20,7 @@ interface AgentDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createAgent(agent: Agent)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun createAgents(agents: List<Agent>)
 }

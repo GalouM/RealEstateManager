@@ -260,17 +260,53 @@ class PropertyRepository(
                     .whereGreaterThanOrEqualTo("creationDate", latestUpdate)
                     .get()
         } else {
-            propertyCollection.orderBy("creationDate").get()
+            propertyCollection.get()
         }
     }
 
-    fun getAddressFromNetwork(idProperty: String): Task<DocumentSnapshot> = addressCollection.document(idProperty).get()
+    fun getPropertyDataFromNetwork(idProperty: String): Task<List<Task<*>>>{
+        val dataFromProperty = mutableListOf<Task<*>>()
+        val address = getAddressFromNetwork(idProperty)
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+                        task.result?.toObject(Address::class.java)?.let { val newAddress = it }
+                    }
+                }
+        val newPicture = mutableListOf<Picture>()
+        val picture = getPicturesFromNetwork(idProperty)
+                .addOnCompleteListener {task ->
+                    if(task.isSuccessful){
+                        task.result?.documents?.forEach { document ->
+                            document.toObject(Picture::class.java)?.let { newPicture.add(it) }
+                        }
+                    }
 
-    fun getPicturesFromNetwork(idProperty: String): Task<QuerySnapshot> = pictureCollection
+                }
+        val newAmenities = mutableListOf<Amenity>()
+        val amenities = getAmenitiesFromNetwork(idProperty)
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+                        task.result?.documents?.forEach { document ->
+                            document.toObject(Amenity::class.java)?.let { newAmenities.add(it)  }
+                        }
+                    }
+
+                }
+
+        dataFromProperty.add(address)
+        dataFromProperty.add(picture)
+        dataFromProperty.add(amenities)
+
+        return Tasks.whenAllComplete(dataFromProperty)
+    }
+
+    private fun getAddressFromNetwork(idProperty: String): Task<DocumentSnapshot> = addressCollection.document(idProperty).get()
+
+    private fun getPicturesFromNetwork(idProperty: String): Task<QuerySnapshot> = pictureCollection
             .whereEqualTo("property", idProperty)
             .get()
 
-    fun getAmenitiesFromNetwork(idProperty: String): Task<QuerySnapshot> = amenityCollection
+    private fun getAmenitiesFromNetwork(idProperty: String): Task<QuerySnapshot> = amenityCollection
             .whereEqualTo("property", idProperty)
             .get()
 

@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
+        android:id="@+id/menu_main_activity_refresh"
+        android:icon="@drawable/refresh_icon"
+        app:showAsAction="always"
+        android:title="@string/refresh"/>
+    <item
         android:id="@+id/menu_toolbar_currency"
         android:icon="@drawable/euro_icon"
         app:showAsAction="always"
@@ -11,7 +16,7 @@
     <item
         android:id="@+id/menu_details_property_modify"
         android:icon="@drawable/modify_icon"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:title="@string/modify"/>
 
     <item

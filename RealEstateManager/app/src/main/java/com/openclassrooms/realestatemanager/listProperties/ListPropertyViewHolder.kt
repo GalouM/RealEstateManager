@@ -50,7 +50,7 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             currency: Currency?, context: Context, isDoubleScreen: Boolean
     ){
         displayData("${property}")
-        /*
+
 
         this.context = context
         isSold = property.property.sold
@@ -78,9 +78,6 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         if(!isDoubleScreen || !isSelected){
             configureCardToNormalState()
         }
-        
-         */
-
 
     }
 

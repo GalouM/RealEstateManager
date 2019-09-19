@@ -1,8 +1,12 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
 import android.content.Context
+import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FileDownloadTask
 import com.openclassrooms.realestatemanager.data.entity.*
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository
@@ -149,12 +153,9 @@ class MainActivityViewModel(
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful){
                         task.result?.documents?.forEach { document ->
-                            document.toObject(Property::class.java)?.let {
-                                newProperty.add(it)
-                                displayData("property : $it")
-                            }
-                            getDataAndAgent(context)
+                            document.toObject(Property::class.java)?.let { newProperty.add(it) }
                         }
+                        getDataAndAgent(context)
                     } else emitResultNetworkRequestFailure()
                 }
 
@@ -170,24 +171,29 @@ class MainActivityViewModel(
                         task.result?.documents?.forEach { document ->
                             val agent = document.toObject(Agent::class.java)
                             agent?.let {
+                                displayData("pic before ${agent.urlProfilePicture}")
                                 agent.urlProfilePicture?.let {
                                     val tempFile = filePathToInternalStorage(context, generateName(), TypeImage.AGENT)
                                     val picAgentDownload = agentRepository.getReferenceAgentPicture(agent.id).getFile(tempFile)
                                             .addOnCompleteListener { storageTask ->
+                                                displayData("${storageTask.isSuccessful}")
                                                 agent.urlProfilePicture = if(storageTask.isSuccessful){
                                                     tempFile.absolutePath
                                                 } else null
+                                                displayData("pic after ${agent.urlProfilePicture}")
 
                                             }
                                     networkOperations.add(picAgentDownload)
                                 }
-                                displayData("agent : $agent")
                                 newAgents.add(it)
                             }
                         }
                     }
                 }
+
         networkOperations.add(agentsDownload)
+
+
 
         newProperty.forEach {property ->
             val propertyId = property.id
@@ -195,10 +201,7 @@ class MainActivityViewModel(
                     .addOnCompleteListener { task ->
                         if(task.isSuccessful){
                             task.result?.documents?.forEach { document ->
-                                document.toObject(Amenity::class.java)?.let {
-                                    newAmenities.add(it)
-                                    displayData("amenity : $it")
-                                }
+                                document.toObject(Amenity::class.java)?.let { newAmenities.add(it) }
                             }
                         }
                     }
@@ -206,36 +209,39 @@ class MainActivityViewModel(
             val addressDownload = propertyRepository.getAddressFromNetwork(propertyId)
                     .addOnCompleteListener { task ->
                         if(task.isSuccessful) {
+                            displayData("address fetched")
                             val address: Address? = task.result?.toObject(Address::class.java)
-                            displayData("address : $address")
                             address?.let {
+                                newAddresses.add(it)
                                 val tempFileMap = filePathToInternalStorage(context, generateName(), TypeImage.ICON_MAP)
                                 val mapDownload = propertyRepository.getMapStorageReference(it.propertyId).getFile(tempFileMap)
                                         .addOnCompleteListener{ taskStorage->
+                                            displayData("map fetched")
                                             if(taskStorage.isSuccessful) {
                                                 it.mapIconUrl = tempFileMap.absolutePath
-                                                newAddresses.add(it)
                                             }
                                         }
                                 networkOperations.add(mapDownload)
                             }
                         }
                     }
+
             networkOperations.add(addressDownload)
             val picturesDownload = propertyRepository.getPicturesFromNetwork(propertyId)
                     .addOnCompleteListener {task ->
                         if(task.isSuccessful){
+                            displayData("picture fetched form FB")
                             task.result?.documents?.forEach { document ->
                                 val picture = document.toObject(Picture::class.java)
-                                displayData("picture : $picture")
                                 picture?.let {
+                                    newPictures.add(it)
                                     val tempFilePicture = createImageFileInExtStorage()
                                     val pictureDownload = propertyRepository.getPictureStorageReference(it.id).getFile(tempFilePicture)
                                             .addOnCompleteListener{ task ->
+                                                displayData("picture fetched from storage")
                                                 if(task.isSuccessful){
                                                     it.url = tempFilePicture.absolutePath
                                                     addPictureToGallery(context, tempFilePicture.absolutePath)
-                                                    newPictures.add(it)
                                                 }
                                             }
                                     networkOperations.add(pictureDownload)
@@ -262,7 +268,7 @@ class MainActivityViewModel(
             networkOperations.add(picturesDownload)
         }
 
-        Tasks.whenAllComplete(networkOperations).addOnCompleteListener {
+        Tasks.whenAll(networkOperations).addOnCompleteListener {
             if(it.isSuccessful){
                 createNewDataInDBLocally()
                 saveDataRepository.lastUpdateFromNetwork = todaysDate
@@ -282,6 +288,9 @@ class MainActivityViewModel(
     }
 
     private fun createNewDataInDBLocally(){
+        displayData("list agent: $newAgents")
+        displayData("list picture: $newPictures")
+        displayData("list address: $newAddresses")
         if(createPropertiesAndDataJob?.isActive == true) createPropertiesAndDataJob?.cancel()
         createPropertiesAndDataJob = launch {
             agentRepository.createAllNewAgents(newAgents)

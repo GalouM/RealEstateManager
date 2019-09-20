@@ -377,8 +377,6 @@ SnackBarListener{
             return
         }
 
-        displayData("loading prop ${state.isLoading}")
-
         renderLoading(state.isLoading)
 
         if(state.errors != null){

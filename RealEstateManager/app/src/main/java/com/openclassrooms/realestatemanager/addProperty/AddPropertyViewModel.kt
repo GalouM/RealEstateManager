@@ -193,6 +193,7 @@ BitmapDownloader.Listeners{
                 currentViewState.copy(
                         isADraft = false,
                         listAgents = null,
+                        errors = null,
                         isLoading = true)
 
             }

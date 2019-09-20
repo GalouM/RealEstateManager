@@ -8,6 +8,7 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -66,6 +67,7 @@ class ListPropertyViewModel(
 
             is Lce.Loading -> {
                 currentViewState.copy(
+                        errorSource = null,
                         openDetails = false,
                         isLoading = true
                 )

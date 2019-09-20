@@ -105,23 +105,29 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == RC_CODE_ADD_AGENT){
-            if(resultCode == Activity.RESULT_OK){
-                showSnackBarMessage(getString(R.string.agent_added))
-            }
-        }
-        if(requestCode == RC_CODE_ADD_PROPERTY){
-            if(resultCode == RESULT_SAVED_TO_DB){
-                showSnackBarMessage(getString(R.string.property_added))
-                updatePropertiesShown()
-            }
-            if(resultCode == RESULT_SAVED_TO_DRAFT){
-                when(isInternetAvailable(this)){
-                    true -> showSnackBarMessage(getString(R.string.modif_draft))
-                    false -> showSnackBarMessage(getString(R.string.saved_as_draft))
-                }
 
+        when(requestCode){
+            RC_CODE_ADD_AGENT -> {
+                if(resultCode == Activity.RESULT_OK){
+                    showSnackBarMessage(getString(R.string.agent_added))
+                }
             }
+
+            RC_CODE_ADD_PROPERTY -> {
+                when(resultCode){
+                    RESULT_SAVED_TO_DB -> {
+                        showSnackBarMessage(getString(R.string.property_added))
+                        updatePropertiesShown()
+                    }
+                    RESULT_SAVED_TO_DRAFT -> {
+                        when(isInternetAvailable(this)){
+                            true -> showSnackBarMessage(getString(R.string.modif_draft))
+                            false -> showSnackBarMessage(getString(R.string.saved_as_draft))
+                        }
+                    }
+                }
+            }
+            RC_CODE_DETAIL_PROPERTY -> updatePropertiesShown()
         }
     }
 
@@ -280,7 +286,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
             showDetailsView()
         } else{
             val intent = Intent(this, DetailActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, RC_CODE_DETAIL_PROPERTY)
         }
     }
 
@@ -319,7 +325,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
         state.errorSource?.let { renderErrorOpeningActivity(it) }
 
-        if(state.newDataUploaded) renderNewPropertyAdded(state.propertyAdded)
+        state.propertyAdded?.let { renderNewPropertyAdded(it) }
 
         renderLoading(state.isLoading)
         renderChangeCurrency(state.currency)
@@ -373,7 +379,6 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     }
 
     private fun renderLoading(loading: Boolean){
-        displayData("loading: $loading")
         if(loading){
             progressbar.visibility = View.VISIBLE
             downloading = true

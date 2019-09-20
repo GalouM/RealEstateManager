@@ -13,6 +13,7 @@ import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
@@ -24,7 +25,6 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
     protected var currentCurrency: Currency? = null
 
     protected abstract fun renderListProperties(properties: List<PropertyWithAllData>)
-    protected abstract fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty)
     protected abstract fun renderIsLoading(loading: Boolean)
     protected abstract fun renderChangeCurrency(currency: Currency)
 
@@ -40,7 +40,7 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
         ).get(ListPropertyViewModel::class.java)
 
         viewModel.viewState.observe(this, Observer { render(it) })
-
+        updatePropertiesDisplay()
 
     }
 
@@ -53,10 +53,10 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
 
     }
 
-    override fun onResume() {
-        super.onResume()
+    protected fun updatePropertiesDisplay(){
         viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
     }
+
 
     override fun render(state: PropertyListViewState?) {
         if (state == null) return
@@ -81,6 +81,13 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
         } else {
             val intent = Intent(activity!!, DetailActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
+        when(errorSource){
+            ErrorSourceListProperty.NO_PROPERTY_IN_DB -> showSnackBarMessage(getString(R.string.no_properties))
+            ErrorSourceListProperty.CAN_T_ACCESS_DB -> showSnackBarMessage(getString(R.string.unknow_error))
         }
     }
 

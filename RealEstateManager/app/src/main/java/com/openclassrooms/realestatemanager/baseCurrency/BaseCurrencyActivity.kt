@@ -104,7 +104,6 @@ abstract class BaseCurrencyActivity<F : BaseFragmentREM> : AppCompatActivity(), 
     }
 
     override fun displayLoading(loading: Boolean) {
-        displayData("loading base $loading")
         progressBar.visibility = if(loading) View.VISIBLE else View.GONE
     }
 }

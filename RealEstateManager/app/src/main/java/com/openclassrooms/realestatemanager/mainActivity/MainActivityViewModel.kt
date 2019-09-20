@@ -69,14 +69,14 @@ class MainActivityViewModel(
                 when(result.packet){
                     is MainActivityResult.OpenAddPropertyResult ->{
                         currentViewState.copy(
-                                newDataUploaded = false,
+                                propertyAdded = null,
                                 isOpenAddProperty = true,
                                 errorSource = null,
                                 isLoading = false)
                     }
                     is MainActivityResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
-                                newDataUploaded = false,
+                                propertyAdded = null,
                                 isOpenAddProperty = false,
                                 currency = result.packet.currency
                                 )
@@ -86,7 +86,6 @@ class MainActivityViewModel(
                                 isOpenAddProperty = false,
                                 errorSource = null,
                                 isLoading = false,
-                                newDataUploaded = true,
                                 propertyAdded = result.packet.numberPropertyAdded
                         )
                     }
@@ -95,7 +94,7 @@ class MainActivityViewModel(
 
             is Lce.Loading -> {
                 currentViewState.copy(
-                        newDataUploaded = false,
+                        propertyAdded = null,
                         isLoading = true,
                         errorSource = null,
                         isOpenAddProperty = false)
@@ -104,7 +103,7 @@ class MainActivityViewModel(
                 when(result.packet){
                     is MainActivityResult.OpenAddPropertyResult -> {
                         currentViewState.copy(
-                                newDataUploaded = false,
+                                propertyAdded = null,
                                 isOpenAddProperty = false,
                                 errorSource = NO_AGENT_IN_DB,
                                 isLoading = false
@@ -112,13 +111,13 @@ class MainActivityViewModel(
                     }
                     is MainActivityResult.ChangeCurrencyResult -> {
                         currentViewState.copy(
-                                newDataUploaded = false,
+                                propertyAdded = null,
                                 isOpenAddProperty = false
                         )
                     }
                     is MainActivityResult.UpdateDataFromNetwork -> {
                         currentViewState.copy(
-                                newDataUploaded = false,
+                                propertyAdded = null,
                                 isOpenAddProperty = false,
                                 errorSource = result.packet.errorSource,
                                 isLoading = false
@@ -160,8 +159,6 @@ class MainActivityViewModel(
 
     private fun downloadLatestDataFromNetwork(context: Context){
         resultToViewState(Lce.Loading())
-
-        displayData("$latestUpdate")
 
         propertyRepository.getAllPropertiesFromNetwork(latestUpdate)
                 .addOnCompleteListener { task ->
@@ -294,7 +291,7 @@ class MainActivityViewModel(
 
     private fun emitResultNetworkRequestFailure(error: ErrorSourceMainActivity){
         val result: Lce<MainActivityResult> = Lce.Error(
-                MainActivityResult.UpdateDataFromNetwork(error, 0)
+                MainActivityResult.UpdateDataFromNetwork(error, null)
         )
         resultToViewState(result)
 

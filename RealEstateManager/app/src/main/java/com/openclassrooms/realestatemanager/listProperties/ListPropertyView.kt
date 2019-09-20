@@ -80,13 +80,6 @@ class ListPropertyView : BaseViewListProperties(),
         }
     }
 
-    override fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
-        when(errorSource){
-            ErrorSourceListProperty.NO_PROPERTY_IN_DB -> showSnackBarMessage(getString(R.string.no_properties))
-            ErrorSourceListProperty.CAN_T_ACCESS_DB -> showSnackBarMessage(getString(R.string.unknow_error))
-        }
-    }
-
     override fun renderIsLoading(loading: Boolean){
         if(loading) {
             frameLayout.foreground.alpha = 50
@@ -145,7 +138,7 @@ class ListPropertyView : BaseViewListProperties(),
     }
 
     private fun refreshListProperties(){
-        viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
+        updatePropertiesDisplay()
     }
 
 }

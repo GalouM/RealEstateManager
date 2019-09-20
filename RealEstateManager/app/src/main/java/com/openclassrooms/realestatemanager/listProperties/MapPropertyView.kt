@@ -95,7 +95,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
     }
 
     override fun onListPropertiesChange() {
-        viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
+        updatePropertiesDisplay()
     }
 
     private fun displayMap(savedInstanceState: Bundle?){
@@ -126,13 +126,6 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
                     displayPropertiesAround(currentCurrency!!)
                 }
             }
-        }
-    }
-
-    override fun renderErrorFetchingProperty(errorSource: ErrorSourceListProperty){
-        when(errorSource){
-            ErrorSourceListProperty.NO_PROPERTY_IN_DB -> showSnackBarMessage(getString(R.string.no_properties))
-            ErrorSourceListProperty.CAN_T_ACCESS_DB -> showSnackBarMessage(getString(R.string.unknow_error))
         }
     }
 
@@ -187,7 +180,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
                 val lastKnowLocation = getAndDisplayUserLocation().lastKnownLocation
                 if(lastKnowLocation != null){
                     computerUserLocationBound(lastKnowLocation)
-                    viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
+                    updatePropertiesDisplay()
                     addCameraMovementListener(lastKnowLocation)
 
 

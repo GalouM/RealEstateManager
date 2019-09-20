@@ -1,12 +1,15 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
 import android.app.Activity
+import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.FrameLayout
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -30,6 +33,7 @@ import com.openclassrooms.realestatemanager.mainActivity.ErrorSourceMainActivity
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.searchProperty.SearchActivity
 import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.TypeConnection.*
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
@@ -65,6 +69,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     @BindView(R.id.main_activity_tablayout) lateinit var tabLayout: TabLayout
     @BindView(R.id.activity_main_rfal) lateinit var rfaLayout: RapidFloatingActionLayout
     @BindView(R.id.activity_main_rfab) lateinit var rfaButton: RapidFloatingActionButton
+    @BindView(R.id.main_activity_progressbar) lateinit var progressbar: ProgressBar
     private lateinit var rfabHelper: RapidFloatingActionHelper
 
     private var menuToolbar: Menu? = null
@@ -74,6 +79,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     private val listDrawableIconTab = listOf(R.drawable.list_icon, R.drawable.map_icon)
 
     var isDoubleScreenMode = false
+    private var downloading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,7 +134,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        if(requestCode == RC_IMAGE_PERMS) downloadNewDataFromNetwork()
+        if(requestCode == RC_IMAGE_PERMS) checkNetworkConnection()
     }
 
     //--------------------
@@ -157,7 +163,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
             R.id.menu_toolbar_currency -> changeCurrency()
             R.id.menu_main_activity_search -> openSearchActivity()
             R.id.menu_details_property_modify -> detailsView?.toolBarModifyClickListener()
-            R.id.menu_main_activity_refresh -> downloadNewDataFromNetwork()
+            R.id.menu_main_activity_refresh -> checkNetworkConnection()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -291,11 +297,9 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         viewModel.viewState.observe(this, Observer { render(it) })
     }
 
-    private fun downloadNewDataFromNetwork(){
-        if(isWifiAvailable(this)){
-            if(requestPermissionStorage(this)) {
-                viewModel.actionFromIntent(MainActivityIntent.UpdatePropertyFromNetwork(this.applicationContext))
-            }
+    private fun downloadNewPropertyFromNetwork(){
+        if(requestPermissionStorage(this)) {
+            viewModel.actionFromIntent(MainActivityIntent.UpdatePropertyFromNetwork(this.applicationContext))
         }
     }
 
@@ -309,19 +313,14 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     override fun render(state: MainActivityViewState?) {
         if (state == null) return
-        if(state.isOpenAddProperty){
-            renderShowAddPropertyActivity()
-        } else{
-            state.errorSource?.let { renderErrorOpeningActivity(it) }
-        }
+
+        if(state.isOpenAddProperty)renderShowAddPropertyActivity()
+
+        state.errorSource?.let { renderErrorOpeningActivity(it) }
 
         if(state.newDataUploaded) renderNewPropertyAdded()
 
-        if(state.isLoading) {
-            displayData("loading")
-        } else {
-            displayData("done")
-        }
+        renderLoading(state.isLoading)
         renderChangeCurrency(state.currency)
 
     }
@@ -366,6 +365,20 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     }
 
+    private fun renderLoading(loading: Boolean){
+        if(loading){
+            progressbar.visibility = View.VISIBLE
+            downloading = true
+        } else {
+            progressbar.visibility = View.GONE
+            downloading = false
+        }
+    }
+
+    //--------------------
+    // UTILS
+    //--------------------
+
     private fun updatePropertiesShown(){
         showSnackBarMessage(getString(R.string.property_added))
         callbackListPropertiesRefresh?.get()?.onListPropertiesChange()
@@ -375,6 +388,33 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     private fun showSnackBarMessage(message: String){
         val viewLayout = findViewById<CoordinatorLayout>(R.id.base_activity_main_layout)
         showSnackBar(viewLayout, message)
+
+    }
+
+    private fun checkNetworkConnection(){
+        if(downloading) return
+        when(typeNetworkConnection(this)){
+            WIFI -> downloadNewPropertyFromNetwork()
+            DATA -> showNoWifiDialog()
+            NONE -> showSnackBarMessage(getString(R.string.connect_data_update))
+        }
+    }
+
+    private fun showNoWifiDialog(){
+        val builder = AlertDialog.Builder(this).apply {
+            setMessage(getString(R.string.no_wifi_message))
+            setTitle(getString(R.string.no_wifi_title))
+            setPositiveButton(getString(R.string.ok_button)) { _, _ ->
+                downloadNewPropertyFromNetwork()
+            }
+            setNegativeButton(getString(R.string.cancel_button)) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+
+            }
+            create()
+        }
+        builder.show()
+
 
     }
 }

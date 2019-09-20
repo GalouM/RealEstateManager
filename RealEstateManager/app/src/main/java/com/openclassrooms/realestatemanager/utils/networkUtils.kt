@@ -40,3 +40,21 @@ fun requestPermissionLocation(fragment: Fragment): Boolean{
     }
     return true
 }
+
+fun typeNetworkConnection(context: Context): TypeConnection{
+    val wifiConnection = isWifiAvailable(context)
+    val internetConnection = isInternetAvailable(context)
+    return when{
+        !internetConnection -> TypeConnection.NONE
+        !wifiConnection && internetConnection -> TypeConnection.DATA
+        wifiConnection -> TypeConnection.WIFI
+        else -> TypeConnection.NONE
+    }
+
+}
+
+enum class TypeConnection{
+    WIFI,
+    DATA,
+    NONE
+}

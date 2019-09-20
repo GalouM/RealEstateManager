@@ -34,6 +34,17 @@
         app:layout_constraintStart_toStartOf="@id/main_activity_toolbar"
         app:layout_constraintEnd_toEndOf="@id/main_activity_toolbar"/>
 
+    <ProgressBar
+        android:id="@+id/main_activity_progressbar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:layout_constraintTop_toBottomOf="@id/main_activity_tablayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
+
     <com.openclassrooms.realestatemanager.mainActivity.MainActivityViewPager
         android:id="@+id/main_activity_tablayout_viewpager"
         android:layout_width="0dp"

@@ -116,5 +116,8 @@
     <string name="allow_gps">Allow GPS permission to use the map feature</string>
     <string name="allow_storage">Allow storage permission to add pictures</string>
     <string name="pictire_not_available">Some pictures might not be available</string>
+    <string name="connect_data_update">Please connect to internet to upload the latest property from the network</string>
+    <string name="no_wifi_message">You are not connected to wifi. Do you wish to download data from the network anyways?</string>
+    <string name="no_wifi_title">No wifi connection</string>
 
 </resources>

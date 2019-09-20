@@ -5,5 +5,6 @@ package com.openclassrooms.realestatemanager.mainActivity
  */
 enum class ErrorSourceMainActivity {
     NO_AGENT_IN_DB,
-    ERROR_FETCHING_NEW_FROM_NETWORK
+    ERROR_FETCHING_NEW_FROM_NETWORK,
+    ERROR_DOWNLOADING_IMAGES
 }

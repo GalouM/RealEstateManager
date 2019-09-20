@@ -341,6 +341,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         when(errorSource){
             NO_AGENT_IN_DB -> showSnackBarMessage(getString(R.string.create_agent_first))
             ERROR_FETCHING_NEW_FROM_NETWORK -> showSnackBarMessage(getString(R.string.error_fetching))
+            ERROR_DOWNLOADING_IMAGES -> showSnackBarMessage(getString(R.string.pictire_not_available))
         }
 
     }

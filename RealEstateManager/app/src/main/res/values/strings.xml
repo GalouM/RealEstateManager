@@ -115,5 +115,6 @@
     <string name="error_fetching">Error fetching data from network</string>
     <string name="allow_gps">Allow GPS permission to use the map feature</string>
     <string name="allow_storage">Allow storage permission to add pictures</string>
+    <string name="pictire_not_available">Some pictures might not be available</string>
 
 </resources>

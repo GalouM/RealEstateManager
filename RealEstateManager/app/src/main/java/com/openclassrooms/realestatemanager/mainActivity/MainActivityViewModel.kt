@@ -167,7 +167,7 @@ class MainActivityViewModel(
                             document.toObject(Property::class.java)?.let { newProperty.add(it) }
                         }
                         getDataAndAgent(context)
-                    } else emitResultNetworkRequestFailure()
+                    } else emitResultNetworkRequestFailure(ERROR_FETCHING_NEW_FROM_NETWORK)
                 }
 
 
@@ -222,7 +222,7 @@ class MainActivityViewModel(
         Tasks.whenAll(networkOperations).addOnCompleteListener {
             if(it.isSuccessful){
                 getDataFromStorage(context)
-            } else emitResultNetworkRequestFailure()
+            } else emitResultNetworkRequestFailure(ERROR_FETCHING_NEW_FROM_NETWORK)
 
         }
     }
@@ -283,17 +283,18 @@ class MainActivityViewModel(
         }
 
         Tasks.whenAll(storageOperation).addOnCompleteListener {
-            if(it.isSuccessful){
-                createNewDataInDBLocally()
-                saveDataRepository.lastUpdateFromNetwork = todaysDate
-            } else it.exception?.let { message -> displayData("$message") }
+            if(!it.isSuccessful){
+                emitResultNetworkRequestFailure(ERROR_DOWNLOADING_IMAGES)
+            }
+            createNewDataInDBLocally()
+            saveDataRepository.lastUpdateFromNetwork = todaysDate
 
         }
     }
 
-    private fun emitResultNetworkRequestFailure(){
+    private fun emitResultNetworkRequestFailure(error: ErrorSourceMainActivity){
         val result: Lce<MainActivityResult> = Lce.Error(
-                MainActivityResult.UpdataDataFromNetwork(ERROR_FETCHING_NEW_FROM_NETWORK)
+                MainActivityResult.UpdataDataFromNetwork(error)
         )
         resultToViewState(result)
 

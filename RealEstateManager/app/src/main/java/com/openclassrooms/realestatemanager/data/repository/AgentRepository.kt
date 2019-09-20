@@ -1,22 +1,16 @@
 package com.openclassrooms.realestatemanager.data.repository
 
 import android.content.Context
-import android.net.Uri
 import androidx.core.net.toUri
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.openclassrooms.realestatemanager.data.database.dao.AgentDao
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.utils.*
-import kotlinx.coroutines.*
-import java.io.File
 import java.util.*
 
 /**

@@ -15,7 +15,6 @@ import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.displayData
 import java.lang.ref.WeakReference
 
 /**

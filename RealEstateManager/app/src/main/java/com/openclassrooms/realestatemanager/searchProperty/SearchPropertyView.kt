@@ -22,14 +22,15 @@ import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addProperty.PickDateDialogView
-import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.Currency.*
+import com.openclassrooms.realestatemanager.utils.Currency.DOLLAR
+import com.openclassrooms.realestatemanager.utils.Currency.EURO
 import com.openclassrooms.realestatemanager.utils.extensions.*
 import java.util.*
 

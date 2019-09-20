@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
 import android.app.Activity
-import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -10,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout

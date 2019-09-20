@@ -2,15 +2,8 @@ package com.openclassrooms.realestatemanager.addProperty
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
 import com.openclassrooms.realestatemanager.addProperty.ActionType.MODIFY_PROPERTY
 import com.openclassrooms.realestatemanager.addProperty.ActionType.NEW_PROPERTY
 import com.openclassrooms.realestatemanager.addProperty.ErrorSourceAddProperty.*
@@ -31,9 +24,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
 import java.net.URL
 
 /**

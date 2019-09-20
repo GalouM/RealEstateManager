@@ -6,7 +6,6 @@ import com.openclassrooms.realestatemanager.data.TempProperty
 import com.openclassrooms.realestatemanager.utils.KEY_PREF
 import com.openclassrooms.realestatemanager.utils.KEY_PREF_LAST_UPDATE
 import com.openclassrooms.realestatemanager.utils.KEY_PREF_TEMP_PROPERTY
-import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.toDateWithTime
 import com.openclassrooms.realestatemanager.utils.extensions.toStringWithTime
 import java.util.*

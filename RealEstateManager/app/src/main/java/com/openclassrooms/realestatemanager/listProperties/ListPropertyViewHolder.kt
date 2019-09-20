@@ -14,7 +14,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.utils.extensions.toEuroDisplay

@@ -30,14 +30,15 @@ import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addProperty.ErrorSourceAddProperty.*
-import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.Currency.*
+import com.openclassrooms.realestatemanager.utils.Currency.DOLLAR
+import com.openclassrooms.realestatemanager.utils.Currency.EURO
 import com.openclassrooms.realestatemanager.utils.TypeAmenity.*
 import com.openclassrooms.realestatemanager.utils.extensions.*
 import kotlinx.android.synthetic.main.dialog_photo_source.view.*

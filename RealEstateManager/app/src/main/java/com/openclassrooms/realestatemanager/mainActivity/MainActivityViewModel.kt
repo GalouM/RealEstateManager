@@ -1,12 +1,8 @@
 package com.openclassrooms.realestatemanager.mainActivity
 
 import android.content.Context
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.storage.FileDownloadTask
 import com.openclassrooms.realestatemanager.data.entity.*
 import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.data.repository.CurrencyRepository

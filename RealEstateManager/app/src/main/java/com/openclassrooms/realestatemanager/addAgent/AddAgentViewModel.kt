@@ -6,7 +6,6 @@ import com.openclassrooms.realestatemanager.data.repository.AgentRepository
 import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
-import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectEmail
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectName
 import com.openclassrooms.realestatemanager.utils.extensions.isCorrectPhoneNumber

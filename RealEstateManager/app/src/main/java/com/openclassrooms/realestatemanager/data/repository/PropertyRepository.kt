@@ -1,9 +1,7 @@
 package com.openclassrooms.realestatemanager.data.repository
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.arch.core.executor.TaskExecutor
 import androidx.core.net.toUri
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -28,7 +26,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream

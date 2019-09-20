@@ -21,12 +21,12 @@ import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
-import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Amenity
 import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.injection.Injection
+import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.extensions.*

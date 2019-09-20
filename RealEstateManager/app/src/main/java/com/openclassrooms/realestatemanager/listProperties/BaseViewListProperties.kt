@@ -5,15 +5,14 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
+import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**

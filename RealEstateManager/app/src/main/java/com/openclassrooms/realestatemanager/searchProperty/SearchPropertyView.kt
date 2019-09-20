@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addProperty.PickDateDialogView
+import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mviBase.REMView
@@ -35,7 +36,7 @@ import java.util.*
 /**
  * A simple [Fragment] subclass.
  */
-class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgentSearchAdapter.ListenerCheckBox,
+class SearchPropertyView : BaseFragmentREM(), REMView<SeachPropertyViewState>, ListAgentSearchAdapter.ListenerCheckBox,
         PickDateDialogView.OnOkButtonListener{
 
     @BindView(R.id.search_select_all_agents) lateinit var selectAllAgents: CheckBox
@@ -222,6 +223,7 @@ class SearchPropertyView : Fragment(), REMView<SeachPropertyViewState>, ListAgen
         if(state.showProperty) renderShowResults()
 
         state.error?.let { renderErrors(it) }
+        renderLoading(state.loading)
     }
 
     private fun renderAgentsList(agents: List<Agent>){

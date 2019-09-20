@@ -2,10 +2,10 @@ package com.openclassrooms.realestatemanager.listProperties
 
 import android.content.Intent
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.injection.Injection
@@ -18,7 +18,7 @@ import com.openclassrooms.realestatemanager.utils.showSnackBar
 /**
  * Created by galou on 2019-08-21
  */
-abstract class BaseViewListProperties : Fragment(), REMView<PropertyListViewState> {
+abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListViewState> {
 
     protected lateinit var viewModel: ListPropertyViewModel
     protected var currentCurrency: Currency? = null

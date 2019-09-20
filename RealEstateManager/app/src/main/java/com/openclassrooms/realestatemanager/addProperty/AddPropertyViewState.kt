@@ -118,5 +118,6 @@ sealed class AddPropertyResult : REMResult{
     ) : AddPropertyResult()
     data class ListAgentsResult(val listAgents: List<Agent>?, val errorSource: List<ErrorSourceAddProperty>?) : AddPropertyResult()
     data class PictureResult(val pictures: List<Picture>) : AddPropertyResult()
+    object NewPropertyResult : AddPropertyResult()
 
 }

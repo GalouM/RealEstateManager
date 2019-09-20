@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="@id/main_activity_toolbar"
         app:layout_constraintEnd_toEndOf="@id/main_activity_toolbar"/>
 
-    <ProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/main_activity_progressbar"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"

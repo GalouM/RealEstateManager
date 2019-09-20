@@ -13,16 +13,6 @@
     android:layout_height="match_parent"
     tools:context=".addProperty.AddPropertyView">
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/add_property_view_progress_bar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="invisible"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/add_property_view_general_group"
         android:layout_width="match_parent"

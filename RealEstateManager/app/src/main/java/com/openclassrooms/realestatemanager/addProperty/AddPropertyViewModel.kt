@@ -178,7 +178,14 @@ BitmapDownloader.Listeners{
                                 isLoading = false
                         )
                     }
-                    else -> return
+                    else -> {
+                        currentViewState.copy(
+                                isADraft = false,
+                                listAgents = null,
+                                errors = null,
+                                isLoading = false
+                        )
+                    }
                 }
             }
 
@@ -216,7 +223,14 @@ BitmapDownloader.Listeners{
                                 errors = result.packet.errorSource
                         )
                     }
-                    else -> return
+                    else -> {
+                        currentViewState.copy(
+                                isADraft = false,
+                                listAgents = null,
+                                isLoading = false,
+                                errors = null
+                        )
+                    }
                 }
 
             }
@@ -225,6 +239,12 @@ BitmapDownloader.Listeners{
 
     private fun resultToViewEffect(result: Lce<AddPropertyResult>){
         if(result is Lce.Content){
+            currentViewState.copy(
+                    isADraft = false,
+                    listAgents = null,
+                    errors = null,
+                    isLoading = false
+            )
             when(result.packet){
                 is AddPropertyResult.PropertyFromDBResult -> {
                     viewEffectLD.value = AddPropertyViewEffect.PropertyFromDBEffect(
@@ -679,25 +699,29 @@ BitmapDownloader.Listeners{
         resultToViewEffect(result)
         }
 
-        if(savedProperty == null && actionType == MODIFY_PROPERTY){
-            fetchExistingPropertyFromDB()
-        } else {
-            savedProperty?.let {
-                propertyId = savedProperty.id
-                agentId = it.agent
-                if (agentId != null) {
-                    searchAgentsJob = launch {
-                        agent = agentRepository.getAgent(agentId!!)[0]
-                        emitResult()
-                    }
-                } else {
-                    emitResult()
+        if(savedProperty == null){
+            when(actionType){
+                MODIFY_PROPERTY -> fetchExistingPropertyFromDB()
+                NEW_PROPERTY -> {
+                    val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.NewPropertyResult)
+                    displayData("$result")
+                    resultToViewState(result)
                 }
-                pictures = it.pictures.sortedBy { picture -> picture.orderNumber }.toMutableList()
-                emitResultPictureModification()
-
             }
+        } else {
+            propertyId = savedProperty.id
+            agentId = savedProperty.agent
+            agentId?.let {
+                searchAgentsJob = launch {
+                    agent = agentRepository.getAgent(it)[0]
+                }
+            }
+            emitResult()
+            pictures = savedProperty.pictures.sortedBy { picture -> picture.orderNumber }.toMutableList()
+            emitResultPictureModification()
+
         }
+
     }
 
 

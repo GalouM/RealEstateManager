@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
+import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Amenity
 import com.openclassrooms.realestatemanager.data.entity.Picture
@@ -36,7 +37,7 @@ import com.smarteist.autoimageslider.SliderView
  * A simple [Fragment] subclass.
  *
  */
-class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
+class DetailsPropertyView : BaseFragmentREM(), REMView<DetailsPropertyViewState> {
 
     @BindView(R.id.details_view_description) lateinit var description: TextView
     @BindView(R.id.details_view_surface) lateinit var surface: TextView
@@ -150,11 +151,7 @@ class DetailsPropertyView : Fragment(), REMView<DetailsPropertyViewState> {
         state.address?.let { renderFetchedAddress(it) }
         state.amenities?.let { renderFetchedAmenities(it) }
 
-        renderIsLoading(state.isLoading)
-    }
-
-    private fun renderIsLoading(loading: Boolean){
-
+        renderLoading(state.isLoading)
     }
 
     private fun renderFetchedProperty(property: Property){

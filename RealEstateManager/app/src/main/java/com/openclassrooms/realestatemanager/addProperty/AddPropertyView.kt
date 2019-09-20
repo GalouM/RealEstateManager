@@ -30,6 +30,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.addProperty.ErrorSourceAddProperty.*
+import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.data.entity.Picture
 import com.openclassrooms.realestatemanager.injection.Injection
@@ -48,7 +49,7 @@ import java.util.*
  * A simple [Fragment] subclass.
  *
  */
-class AddPropertyView : Fragment(), REMView<AddPropertyViewState>,
+class AddPropertyView : BaseFragmentREM(), REMView<AddPropertyViewState>,
         PickDateDialogView.OnOkButtonListener, ListAgentsDialogView.OnAgentSelected, ListPictureAdapter.Listener,
 SnackBarListener{
 
@@ -84,7 +85,6 @@ SnackBarListener{
     @BindView(R.id.add_property_view_dropdown_agent_inputlayout) lateinit var agentLayout: TextInputLayout
     @BindView(R.id.add_property_view_type_inputlayout) lateinit var typeLayout: TextInputLayout
     @BindView(R.id.add_property_view_picture_rv) lateinit var recyclerViewPictures: RecyclerView
-    @BindView(R.id.add_property_view_progress_bar) lateinit var progressBar: ProgressBar
 
     private lateinit var viewModel: AddPropertyViewModel
     private var currentCurrency: Currency? = null
@@ -182,6 +182,8 @@ SnackBarListener{
 
     fun toolBarValidateClickListener(){
         disableAllErrors()
+
+        if(loading) return
 
         if(isInternetAvailable(activity!!)){
             emitSaveToDBIntent()
@@ -375,10 +377,9 @@ SnackBarListener{
             return
         }
 
-        if(state.isLoading){
-            renderIsLoading(state.isLoading)
-            return
-        }
+        displayData("loading prop ${state.isLoading}")
+
+        renderLoading(state.isLoading)
 
         if(state.errors != null){
             renderErrors(state.errors)
@@ -458,10 +459,6 @@ SnackBarListener{
     private fun renderPictures(pictures: List<Picture>){
         adapter.update(pictures)
         recyclerViewPictures.scrollToPosition(pictures.size - 1)
-    }
-
-    private fun renderIsLoading(loading: Boolean){
-        progressBar.visibility = if(loading) View.VISIBLE else View.INVISIBLE
     }
 
     private fun disableAllErrors(){

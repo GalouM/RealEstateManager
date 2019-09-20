@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         }
         if(requestCode == RC_CODE_ADD_PROPERTY){
             if(resultCode == RESULT_SAVED_TO_DB){
+                showSnackBarMessage(getString(R.string.property_added))
                 updatePropertiesShown()
             }
             if(resultCode == RESULT_SAVED_TO_DRAFT){
@@ -318,7 +319,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
         state.errorSource?.let { renderErrorOpeningActivity(it) }
 
-        if(state.newDataUploaded) renderNewPropertyAdded()
+        if(state.newDataUploaded) renderNewPropertyAdded(state.propertyAdded)
 
         renderLoading(state.isLoading)
         renderChangeCurrency(state.currency)
@@ -345,7 +346,13 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
 
     }
 
-    private fun renderNewPropertyAdded(){
+    private fun renderNewPropertyAdded(numberPropertyAdded: Int){
+        val message = when(numberPropertyAdded){
+            0 -> getString(R.string.no_new_property)
+            1 -> String.format(getString(R.string.nb_property_added), "$numberPropertyAdded")
+            else -> String.format(getString(R.string.nb_properties_added), "$numberPropertyAdded")
+        }
+        showSnackBarMessage(message)
         updatePropertiesShown()
     }
 
@@ -366,6 +373,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     }
 
     private fun renderLoading(loading: Boolean){
+        displayData("loading: $loading")
         if(loading){
             progressbar.visibility = View.VISIBLE
             downloading = true
@@ -380,7 +388,6 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     //--------------------
 
     private fun updatePropertiesShown(){
-        showSnackBarMessage(getString(R.string.property_added))
         callbackListPropertiesRefresh?.get()?.onListPropertiesChange()
         callbackMapPropertiesRefresh?.get()?.onListPropertiesChange()
     }

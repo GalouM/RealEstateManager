@@ -49,12 +49,8 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             property: PropertyWithAllData, glide: RequestManager,
             currency: Currency?, context: Context, isDoubleScreen: Boolean
     ){
-        displayData("${property}")
-
-
         this.context = context
         isSold = property.property.sold
-
 
         if(property.pictures.isNotEmpty()){
             val firstPicture = property.pictures.minBy{it.orderNumber!!}
@@ -64,8 +60,6 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             } catch (e: Exception) {
             }
         }
-
-
 
         type.text = property.property.type.typeName
         neighborhood.text = property.address[0].neighbourhood

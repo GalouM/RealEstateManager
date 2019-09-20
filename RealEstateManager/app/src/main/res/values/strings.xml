@@ -119,5 +119,8 @@
     <string name="connect_data_update">Please connect to internet to upload the latest property from the network</string>
     <string name="no_wifi_message">You are not connected to wifi. Do you wish to download data from the network anyways?</string>
     <string name="no_wifi_title">No wifi connection</string>
+    <string name="nb_property_added">%s property was added</string>
+    <string name="nb_properties_added">%s properties were added</string>
+    <string name="no_new_property">No new property</string>
 
 </resources>

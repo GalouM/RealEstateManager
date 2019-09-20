@@ -15,13 +15,14 @@ data class MainActivityViewState(
         val errorSource: ErrorSourceMainActivity? = null,
         val isLoading: Boolean = false,
         val currency: Currency = Currency.EURO,
-        val newDataUploaded: Boolean = false
+        val newDataUploaded: Boolean = false,
+        val propertyAdded: Int = 0
 ) : REMViewState
 
 sealed class MainActivityResult : REMResult{
     object OpenAddPropertyResult: MainActivityResult()
     data class ChangeCurrencyResult(val currency: Currency) : MainActivityResult()
-    data class UpdataDataFromNetwork(val errorSource: ErrorSourceMainActivity?) : MainActivityResult()
+    data class UpdateDataFromNetwork(val errorSource: ErrorSourceMainActivity?, val numberPropertyAdded: Int) : MainActivityResult()
 }
 
 sealed class MainActivityIntent : REMIntent{

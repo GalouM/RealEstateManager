@@ -81,12 +81,13 @@ class MainActivityViewModel(
                                 currency = result.packet.currency
                                 )
                     }
-                    is MainActivityResult.UpdataDataFromNetwork -> {
+                    is MainActivityResult.UpdateDataFromNetwork -> {
                         currentViewState.copy(
                                 isOpenAddProperty = false,
                                 errorSource = null,
                                 isLoading = false,
-                                newDataUploaded = true
+                                newDataUploaded = true,
+                                propertyAdded = result.packet.numberPropertyAdded
                         )
                     }
                 }
@@ -115,7 +116,7 @@ class MainActivityViewModel(
                                 isOpenAddProperty = false
                         )
                     }
-                    is MainActivityResult.UpdataDataFromNetwork -> {
+                    is MainActivityResult.UpdateDataFromNetwork -> {
                         currentViewState.copy(
                                 newDataUploaded = false,
                                 isOpenAddProperty = false,
@@ -159,6 +160,8 @@ class MainActivityViewModel(
 
     private fun downloadLatestDataFromNetwork(context: Context){
         resultToViewState(Lce.Loading())
+
+        displayData("$latestUpdate")
 
         propertyRepository.getAllPropertiesFromNetwork(latestUpdate)
                 .addOnCompleteListener { task ->
@@ -234,7 +237,6 @@ class MainActivityViewModel(
                 val tempFile = filePathToInternalStorage(context, generateName(), TypeImage.AGENT)
                 val picAgentDownload = agentRepository.getReferenceAgentPicture(agent.id).getFile(tempFile)
                         .addOnCompleteListener { storageTask ->
-                            displayData("${storageTask.isSuccessful}")
                             agent.urlProfilePicture = if(storageTask.isSuccessful){
                                 tempFile.absolutePath
                             } else null
@@ -250,7 +252,7 @@ class MainActivityViewModel(
                         if(task.isSuccessful){
                             picture.url = tempFilePicture.absolutePath
                             addPictureToGallery(context, tempFilePicture.absolutePath)
-                        } else displayData("picture failed ${picture.serverUrl}")
+                        }
                     }
             storageOperation.add(pictureDownload)
             picture.thumbnailUrl?.let { _ ->
@@ -276,16 +278,14 @@ class MainActivityViewModel(
                     .addOnCompleteListener{ taskStorage->
                         if(taskStorage.isSuccessful) {
                             address.mapIconUrl = tempFileMap.absolutePath
-                        } else displayData("address failed" + address.propertyId)
+                        }
                     }
             storageOperation.add(mapDownload)
 
         }
 
         Tasks.whenAll(storageOperation).addOnCompleteListener {
-            if(!it.isSuccessful){
-                emitResultNetworkRequestFailure(ERROR_DOWNLOADING_IMAGES)
-            }
+            if(!it.isSuccessful) emitResultNetworkRequestFailure(ERROR_DOWNLOADING_IMAGES)
             createNewDataInDBLocally()
             saveDataRepository.lastUpdateFromNetwork = todaysDate
 
@@ -294,22 +294,21 @@ class MainActivityViewModel(
 
     private fun emitResultNetworkRequestFailure(error: ErrorSourceMainActivity){
         val result: Lce<MainActivityResult> = Lce.Error(
-                MainActivityResult.UpdataDataFromNetwork(error)
+                MainActivityResult.UpdateDataFromNetwork(error, 0)
         )
         resultToViewState(result)
 
     }
 
     private fun createNewDataInDBLocally(){
-        displayData("list agent: $newAgents")
-        displayData("list picture: $newPictures")
-        displayData("list address: $newAddresses")
         if(createPropertiesAndDataJob?.isActive == true) createPropertiesAndDataJob?.cancel()
         createPropertiesAndDataJob = launch {
             agentRepository.createAllNewAgents(newAgents)
             propertyRepository.createDownloadedDataLocally(newProperty, newAddresses, newPictures, newAmenities)
 
-            val result: Lce<MainActivityResult> = Lce.Content(MainActivityResult.UpdataDataFromNetwork(null))
+            val result: Lce<MainActivityResult> = Lce.Content(
+                    MainActivityResult.UpdateDataFromNetwork(null, newProperty.size)
+            )
             resultToViewState(result)
         }
     }

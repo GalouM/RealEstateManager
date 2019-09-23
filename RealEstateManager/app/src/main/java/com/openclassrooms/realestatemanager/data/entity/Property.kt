@@ -1,17 +1,21 @@
 package com.openclassrooms.realestatemanager.data.entity
 
+import android.content.ContentValues
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.openclassrooms.realestatemanager.data.database.Converters
+import com.openclassrooms.realestatemanager.utils.PROPERTY_TABLE_NAME
 import com.openclassrooms.realestatemanager.utils.TypeProperty
+import com.openclassrooms.realestatemanager.utils.extensions.toDate
 import java.util.*
 
 /**
  * Created by galou on 2019-07-03
  */
 @Entity(
-        tableName = "properties",
+        tableName = PROPERTY_TABLE_NAME,
         foreignKeys = [
     ForeignKey(
             entity = Agent::class,
@@ -19,7 +23,7 @@ import java.util.*
             childColumns = ["agent"],
             onDelete = ForeignKey.NO_ACTION)])
 data class Property (
-        @ColumnInfo(name = "property_id") @PrimaryKey val id: String = "",
+        @ColumnInfo(name = "property_id") @PrimaryKey var id: String = "",
         @ColumnInfo(name = "type_property")var type: TypeProperty = TypeProperty.HOUSE,
         var price: Double = 0.0,
         var surface: Double = 0.0,
@@ -32,6 +36,9 @@ data class Property (
         @ColumnInfo(name = "sell_date") var sellDate: Date? = null,
         var agent: String = "",
         @ColumnInfo(name = "has_picture") var hasPictures: Boolean = false,
-        @ColumnInfo(name = "creation_date") val creationDate: Date = Date()
+        @ColumnInfo(name = "creation_date") var creationDate: Date = Date()
 )
+
+
+
 

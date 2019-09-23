@@ -114,21 +114,13 @@ class PropertyRepository(
                     ActionType.MODIFY_PROPERTY -> propertyDao.updateProperty(property)
                 }
             }
-            launch {
-                amenityDao.insertAmenity(amenities)
-            }
+            launch { amenityDao.insertAmenity(amenities) }
 
-            launch {
-                pictureDao.updatePicture(picturesToUpdate)
-            }
+            launch { pictureDao.updatePicture(picturesToUpdate) }
 
-            launch {
-                pictureDao.insertPicture(newPictures)
-            }
+            launch { pictureDao.insertPicture(newPictures) }
 
-            launch {
-                pictureDao.deletePictures(picturesToDelete.map { it.id })
-            }
+            launch { pictureDao.deletePictures(picturesToDelete.map { it.id }) }
 
             launch {
                 when(actionType){
@@ -138,9 +130,7 @@ class PropertyRepository(
 
             }
 
-            launch {
-                amenityDao.deleteAmenities(amenityToDelete.map{ it.id })
-            }
+            launch { amenityDao.deleteAmenities(amenityToDelete.map{ it.id }) }
 
         }
     }

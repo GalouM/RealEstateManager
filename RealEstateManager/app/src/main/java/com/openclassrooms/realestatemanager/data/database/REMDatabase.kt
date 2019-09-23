@@ -13,7 +13,7 @@ import com.openclassrooms.realestatemanager.data.entity.*
  */
 @Database(entities = [Address::class, Agent::class, Amenity::class, Picture::class, Property::class], version = 1)
 @TypeConverters(Converters::class)
-public abstract class REMDatabase : RoomDatabase(){
+abstract class REMDatabase : RoomDatabase(){
 
     // --- DAO
     abstract fun addressDao(): AddressDao

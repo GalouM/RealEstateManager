@@ -1,10 +1,9 @@
 package com.openclassrooms.realestatemanager.data.database.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Update
+import android.database.Cursor
+import androidx.room.*
 import com.openclassrooms.realestatemanager.data.entity.Address
+import com.openclassrooms.realestatemanager.utils.ADDRESS_TABLE_NAME
 
 /**
  * Created by galou on 2019-07-03
@@ -21,6 +20,9 @@ interface AddressDao {
 
     @Update
     suspend fun updateAddress(address: Address)
+
+    @Query("SELECT * FROM $ADDRESS_TABLE_NAME WHERE address_id = :addressId")
+    suspend fun getAddressWithCursor(addressId: String): Cursor
 
 
 }

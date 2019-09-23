@@ -1,15 +1,17 @@
 package com.openclassrooms.realestatemanager.data.entity
 
+import android.content.ContentValues
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.openclassrooms.realestatemanager.utils.PICTURE_TABLE_NAME
 
 /**
  * Created by galou on 2019-07-03
  */
 @Entity(
-        tableName = "pictures",
+        tableName = PICTURE_TABLE_NAME,
         foreignKeys = [
     ForeignKey(
             entity = Property::class,
@@ -20,7 +22,7 @@ import androidx.room.PrimaryKey
         ]
 )
 data class Picture(
-        @PrimaryKey @ColumnInfo(name = "picture_id") val id: String = "",
+        @PrimaryKey @ColumnInfo(name = "picture_id") var id: String = "",
         var url: String = "",
         @ColumnInfo(name = "thumbnail_url") var thumbnailUrl: String? = null,
         @ColumnInfo(name = "server_url") var serverUrl: String? = null,

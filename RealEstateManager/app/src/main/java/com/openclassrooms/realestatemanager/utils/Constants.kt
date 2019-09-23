@@ -53,7 +53,6 @@ const val RC_CODE_DETAIL_PROPERTY = 108
 // RESULT CODE
 const val RESULT_SAVED_TO_DB = 500
 const val RESULT_SAVED_TO_DRAFT = 501
-const val RESULT_PROPERTY_MODIFIED = 502
 
 // PERMISSIONS
 const val PERMS_LOCALISATION = Manifest.permission.ACCESS_FINE_LOCATION
@@ -71,3 +70,14 @@ const val STORAGE_PATH_AGENT_PICTURE = "images/agentsPicture/"
 const val STORAGE_PATH_PROPERTY_PICTURE = "images/propertyPicture/"
 const val STORAGE_PATH_PROPERTY_PICTURE_THUMBNAIL = "images/propertyPicture/thumbnail/"
 const val STORAGE_PATH_MAP = "map/"
+
+// PROVIDER
+const val AUTHORITY = "com.openclassrooms.realestatemanager.provider"
+const val URI_PATH = "content://$AUTHORITY/%s"
+
+// TABLE NAME
+const val PROPERTY_TABLE_NAME = "properties"
+const val PICTURE_TABLE_NAME = "pictures"
+const val ADDRESS_TABLE_NAME = "address"
+const val AMENITY_TABLE_NAME = "amenities"
+const val AGENT_TABLE_NAME = "agents"

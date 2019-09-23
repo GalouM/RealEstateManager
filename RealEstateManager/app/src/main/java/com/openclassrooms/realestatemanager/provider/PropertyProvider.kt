@@ -35,10 +35,13 @@ class PropertyProvider : ContentProvider() {
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
         context?.let{ context ->
+            /*
             val propertyId = ContentUris.parseId(uri).toString()
             val cursor = REMDatabase.getDatabase(context).propertyDao().getPropertyWithCursor(propertyId)
             cursor.setNotificationUri(context.contentResolver, uri)
             return cursor
+
+             */
         }
 
         throw Exception("Failed to query row for uri $uri")

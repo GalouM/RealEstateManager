@@ -20,7 +20,4 @@ interface PictureDao {
 
     @Update
     suspend fun updatePicture(pictures: List<Picture>)
-
-    @Query("SELECT * FROM $PICTURE_TABLE_NAME WHERE picture_id = :pictureId")
-    suspend fun getPictureWithCursor(pictureId: String): Cursor
 }

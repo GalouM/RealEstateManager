@@ -21,6 +21,4 @@ interface AmenityDao {
     @Query("DELETE FROM $AMENITY_TABLE_NAME WHERE amenity_id IN (:amenitiesId)")
     suspend fun deleteAmenities(amenitiesId: List<String>)
 
-    @Query("SELECT * FROM $AMENITY_TABLE_NAME WHERE amenity_id = :amenityId")
-    suspend fun getAmenityWithCursor(amenityId: String): Cursor
 }

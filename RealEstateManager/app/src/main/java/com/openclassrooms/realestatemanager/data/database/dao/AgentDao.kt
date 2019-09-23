@@ -20,8 +20,6 @@ interface AgentDao {
     @Query("SELECT * FROM $AGENT_TABLE_NAME WHERE agent_id = :agentId")
     suspend fun getAgent(agentId: String): List<Agent>
 
-    @Query("SELECT * FROM $AGENT_TABLE_NAME WHERE agent_id = :agentId")
-    fun getAgentWithCursor(agentId: String): Cursor
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createAgent(agent: Agent): Long

@@ -37,9 +37,6 @@ import java.util.concurrent.TimeUnit
  */
 class PropertyRepository(
         private val propertyDao: PropertyDao,
-        private val amenityDao: AmenityDao,
-        private val pictureDao: PictureDao,
-        private val addressDao: AddressDao,
         private val geocodingApiService: GeocodingApiService
 ){
 
@@ -107,43 +104,20 @@ class PropertyRepository(
             property: Property, amenities: List<Amenity>, newPictures: List<Picture>, picturesToDelete: List<Picture>, picturesToUpdate: List<Picture>,
             address: Address, actionType: ActionType, amenityToDelete: List<Amenity>
     ){
-        coroutineScope {
-            launch {
-                when(actionType){
-                    ActionType.NEW_PROPERTY -> propertyDao.createProperty(property)
-                    ActionType.MODIFY_PROPERTY -> propertyDao.updateProperty(property)
-                }
-            }
-            launch { amenityDao.insertAmenity(amenities) }
-
-            launch { pictureDao.updatePicture(picturesToUpdate) }
-
-            launch { pictureDao.insertPicture(newPictures) }
-
-            launch { pictureDao.deletePictures(picturesToDelete.map { it.id }) }
-
-            launch {
-                when(actionType){
-                    ActionType.NEW_PROPERTY -> addressDao.createAddress(address)
-                    ActionType.MODIFY_PROPERTY -> addressDao.updateAddress(address)
-                }
-
-            }
-
-            launch { amenityDao.deleteAmenities(amenityToDelete.map{ it.id }) }
-
+        when(actionType){
+            ActionType.NEW_PROPERTY -> propertyDao.createPropertyAndData(
+                    property, address, newPictures, amenities
+            )
+            ActionType.MODIFY_PROPERTY -> propertyDao.updatePropertyAndData(
+                    property, address, newPictures, amenities, picturesToDelete, picturesToUpdate, amenityToDelete
+            )
         }
     }
 
     suspend fun createDownloadedDataLocally(
             properties: List<Property>, addresses: List<Address>, pictures: List<Picture>, amenities: List<Amenity>
     ){
-        coroutineScope {
-            launch { propertyDao.createProperties(properties) }
-            launch { addressDao.createAddresses(addresses) }
-            launch { pictureDao.insertPicture(pictures) }
-            launch { amenityDao.insertAmenity(amenities) }
-        }
+        propertyDao.createPropertiesAndData(properties, addresses, pictures, amenities)
 
     }
 
@@ -281,14 +255,11 @@ class PropertyRepository(
         @Volatile
         private var INSTANCE: PropertyRepository? = null
         fun getPropertyRepository(propertyDao: PropertyDao,
-                                  amenityDao: AmenityDao,
-                                  pictureDao: PictureDao,
-                                  addressDao: AddressDao,
                                   geocodingApiService: GeocodingApiService): PropertyRepository {
             return INSTANCE
                     ?: synchronized(this){
                         val instance = PropertyRepository(
-                                propertyDao, amenityDao, pictureDao, addressDao, geocodingApiService)
+                                propertyDao, geocodingApiService)
                         INSTANCE = instance
                         return instance
                     }

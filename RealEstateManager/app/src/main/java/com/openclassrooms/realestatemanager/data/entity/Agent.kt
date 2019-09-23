@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.openclassrooms.realestatemanager.utils.AGENT_TABLE_NAME
 import com.openclassrooms.realestatemanager.utils.extensions.toDate
+import com.openclassrooms.realestatemanager.utils.todaysDate
 import java.util.*
 
 /**

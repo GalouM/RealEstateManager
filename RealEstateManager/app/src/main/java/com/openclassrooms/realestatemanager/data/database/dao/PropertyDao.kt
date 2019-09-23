@@ -26,8 +26,6 @@ abstract class PropertyDao(private val database: REMDatabase) {
     @Query("SELECT * FROM $PROPERTY_TABLE_NAME WHERE property_id = :propertyId")
     abstract suspend fun getProperty(propertyId: String): List<PropertyWithAllData>
 
-    @Query("SELECT * FROM $PROPERTY_TABLE_NAME WHERE property_id = :propertyId")
-    abstract fun getPropertyWithCursor(propertyId: String): Cursor
 
     @Query("SELECT * FROM $PROPERTY_TABLE_NAME ORDER BY on_market_since")
     abstract suspend fun getAllProperties(): List<PropertyWithAllData>
@@ -55,7 +53,7 @@ abstract class PropertyDao(private val database: REMDatabase) {
     ): List<PropertyWithAllData>
 
     @Query("SELECT * FROM $PROPERTY_TABLE_NAME " +
-            "INNER JOIN $AMENITY_TABLE_NAME ON AMENITY_TABLE_NAME.property = $PROPERTY_TABLE_NAME.property_id " +
+            "INNER JOIN $AMENITY_TABLE_NAME ON $AMENITY_TABLE_NAME.property = $PROPERTY_TABLE_NAME.property_id " +
             "INNER JOIN $ADDRESS_TABLE_NAME ON $ADDRESS_TABLE_NAME.address_id = $PROPERTY_TABLE_NAME.property_id WHERE " +
             "(amenities.type_amenity IN (:listAmenities)) " +
             "AND (address.neighbourhood LIKE :neighborhood) " +
@@ -100,6 +98,16 @@ abstract class PropertyDao(private val database: REMDatabase) {
         database.pictureDao().updatePicture(picturesToUpdate)
         database.pictureDao().insertPicture(newPictures)
         database.amenityDao().deleteAmenities(amenitiesToDelete.map { it.id })
+        database.amenityDao().insertAmenity(amenities)
+    }
+
+    @Transaction
+    open suspend fun createPropertiesAndData(
+            properties: List<Property>, addresses: List<Address>, pictures: List<Picture>, amenities: List<Amenity>
+    ){
+        createProperties(properties)
+        database.addressDao().createAddresses(addresses)
+        database.pictureDao().insertPicture(pictures)
         database.amenityDao().insertAmenity(amenities)
     }
 

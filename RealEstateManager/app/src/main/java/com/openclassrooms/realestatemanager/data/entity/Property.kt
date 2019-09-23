@@ -9,6 +9,7 @@ import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.utils.PROPERTY_TABLE_NAME
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import com.openclassrooms.realestatemanager.utils.extensions.toDate
+import com.openclassrooms.realestatemanager.utils.todaysDate
 import java.util.*
 
 /**

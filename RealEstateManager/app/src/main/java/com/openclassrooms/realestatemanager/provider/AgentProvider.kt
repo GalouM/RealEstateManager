@@ -41,10 +41,13 @@ class AgentProvider : ContentProvider() {
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
         context?.let{ context ->
+            /*
             val agentId = ContentUris.parseId(uri).toString()
             val cursor = REMDatabase.getDatabase(context).agentDao().getAgentWithCursor(agentId)
             cursor.setNotificationUri(context.contentResolver, uri)
             return cursor
+
+             */
         }
 
         throw Exception("Failed to query row for uri $uri")

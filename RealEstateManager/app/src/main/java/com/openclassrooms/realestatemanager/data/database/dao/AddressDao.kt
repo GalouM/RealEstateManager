@@ -21,8 +21,6 @@ interface AddressDao {
     @Update
     suspend fun updateAddress(address: Address)
 
-    @Query("SELECT * FROM $ADDRESS_TABLE_NAME WHERE address_id = :addressId")
-    suspend fun getAddressWithCursor(addressId: String): Cursor
 
 
 }

@@ -15,6 +15,7 @@ import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 /**
@@ -172,11 +173,21 @@ class MainActivityViewModel(
     private fun getDataAndAgent(context: Context){
         val networkOperations = mutableListOf<Task<*>>()
 
+        var dataEmpty = false
+
+        runBlocking {
+            val agents = agentRepository.getAllAgents()
+            val properties = propertyRepository.getAllProperties()
+            dataEmpty = agents.isEmpty() && properties.isEmpty()
+        }
+
+        latestUpdate = if(dataEmpty) null else latestUpdate
+
         val agentsDownload = agentRepository.getAgentsFromNetwork(latestUpdate)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result?.documents?.forEach { document ->
-                            document.toObject(Agent::class.java)?.let { newAgents.add(it) }
+                            document.toObject(Agent::class.java)?.let {newAgents.add(it) }
                         }
                     }
                 }
@@ -266,7 +277,7 @@ class MainActivityViewModel(
         }
 
         newAddresses.forEach { address ->
-            val tempFileMap = filePathToInternalStorage(context, generateName(), TypeImage.ICON_MAP)
+            val tempFileMap = filePathToInternalStorage(context, address.propertyId, TypeImage.ICON_MAP)
             val mapDownload = propertyRepository.getMapStorageReference(address.propertyId).getFile(tempFileMap)
                     .addOnCompleteListener{ taskStorage->
                         if(taskStorage.isSuccessful) {
@@ -297,6 +308,7 @@ class MainActivityViewModel(
         if(createPropertiesAndDataJob?.isActive == true) createPropertiesAndDataJob?.cancel()
         createPropertiesAndDataJob = launch {
             agentRepository.createAllNewAgents(newAgents)
+            val agents = agentRepository.getAllAgents()
             propertyRepository.createDownloadedDataLocally(newProperty, newAddresses, newPictures, newAmenities)
 
             val result: Lce<MainActivityResult> = Lce.Content(

@@ -14,7 +14,7 @@ import com.openclassrooms.realestatemanager.utils.AGENT_TABLE_NAME
 interface AddressDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createAddress(address: Address): Long
+    suspend fun createAddress(address: Address)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createAddresses(addresses: List<Address>)

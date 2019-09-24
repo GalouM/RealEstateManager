@@ -14,7 +14,7 @@ import com.openclassrooms.realestatemanager.utils.PICTURE_TABLE_NAME
 interface PictureDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPicture(pictures: List<Picture>): List<Long>
+    suspend fun insertPicture(pictures: List<Picture>)
 
     @Query("DELETE FROM $PICTURE_TABLE_NAME WHERE picture_id IN (:pictureId)")
     suspend fun deletePictures(pictureId: List<String>)

@@ -15,13 +15,13 @@ import java.util.*
 abstract class PropertyDao(private val database: REMDatabase) {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun createProperty(property: Property): Long
+    abstract suspend fun createProperty(property: Property)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun createProperties(properties: List<Property>)
 
     @Update
-    abstract suspend fun updateProperty(property: Property): Int
+    abstract suspend fun updateProperty(property: Property)
 
     @Query("SELECT * FROM $PROPERTY_TABLE_NAME WHERE property_id = :propertyId")
     abstract suspend fun getProperty(propertyId: String): List<PropertyWithAllData>
@@ -79,27 +79,25 @@ abstract class PropertyDao(private val database: REMDatabase) {
     @Transaction
     open suspend fun createPropertyAndData(
             property: Property, address: Address, pictures: List<Picture>, amenities: List<Amenity>
-    ): Long{
-        val idRoom = createProperty(property)
+    ){
+        createProperty(property)
         database.addressDao().createAddress(address)
         database.pictureDao().insertPicture(pictures)
         database.amenityDao().insertAmenity(amenities)
-        return idRoom
     }
 
     @Transaction
     open suspend fun updatePropertyAndData(
             property: Property, address: Address, newPictures: List<Picture>, amenities: List<Amenity>,
             picturesToDelete: List<Picture>, picturesToUpdate: List<Picture>, amenitiesToDelete: List<Amenity>
-    ): Int{
-        val idRoom = updateProperty(property)
+    ){
+        updateProperty(property)
         database.addressDao().updateAddress(address)
         database.pictureDao().deletePictures(picturesToDelete.map { it.id })
         database.pictureDao().updatePicture(picturesToUpdate)
         database.pictureDao().insertPicture(newPictures)
         database.amenityDao().deleteAmenities(amenitiesToDelete.map { it.id })
         database.amenityDao().insertAmenity(amenities)
-        return idRoom
     }
 
     @Transaction

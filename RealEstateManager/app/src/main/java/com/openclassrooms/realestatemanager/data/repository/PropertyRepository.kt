@@ -15,17 +15,12 @@ import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.data.api.GeocodingApiService
 import com.openclassrooms.realestatemanager.data.api.reponse.GeocodingApiResponse
-import com.openclassrooms.realestatemanager.data.database.dao.AddressDao
-import com.openclassrooms.realestatemanager.data.database.dao.AmenityDao
-import com.openclassrooms.realestatemanager.data.database.dao.PictureDao
 import com.openclassrooms.realestatemanager.data.database.dao.PropertyDao
 import com.openclassrooms.realestatemanager.data.entity.*
 import com.openclassrooms.realestatemanager.utils.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream

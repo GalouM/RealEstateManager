@@ -1,18 +1,14 @@
 package com.openclassrooms.realestatemanager.provider
 
 import android.content.ContentProvider
-import android.content.ContentUris
 import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import com.openclassrooms.realestatemanager.data.database.REMDatabase
 import com.openclassrooms.realestatemanager.utils.*
 import kotlinx.coroutines.runBlocking
-import java.lang.Exception
-import java.lang.IllegalArgumentException
 
 /**
  * Created by galou on 2019-09-22

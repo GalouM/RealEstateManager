@@ -4,7 +4,6 @@ import android.database.Cursor
 import androidx.room.*
 import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.utils.ADDRESS_TABLE_NAME
-import com.openclassrooms.realestatemanager.utils.AGENT_TABLE_NAME
 
 /**
  * Created by galou on 2019-07-03

@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.openclassrooms.realestatemanager.data.entity.Amenity
 import com.openclassrooms.realestatemanager.utils.AMENITY_TABLE_NAME
-import com.openclassrooms.realestatemanager.utils.PICTURE_TABLE_NAME
 
 /**
  * Created by galou on 2019-07-03

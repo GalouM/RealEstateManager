@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.data.entity
 
-import android.content.ContentValues
 import androidx.room.*
 import com.openclassrooms.realestatemanager.utils.PICTURE_TABLE_NAME
 

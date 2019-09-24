@@ -1,12 +1,11 @@
 package com.openclassrooms.realestatemanager.data.entity
 
-import android.content.ContentValues
-import androidx.room.*
-import com.openclassrooms.realestatemanager.data.database.Converters
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 import com.openclassrooms.realestatemanager.utils.PROPERTY_TABLE_NAME
 import com.openclassrooms.realestatemanager.utils.TypeProperty
-import com.openclassrooms.realestatemanager.utils.extensions.toDate
-import com.openclassrooms.realestatemanager.utils.todaysDate
 import java.util.*
 
 /**

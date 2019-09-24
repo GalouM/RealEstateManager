@@ -1,8 +1,6 @@
 package com.openclassrooms.realestatemanager.data.entity
 
-import android.content.ContentValues
 import androidx.room.*
-import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.utils.AMENITY_TABLE_NAME
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 

@@ -5,15 +5,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
-import androidx.core.content.ContextCompat.getDrawable
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.request.RequestOptions
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
@@ -21,7 +17,6 @@ import com.openclassrooms.realestatemanager.utils.extensions.loadImage
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
 import com.openclassrooms.realestatemanager.utils.extensions.toEuroDisplay
-import com.openclassrooms.realestatemanager.utils.glideRequestListener
 
 /**
  * Created by galou on 2019-08-12

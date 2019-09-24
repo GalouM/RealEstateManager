@@ -71,7 +71,7 @@ const val STORAGE_PATH_PROPERTY_PICTURE = "images/propertyPicture/"
 const val STORAGE_PATH_PROPERTY_PICTURE_THUMBNAIL = "images/propertyPicture/thumbnail/"
 const val STORAGE_PATH_MAP = "map/"
 
-// PROVIDER
+// CONTENT PROVIDER
 const val AUTHORITY = "com.openclassrooms.realestatemanager.provider"
 const val URI_PATH = "content://$AUTHORITY"
 const val CODE_PROPERTY_DIR = 1

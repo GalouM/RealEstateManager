@@ -12,6 +12,8 @@ import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.extensions.toDate
+import com.openclassrooms.realestatemanager.utils.extensions.toEuro
+import com.openclassrooms.realestatemanager.utils.extensions.toSqMeter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
@@ -140,10 +142,11 @@ class SearchPropertyViewModel(
         }
 
         fun setQueryInput(){
-            minPrice?.let { minPriceQuery = it }
-            maxPrice?.let { maxPriceQuery = it }
-            minSurface?.let { minSurfaceQuery = it }
-            maxSurface?.let { maxSurfaceQuery = it }
+            val currentCurrency = if(currency.value != null) currency.value!! else Currency.EURO
+            minPrice?.let { minPriceQuery = it.toEuro(currentCurrency) }
+            maxPrice?.let { maxPriceQuery = it.toEuro(currentCurrency) }
+            minSurface?.let { minSurfaceQuery = it.toSqMeter(currentCurrency) }
+            maxSurface?.let { maxSurfaceQuery = it.toSqMeter(currentCurrency) }
             minNbRooms?.let { nbRoomQuery = it }
             minNbBedrooms?.let { nbBedroomQuery = it }
             minNbBathrooms?.let { nbBathroomQuery = it }

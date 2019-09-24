@@ -13,6 +13,7 @@ import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
@@ -39,7 +40,6 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
         ).get(ListPropertyViewModel::class.java)
 
         viewModel.viewState.observe(this, Observer { render(it) })
-        updatePropertiesDisplay()
 
     }
 
@@ -48,6 +48,7 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
         argument?.let{
             val actionType = ActionTypeList.valueOf(it)
             viewModel.actionFromIntent(PropertyListIntent.SetActionTypeIntent(actionType))
+            updatePropertiesDisplay()
         }
 
     }
@@ -59,12 +60,12 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
 
     override fun render(state: PropertyListViewState?) {
         if (state == null) return
-        if(state.openDetails) {
+        if (state.openDetails) {
             renderOpenPropertyDetails()
             return
         }
 
-        if(state.listProperties != null && currentCurrency != null && !state.isLoading){
+        if(state.listProperties != null  && !state.isLoading){
             renderListProperties(state.listProperties)
         }
 

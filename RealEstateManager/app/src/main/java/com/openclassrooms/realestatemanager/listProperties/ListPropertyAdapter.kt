@@ -48,7 +48,7 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
         return properties[position]
     }
 
-    fun updateCurrency(newCurrency: Currency){
+    fun updateCurrency(newCurrency: Currency?){
         currency = newCurrency
         notifyDataSetChanged()
     }

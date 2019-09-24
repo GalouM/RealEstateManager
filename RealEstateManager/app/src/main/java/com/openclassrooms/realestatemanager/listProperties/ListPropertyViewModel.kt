@@ -8,6 +8,7 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -106,6 +107,7 @@ class ListPropertyViewModel(
         var propertiesForDisplay: List<PropertyWithAllData>? = null
 
         fun emitResult(){
+            displayData("properties dipslay $propertiesForDisplay")
             val result: Lce<PropertyListResult> = if(propertiesForDisplay!!.isEmpty()){
                 Lce.Error(PropertyListResult.DisplayPropertiesResult(null))
             } else{
@@ -113,6 +115,8 @@ class ListPropertyViewModel(
             }
             resultToViewState(result)
         }
+
+        displayData("action type $actionType")
 
         when(actionType){
             ActionTypeList.ALL_PROPERTIES -> {

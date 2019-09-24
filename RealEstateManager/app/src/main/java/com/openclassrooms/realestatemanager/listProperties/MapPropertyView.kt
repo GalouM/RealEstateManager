@@ -123,7 +123,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
             userLocationBounds?.let{
                 if(it.contains(position)){
                     propertiesNearBy.add(property)
-                    displayPropertiesAround(currentCurrency!!)
+                    displayPropertiesAround(currentCurrency)
                 }
             }
         }
@@ -142,7 +142,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
     // MAP ACTIONS
     //--------------------
 
-    private fun displayPropertiesAround(currency: Currency) {
+    private fun displayPropertiesAround(currency: Currency?) {
         mapBoxMap?.clear()
         mapBoxMap?.onInfoWindowClickListener = this
         val iconFactory = IconFactory.getInstance(contextApp.applicationContext)
@@ -152,6 +152,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
             val snippet = when (currency) {
                 Currency.EURO -> "${it.property.price.toEuroDisplay()}€"
                 Currency.DOLLAR -> "$${it.property.price.toDollar().toDollarDisplay()}"
+                else -> "${it.property.price.toEuroDisplay()}€"
             }
             val markerREM = MarkerREMOptions()
                     .title(it.property.type.typeName)

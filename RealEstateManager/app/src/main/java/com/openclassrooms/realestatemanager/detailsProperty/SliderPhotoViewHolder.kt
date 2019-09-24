@@ -1,14 +1,17 @@
 package com.openclassrooms.realestatemanager.detailsProperty
 
+import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.Picture
+import com.openclassrooms.realestatemanager.utils.extensions.loadImage
 import com.smarteist.autoimageslider.SliderViewAdapter
 
 /**
@@ -25,7 +28,8 @@ class SliderPhotoViewHolder(itemView: View) : SliderViewAdapter.ViewHolder(itemV
     }
 
     fun updateWithPicture(picture: Picture, glide: RequestManager){
-        glide.load(picture.url).apply(RequestOptions.centerCropTransform()).into(imageViewBackground)
+
+        imageViewBackground.loadImage(picture.url, picture.serverUrl, glide)
         textViewDescription.text = picture.description
     }
 }

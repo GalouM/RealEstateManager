@@ -4,10 +4,16 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.utils.extensions.saveToInternalStorage
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -112,4 +118,5 @@ fun filePathToInternalStorage(context: Context, name: String, type: TypeImage): 
     val directory = wrapper.getDir(type.folder, Context.MODE_PRIVATE)
     return File(directory, "JPEG_${type}_$name.jpeg")
 }
+
 

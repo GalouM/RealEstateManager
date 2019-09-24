@@ -14,7 +14,6 @@ import java.util.*
  */
 @Entity(
         tableName = PROPERTY_TABLE_NAME,
-        //indices = [Index(value = ["agent"])],
         foreignKeys = [
     ForeignKey(
             entity = Agent::class,

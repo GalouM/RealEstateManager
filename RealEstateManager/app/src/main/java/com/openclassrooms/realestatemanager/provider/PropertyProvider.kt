@@ -23,6 +23,8 @@ class PropertyProvider : ContentProvider() {
     companion object{
         val uriProperty = "$URI_PATH/$PROPERTY_TABLE_NAME"
         val uriAgent = "$URI_PATH/$AGENT_TABLE_NAME"
+        val uriPictures = "$URI_PATH/$PICTURE_TABLE_NAME"
+        val uriAmenities = "$URI_PATH/$AMENITY_TABLE_NAME"
     }
 
 
@@ -80,11 +82,17 @@ class PropertyProvider : ContentProvider() {
            return when(uriMatcher.match(uri)){
                 CODE_PICTURE_ITEM -> database.pictureDao().getPictureWithCursor(id)
                 CODE_AMENITY_ITEM -> database.amenityDao().getAmenityWithCursor(id)
-                CODE_PROPERTY_AMENITIES -> database.amenityDao().getPropertyAmenitiesWithCursor(id)
-                CODE_PROPERTY_PICTURES -> database.pictureDao().getPropertyPicturesWithCursor(id)
+                CODE_PROPERTY_AMENITIES -> {
+                    val idProperty = uri.pathSegments[1]
+                    database.amenityDao().getPropertyAmenitiesWithCursor(idProperty)
+                }
+                CODE_PROPERTY_PICTURES -> {
+                    val idProperty = uri.pathSegments[1]
+                    database.pictureDao().getPropertyPicturesWithCursor(idProperty)
+                }
                 CODE_PROPERTY_ADDRESS -> {
-                    val idAddress = uri.pathSegments[1]
-                    database.addressDao().getAddressWithCursor(idAddress)
+                    val idProperty = uri.pathSegments[1]
+                    database.addressDao().getAddressWithCursor(idProperty)
                 }
                 CODE_PROPERTY_ITEM -> database.propertyDao().getPropertyWithCursor(id)
                 CODE_PROPERTY_DIR -> database.propertyDao().getAllPropertiesWithCursor()

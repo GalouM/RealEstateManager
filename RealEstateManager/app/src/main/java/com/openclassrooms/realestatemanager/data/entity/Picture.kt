@@ -9,7 +9,7 @@ import com.openclassrooms.realestatemanager.utils.PICTURE_TABLE_NAME
  */
 @Entity(
         tableName = PICTURE_TABLE_NAME,
-        indices = [Index(value = ["id_property"])],
+        indices = [Index(value = ["id_property", "order_number"], unique = true)],
         foreignKeys = [
     ForeignKey(
             entity = Property::class,

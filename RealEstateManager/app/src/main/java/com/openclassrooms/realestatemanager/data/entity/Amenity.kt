@@ -1,10 +1,7 @@
 package com.openclassrooms.realestatemanager.data.entity
 
 import android.content.ContentValues
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.utils.AMENITY_TABLE_NAME
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
@@ -13,6 +10,7 @@ import com.openclassrooms.realestatemanager.utils.TypeAmenity
  * Created by galou on 2019-07-03
  */
 @Entity( tableName = AMENITY_TABLE_NAME,
+        indices = [Index(value = ["property", "type_amenity"], unique = true)],
         foreignKeys = [
     ForeignKey(
             entity = Property::class,

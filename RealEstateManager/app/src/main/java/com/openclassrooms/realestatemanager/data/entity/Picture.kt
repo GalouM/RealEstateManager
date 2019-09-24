@@ -1,10 +1,7 @@
 package com.openclassrooms.realestatemanager.data.entity
 
 import android.content.ContentValues
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.openclassrooms.realestatemanager.utils.PICTURE_TABLE_NAME
 
 /**
@@ -12,6 +9,7 @@ import com.openclassrooms.realestatemanager.utils.PICTURE_TABLE_NAME
  */
 @Entity(
         tableName = PICTURE_TABLE_NAME,
+        indices = [Index(value = ["id_property"])],
         foreignKeys = [
     ForeignKey(
             entity = Property::class,

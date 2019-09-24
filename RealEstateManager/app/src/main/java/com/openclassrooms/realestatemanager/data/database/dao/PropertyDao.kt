@@ -21,11 +21,10 @@ abstract class PropertyDao(private val database: REMDatabase) {
     abstract suspend fun createProperties(properties: List<Property>)
 
     @Update
-    abstract suspend fun updateProperty(property: Property)
+    abstract suspend fun updateProperty(property: Property): Int
 
     @Query("SELECT * FROM $PROPERTY_TABLE_NAME WHERE property_id = :propertyId")
     abstract suspend fun getProperty(propertyId: String): List<PropertyWithAllData>
-
 
     @Query("SELECT * FROM $PROPERTY_TABLE_NAME ORDER BY on_market_since")
     abstract suspend fun getAllProperties(): List<PropertyWithAllData>
@@ -80,25 +79,27 @@ abstract class PropertyDao(private val database: REMDatabase) {
     @Transaction
     open suspend fun createPropertyAndData(
             property: Property, address: Address, pictures: List<Picture>, amenities: List<Amenity>
-    ){
-        createProperty(property)
+    ): Long{
+        val idRoom = createProperty(property)
         database.addressDao().createAddress(address)
         database.pictureDao().insertPicture(pictures)
         database.amenityDao().insertAmenity(amenities)
+        return idRoom
     }
 
     @Transaction
     open suspend fun updatePropertyAndData(
             property: Property, address: Address, newPictures: List<Picture>, amenities: List<Amenity>,
             picturesToDelete: List<Picture>, picturesToUpdate: List<Picture>, amenitiesToDelete: List<Amenity>
-    ){
-        updateProperty(property)
+    ): Int{
+        val idRoom = updateProperty(property)
         database.addressDao().updateAddress(address)
         database.pictureDao().deletePictures(picturesToDelete.map { it.id })
         database.pictureDao().updatePicture(picturesToUpdate)
         database.pictureDao().insertPicture(newPictures)
         database.amenityDao().deleteAmenities(amenitiesToDelete.map { it.id })
         database.amenityDao().insertAmenity(amenities)
+        return idRoom
     }
 
     @Transaction
@@ -110,5 +111,13 @@ abstract class PropertyDao(private val database: REMDatabase) {
         database.pictureDao().insertPicture(pictures)
         database.amenityDao().insertAmenity(amenities)
     }
+
+
+
+    @Query("SELECT * FROM $PROPERTY_TABLE_NAME ORDER BY on_market_since")
+    abstract  fun getAllPropertiesWithCursor(): Cursor
+
+    @Query("SELECT * FROM $PROPERTY_TABLE_NAME WHERE property_id = :propertyId")
+    abstract fun getPropertyWithCursor(propertyId: String): Cursor
 
 }

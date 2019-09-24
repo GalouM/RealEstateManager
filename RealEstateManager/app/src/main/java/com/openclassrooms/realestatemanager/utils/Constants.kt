@@ -73,7 +73,16 @@ const val STORAGE_PATH_MAP = "map/"
 
 // PROVIDER
 const val AUTHORITY = "com.openclassrooms.realestatemanager.provider"
-const val URI_PATH = "content://$AUTHORITY/%s"
+const val URI_PATH = "content://$AUTHORITY"
+const val CODE_PROPERTY_DIR = 1
+const val CODE_PROPERTY_ITEM = 2
+const val CODE_PROPERTY_ADDRESS = 3
+const val CODE_PROPERTY_AMENITIES = 4
+const val CODE_PROPERTY_PICTURES = 5
+const val CODE_AGENT_DIR = 6
+const val CODE_AGENT_ITEM = 7
+const val CODE_AMENITY_ITEM = 8
+const val CODE_PICTURE_ITEM = 9
 
 // TABLE NAME
 const val PROPERTY_TABLE_NAME = "properties"

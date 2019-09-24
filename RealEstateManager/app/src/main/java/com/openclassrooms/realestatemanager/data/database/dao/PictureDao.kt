@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.data.database.dao
 import android.database.Cursor
 import androidx.room.*
 import com.openclassrooms.realestatemanager.data.entity.Picture
+import com.openclassrooms.realestatemanager.utils.AGENT_TABLE_NAME
 import com.openclassrooms.realestatemanager.utils.PICTURE_TABLE_NAME
 
 /**
@@ -20,4 +21,12 @@ interface PictureDao {
 
     @Update
     suspend fun updatePicture(pictures: List<Picture>)
+
+
+    @Query("SELECT * FROM $PICTURE_TABLE_NAME WHERE picture_id = :pictureId")
+    fun getPictureWithCursor(pictureId: String): Cursor
+
+    @Query("SELECT * FROM $PICTURE_TABLE_NAME WHERE id_property = :propertyId")
+    fun getPropertyPicturesWithCursor(propertyId: String): Cursor
+
 }

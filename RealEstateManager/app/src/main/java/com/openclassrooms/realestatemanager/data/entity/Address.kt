@@ -1,10 +1,7 @@
 package com.openclassrooms.realestatemanager.data.entity
 
 import android.content.ContentValues
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.openclassrooms.realestatemanager.utils.ADDRESS_TABLE_NAME
 
 /**

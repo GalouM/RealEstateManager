@@ -11,7 +11,7 @@ import com.openclassrooms.realestatemanager.data.entity.*
 /**
  * Created by galou on 2019-07-03
  */
-@Database(entities = [Address::class, Agent::class, Amenity::class, Picture::class, Property::class], version = 1)
+@Database(entities = [Address::class, Agent::class, Amenity::class, Picture::class, Property::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class REMDatabase : RoomDatabase(){
 
@@ -31,7 +31,7 @@ abstract class REMDatabase : RoomDatabase(){
                 val instance = Room.databaseBuilder(
                         context.applicationContext,
                         REMDatabase::class.java,
-                        "REM_DB.db")
+                        "RealEstateManager_database.db")
                         .build()
                 INSTANCE = instance
                 return instance

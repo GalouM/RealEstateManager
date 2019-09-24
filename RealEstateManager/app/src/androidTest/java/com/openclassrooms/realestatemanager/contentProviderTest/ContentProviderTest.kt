@@ -42,7 +42,6 @@ class ContentProviderTest {
 
     @Test
     fun getPropertyWhenNoItemInserted(){
-        val idProperty = idGenerated
         val uriProperty = "${PropertyProvider.uriProperty}/$idProperty".toUri()
         val cursor = contentResolver.query(uriProperty, null, null, null, null)
         assertNotNull(cursor)
@@ -52,7 +51,6 @@ class ContentProviderTest {
 
     @Test
     fun getAgentWhenNoItemInserted(){
-        val idAgent = idGenerated
         val uriAgent = "${PropertyProvider.uriAgent}/$idAgent".toUri()
         val cursor = contentResolver.query(uriAgent, null, null, null, null)
         assertNotNull(cursor)

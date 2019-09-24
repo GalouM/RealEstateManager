@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.contentProviderTest
 
 import android.content.ContentValues
+import android.util.Log
 import com.openclassrooms.realestatemanager.data.database.Converters
 import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Amenity
@@ -38,7 +39,7 @@ fun generatePropertyAndDataContentValue(idProperty: String, idAgent: String): Co
     value.put("rooms", 3)
     value.put("bedrooms", 1)
     value.put("bathrooms", 1)
-    value.put("description", "nice house")
+    value.put("property_description", "nice house")
     value.put("on_market_since", todaysDate.time)
     value.put("sold", false)
     value.put("agent", idAgent)
@@ -50,7 +51,7 @@ fun generatePropertyAndDataContentValue(idProperty: String, idAgent: String): Co
     value.put("thumbnail_url", "url")
     value.put("server_url", "url server")
     value.put("id_property", idProperty)
-    value.put("description", "description")
+    value.put("picture_description", "description")
     value.put("order_number", 1)
 
     value.put("amenity_id", idGenerated)

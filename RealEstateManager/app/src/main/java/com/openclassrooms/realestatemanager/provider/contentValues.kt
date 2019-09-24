@@ -19,7 +19,7 @@ fun propertyFromContentValues(values: ContentValues): Property{
     if(values.containsKey("rooms")) property.rooms = values.getAsInteger("rooms")
     if(values.containsKey("bedrooms")) property.bedrooms = values.getAsInteger("bedrooms")
     if(values.containsKey("bathrooms")) property.bathrooms = values.getAsInteger("bathrooms")
-    if(values.containsKey("description")) property.id = values.getAsString("description")
+    if(values.containsKey("property_description")) property.description = values.getAsString("property_description")
     if(values.containsKey("on_market_since")) property.onMarketSince = Date(values.getAsLong("on_market_since"))
     if(values.containsKey("sold")) property.sold = values.getAsBoolean("sold")
     if(values.containsKey("sell_date")) property.onMarketSince = Date(values.getAsLong("sell_date"))
@@ -44,7 +44,7 @@ fun pictureFromContentValues(values: ContentValues): List<Picture> {
     if (values.containsKey("thumbnail_url")) thumbnailUrls = values.getAsString("thumbnail_url").split("&")
     if(values.containsKey("server_url")) serverUrls = values.getAsString("server_url").split("&")
     if(values.containsKey("id_property")) idProperty = values.getAsString("id_property").split("&")
-    if(values.containsKey("description")) descriptions = values.getAsString("description").split("&")
+    if(values.containsKey("picture_description")) descriptions = values.getAsString("picture_description").split("&")
     if(values.containsKey("order_number")) orderNumbers = values.getAsString("order_number").split("&")
 
     if(pictureIds.size == urls.size && pictureIds.size == thumbnailUrls.size && pictureIds.size == serverUrls.size

@@ -24,6 +24,6 @@ data class Picture(
         @ColumnInfo(name = "thumbnail_url") var thumbnailUrl: String? = null,
         @ColumnInfo(name = "server_url") var serverUrl: String? = null,
         @ColumnInfo(name = "id_property") var property: String? = null,
-        var description: String = "",
+        @ColumnInfo(name = "picture_description") var description: String = "",
         @ColumnInfo(name = "order_number") var orderNumber: Int? = null
 )

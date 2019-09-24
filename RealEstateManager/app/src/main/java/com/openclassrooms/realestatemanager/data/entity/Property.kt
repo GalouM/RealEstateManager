@@ -27,7 +27,7 @@ data class Property (
         var rooms: Int = 0,
         var bedrooms: Int? = null,
         var bathrooms: Int? = null,
-        var description: String? = null,
+        @ColumnInfo(name = "property_description")var description: String? = null,
         @ColumnInfo(name = "on_market_since") var onMarketSince: Date = Date(),
         var sold: Boolean = false,
         @ColumnInfo(name = "sell_date") var sellDate: Date? = null,

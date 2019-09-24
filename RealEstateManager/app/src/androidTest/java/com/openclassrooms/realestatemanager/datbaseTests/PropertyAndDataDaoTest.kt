@@ -64,11 +64,8 @@ class PropertyAndDataDaoTest {
     @Test
     @Throws(Exception::class)
     fun createAndGetPropertyWithData() = runBlocking {
-        Log.d("TAG", "create")
         propertyDao.createPropertyAndData(property1, address1, picturesProperty1, amenitiesProperty1)
-        Log.d("TAG", "get")
         val propertyFromDao = propertyDao.getProperty(property1.id)
-        Log.d("TAG", "assert")
         assertEquals(property1.id, propertyFromDao[0].property.id)
         assertEquals(address1.propertyId, propertyFromDao[0].address[0].propertyId)
         assertEquals(amenity1.id, propertyFromDao[0].amenities[0].id)

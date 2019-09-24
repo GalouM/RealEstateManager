@@ -52,6 +52,7 @@ fun addPictureToGallery(context: Context, photoPath: String){
 fun createImageFileInExtStorage(): File{
     val name = generateName() + idGenerated
     val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+    directory.mkdirs()
     return File.createTempFile("JPEG_${TypeImage.PROPERTY}_$name",".jpeg", directory)
 
 }

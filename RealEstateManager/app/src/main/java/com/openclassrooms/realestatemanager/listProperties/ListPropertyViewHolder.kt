@@ -13,6 +13,7 @@ import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.loadImage
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
@@ -56,6 +57,8 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val pictureUrl = firstPicture!!.thumbnailUrl ?: firstPicture.url
             pictureView.loadImage(pictureUrl, firstPicture.serverUrl, glide)
 
+        } else {
+            pictureView.setImageResource(R.drawable.home_icon)
         }
 
         type.text = property.property.type.typeName

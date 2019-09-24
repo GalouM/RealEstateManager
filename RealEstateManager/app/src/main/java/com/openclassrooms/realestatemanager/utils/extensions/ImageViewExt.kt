@@ -12,6 +12,8 @@ import com.openclassrooms.realestatemanager.R
 fun ImageView.loadImage(imageUrl: String, fallbackImage: String?, glide: RequestManager){
     glide.load(imageUrl).apply(RequestOptions.centerCropTransform())
             .error(glide.load(fallbackImage)
-                    .error(glide.load(R.drawable.refresh_icon)))
+                    .apply(RequestOptions.centerCropTransform())
+                    .error(glide.load(R.drawable.refresh_icon)
+                            .apply(RequestOptions.centerCropTransform())))
             .into(this)
 }

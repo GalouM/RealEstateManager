@@ -8,6 +8,7 @@ import butterknife.ButterKnife
 import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.Picture
+import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.loadImage
 import com.smarteist.autoimageslider.SliderViewAdapter
 
@@ -27,6 +28,7 @@ class SliderPhotoViewHolder(itemView: View) : SliderViewAdapter.ViewHolder(itemV
     fun updateWithPicture(picture: Picture, glide: RequestManager){
 
         imageViewBackground.loadImage(picture.url, picture.serverUrl, glide)
+        displayData("${picture.url}")
         textViewDescription.text = picture.description
     }
 }

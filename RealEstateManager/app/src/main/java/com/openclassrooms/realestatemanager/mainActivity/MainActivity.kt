@@ -263,7 +263,14 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
             0 -> {
                 viewModel.actionFromIntent(MainActivityIntent.OpenAddPropertyActivityIntent)}
 
-            1 -> showAddAgentActivity()
+            1 -> {
+                if(isInternetAvailable(this)){
+                    showAddAgentActivity()
+                } else {
+                    showSnackBarMessage(getString(R.string.internet_agent))
+                }
+
+            }
         }
         rfabHelper.toggleContent()
     }

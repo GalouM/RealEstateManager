@@ -122,5 +122,6 @@
     <string name="nb_property_added">%s property was added</string>
     <string name="nb_properties_added">%s properties were added</string>
     <string name="no_new_property">No new property</string>
+    <string name="internet_agent">You need internet to add an agent</string>
 
 </resources>

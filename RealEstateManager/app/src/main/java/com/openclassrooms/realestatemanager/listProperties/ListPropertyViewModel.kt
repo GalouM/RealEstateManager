@@ -107,7 +107,6 @@ class ListPropertyViewModel(
         var propertiesForDisplay: List<PropertyWithAllData>? = null
 
         fun emitResult(){
-            displayData("properties dipslay $propertiesForDisplay")
             val result: Lce<PropertyListResult> = if(propertiesForDisplay!!.isEmpty()){
                 Lce.Error(PropertyListResult.DisplayPropertiesResult(null))
             } else{
@@ -115,8 +114,6 @@ class ListPropertyViewModel(
             }
             resultToViewState(result)
         }
-
-        displayData("action type $actionType")
 
         when(actionType){
             ActionTypeList.ALL_PROPERTIES -> {

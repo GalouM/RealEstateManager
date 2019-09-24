@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import com.openclassrooms.realestatemanager.data.database.REMDatabase
 import com.openclassrooms.realestatemanager.utils.*
@@ -19,10 +20,13 @@ import java.lang.IllegalArgumentException
 
 class PropertyProvider : ContentProvider() {
 
-    val uriProperty = "$URI_PATH/$PROPERTY_TABLE_NAME".toUri()
-    val uriAgent = "$URI_PATH/$AGENT_TABLE_NAME".toUri()
+    companion object{
+        val uriProperty = "$URI_PATH/$PROPERTY_TABLE_NAME"
+        val uriAgent = "$URI_PATH/$AGENT_TABLE_NAME"
+    }
 
-    val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
+
+    private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
         addURI(AUTHORITY, PROPERTY_TABLE_NAME, CODE_PROPERTY_DIR)
         addURI(AUTHORITY, "$PROPERTY_TABLE_NAME/*", CODE_PROPERTY_ITEM)
         addURI(AUTHORITY, "$PROPERTY_TABLE_NAME/*/address", CODE_PROPERTY_ADDRESS)
@@ -46,8 +50,8 @@ class PropertyProvider : ContentProvider() {
                     runBlocking {
                         database.propertyDao().createPropertyAndData(property, address, listPictures, listAmenities)
                         context!!.contentResolver.notifyChange(uri, null)
-                        return@runBlocking "$uri/${property.id}".toUri()
                     }
+                    return "$uri/${property.id}".toUri()
                 }
                 CODE_PROPERTY_DIR -> throw IllegalArgumentException("Invalid URI cannot insert without an ID $uri")
                 CODE_PICTURE_ITEM -> throw IllegalArgumentException("Invalid URI cannot create data without a property $uri")
@@ -59,8 +63,8 @@ class PropertyProvider : ContentProvider() {
                     runBlocking {
                         database.agentDao().createAgent(agent)
                         context!!.contentResolver.notifyChange(uri, null)
-                        return@runBlocking "$uri/${agent.id}".toUri()
                     }
+                    return "$uri/${agent.id}".toUri()
                 }
                 else -> throw IllegalArgumentException("Unknown URI $uri")
             }
@@ -71,7 +75,6 @@ class PropertyProvider : ContentProvider() {
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
         val id = uri.lastPathSegment
-        val idAddress = uri.pathSegments[4]
         if(id != null && context != null){
             val database = REMDatabase.getDatabase(context!!)
            return when(uriMatcher.match(uri)){
@@ -79,7 +82,10 @@ class PropertyProvider : ContentProvider() {
                 CODE_AMENITY_ITEM -> database.amenityDao().getAmenityWithCursor(id)
                 CODE_PROPERTY_AMENITIES -> database.amenityDao().getPropertyAmenitiesWithCursor(id)
                 CODE_PROPERTY_PICTURES -> database.pictureDao().getPropertyPicturesWithCursor(id)
-                CODE_PROPERTY_ADDRESS -> database.addressDao().getAddressWithCursor(idAddress)
+                CODE_PROPERTY_ADDRESS -> {
+                    val idAddress = uri.pathSegments[1]
+                    database.addressDao().getAddressWithCursor(idAddress)
+                }
                 CODE_PROPERTY_ITEM -> database.propertyDao().getPropertyWithCursor(id)
                 CODE_PROPERTY_DIR -> database.propertyDao().getAllPropertiesWithCursor()
                 CODE_AGENT_DIR -> database.agentDao().getAllAgentsWithCursor()

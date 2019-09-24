@@ -41,14 +41,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    testImplementation 'junit:junit:4.12'
-    testImplementation "androidx.test:core:1.2.1-alpha02"
-    testImplementation "androidx.test.ext:junit:1.1.2-alpha02"
-    testImplementation "androidx.test:runner:1.3.0-alpha02"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation "androidx.core:core-ktx:$rootProject.coreKtxVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.liveDataKtxVersion"
 
@@ -56,10 +49,20 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha09'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //ROBOLECTRIC
     testImplementation "org.robolectric:robolectric:$rootProject.robolectricVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //TEST
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoCoreVersion"
+    testImplementation "junit:junit:$rootProject.jUnitVersion"
+    testImplementation "androidx.test:core:$rootProject.testCoreVersion"
+    testImplementation "androidx.test.ext:junit:$rootProject.testJUnitVersion"
+    testImplementation "androidx.test:runner:$rootProject.testRunnerVersion"
+    androidTestImplementation "androidx.test:rules:$rootProject.ruleVersion"
 
     //BUTTERKNIFE
     implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"

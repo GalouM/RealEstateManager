@@ -82,6 +82,22 @@ fun amenityFromContentValues(values: ContentValues): List<Amenity> {
     return amenities
 }
 
+fun addressFromContentValues(values: ContentValues): Address {
+    val address = Address()
+    if (values.containsKey("address_id")) address.propertyId = values.getAsString("address_id")
+    if (values.containsKey("street")) address.street = values.getAsString("street")
+    if (values.containsKey("city")) address.city = values.getAsString("city")
+    if (values.containsKey("country")) address.country = values.getAsString("country")
+    if (values.containsKey("postal_code")) address.postalCode = values.getAsString("postal_code")
+    if (values.containsKey("state")) address.state = values.getAsString("state")
+    if (values.containsKey("longitude")) address.longitude = values.getAsDouble("longitude")
+    if (values.containsKey("latitude")) address.latitude = values.getAsDouble("latitude")
+    if (values.containsKey("neighbourhood")) address.neighbourhood = values.getAsString("neighbourhood")
+    if (values.containsKey("map_icon_url")) address.mapIconUrl = values.getAsString("map_icon_url")
+    if (values.containsKey("address_for_display")) address.addressForDisplay = values.getAsString("address_for_display")
+    return address
+}
+
 fun agentFromContentValues(values: ContentValues): Agent{
     val agent = Agent()
     if (values.containsKey("agent_id")) agent.id = values.getAsString("agent_id")
@@ -92,20 +108,4 @@ fun agentFromContentValues(values: ContentValues): Agent{
     if (values.containsKey("url_picture")) agent.urlProfilePicture = values.getAsString("url_picture")
     if (values.containsKey("creation_date")) agent.creationDate = Date(values.getAsLong("creation_date"))
     return agent
-}
-
-fun addressFromContentValues(values: ContentValues): Address {
-    val address = Address()
-    if (values.containsKey("address_id")) address.propertyId = values.getAsString("address_id")
-    if (values.containsKey("street")) address.street = values.getAsString("street")
-    if (values.containsKey("city")) address.city = values.getAsString("city")
-    if (values.containsKey("country")) address.country = values.getAsString("country")
-    if (values.containsKey("postalCode")) address.postalCode = values.getAsString("postalCode")
-    if (values.containsKey("state")) address.state = values.getAsString("state")
-    if (values.containsKey("longitude")) address.longitude = values.getAsDouble("longitude")
-    if (values.containsKey("latitude")) address.latitude = values.getAsDouble("latitude")
-    if (values.containsKey("neighbourhood")) address.neighbourhood = values.getAsString("neighbourhood")
-    if (values.containsKey("map_icon_url")) address.mapIconUrl = values.getAsString("map_icon_url")
-    if (values.containsKey("address_for_display")) address.addressForDisplay = values.getAsString("address_for_display")
-    return address
 }

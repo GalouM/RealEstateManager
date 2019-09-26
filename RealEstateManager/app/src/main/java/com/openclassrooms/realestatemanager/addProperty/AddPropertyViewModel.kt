@@ -56,36 +56,17 @@ BitmapDownloader.Listeners{
     private lateinit var actionType: ActionType
     private lateinit var context: Context
     private var propertyId: String = idGenerated
-    private var propertyFetched: PropertyWithAllData? = null
     private var previousPictures = listOf<Picture>()
     private var previousAmenities = listOf<Amenity>()
+    private lateinit var address: Address
+    private lateinit var property: Property
+    private val amenities = mutableListOf<Amenity>()
+    private var pictures = mutableListOf<Picture>()
 
     // data
     private val listErrorInputs = mutableListOf<ErrorSourceAddProperty>()
-    private lateinit var type: String
-    private var price: Double? = null
-    private var surface: Double? = null
-    private var rooms: Int? = null
-    private var bedrooms: Int? = null
-    private var bathrooms: Int? = null
-    private lateinit var description: String
-    private lateinit var address: String
-    private lateinit var street: String
-    private lateinit var city: String
-    private var postalCode: String = ""
-    private lateinit var state: String
-    private lateinit var country: String
     private lateinit var neighborhood: String
-    private lateinit var onMarketSince: String
-    private var isSold: Boolean = false
-    private var sellOn: String? = null
     private var agentId: String? = null
-    private lateinit var amenities: List<TypeAmenity>
-    private var pictures = mutableListOf<Picture>()
-    private var map = ""
-    private var latitude: Double? = null
-    private var longitude: Double? = null
-    private var addressForDisplay: String = ""
 
 
     //Coroutine job
@@ -265,23 +246,11 @@ BitmapDownloader.Listeners{
     private fun setActionType(actionType: ActionType){
         if(!initalIntentHandled) {
             this.actionType = actionType
-            setPropertyFetched()
             fetchSavedProperty()
             initalIntentHandled = true
         }
     }
 
-    private fun setPropertyFetched(){
-        if(actionType == MODIFY_PROPERTY) {
-            propertyFetched = propertyRepository.propertyPicked
-            propertyFetched?.let {
-                propertyId = it.property.id
-                previousAmenities = it.amenities
-                previousPictures = it.pictures
-            }
-
-        }
-    }
 
     //--------------------
     // SET DATA
@@ -293,7 +262,7 @@ BitmapDownloader.Listeners{
 
     private fun addPictureToProperty(pictureUrl: String, thumbnailUrl: String?){
         pictures.add(Picture(
-                idGenerated, pictureUrl, thumbnailUrl,  null, propertyId, "", pictures.size -1)
+                idGenerated, pictureUrl, thumbnailUrl,  null, property.id, "", pictures.size -1)
         )
         emitResultPictureModification()
     }
@@ -338,88 +307,94 @@ BitmapDownloader.Listeners{
                                     isSold: Boolean, sellOn: String?,
                                     amenities: List<TypeAmenity>, contextApp: Context
     ){
-        fun setGlobalProperties() {
+
+        fun checkErrorsFromUserInput(): List<ErrorSourceAddProperty>{
+            val listErrors = mutableListOf<ErrorSourceAddProperty>()
+            val onMarketDate = onMarketSince.toDate()
+            val sellDate = sellOn?.toDate()
+
+            if(onMarketDate == null ||
+                    !onMarketDate.isCorrectOnMarketDate()) listErrors.add(INCORRECT_ON_MARKET_DATE)
+            if(isSold) {
+                if (sellDate == null ||
+                        onMarketDate != null
+                        && !sellDate.isCorrectSoldDate(onMarketDate)) listErrors.add(INCORRECT_SOLD_DATE)
+                if (sellOn == null) listErrors.add(NO_SOLD_DATE)
+            }
+            if(!type.isExistingPropertyType()) listErrors.add(NO_TYPE_SELECTED)
+            if(price == null) listErrors.add(NO_PRICE)
+            if(surface == null) listErrors.add(NO_SURFACE)
+            if(rooms == null) listErrors.add(NO_ROOMS)
+            if(address.isEmpty()) listErrors.add(NO_ADDRESS)
+            if(agentId == null) listErrors.add(NO_AGENT)
+            pictures.forEach {
+                if(it.description.isBlank()){
+                    listErrors.add(MISSING_DESCRIPTION)
+                }
+            }
+
+            return listErrors
+        }
+        fun setDataFromInputs() {
             context = contextApp
-            this.type = type
-            this.price = price
-            this.surface = surface
-            this.rooms = rooms
-            this.bedrooms = bedrooms
-            this.bathrooms = bathrooms
-            this.description = description
-            this.address = address
+
+            property = Property(
+                    id = propertyId, type = Converters.toTypeProperty(type), price = price!!.toEuro(currency.value!!),
+                    surface = surface!!.toSqMeter(currency.value!!), rooms = rooms!!, bedrooms = bedrooms, bathrooms = bathrooms,
+                    description = description, onMarketSince = onMarketSince.toDate()!!, sold = isSold, sellDate =  sellOn?.toDate(),
+                    agent = agentId!!, hasPictures = pictures.isNotEmpty(), creationDate = todaysDate
+            )
+            this.address = Address(propertyId = property.id)
+            amenities.forEach {
+                this.amenities.add(Amenity(idGenerated, propertyId, it))
+            }
             this.neighborhood = neighborhood
-            this.onMarketSince = onMarketSince
-            this.isSold = isSold
-            this.sellOn = sellOn
-            this.amenities = amenities
         }
 
         listErrorInputs.clear()
         resultToViewState(Lce.Loading())
-        setGlobalProperties()
         checkErrorsFromUserInput().forEach { listErrorInputs.add(it) }
-        fetchAddressLocation(address)
+        if(listErrorInputs.isEmpty()){
+            setDataFromInputs()
+            fetchAddressLocation(address)
+        } else {
+            emitErrorFromInputs()
+        }
     }
 
     private fun checkLocationAndMap(geocodingApi: GeocodingApiResponse){
         val results = geocodingApi.results
         if(results.isNotEmpty()){
             configureAddressComponent(geocodingApi)
-            val mapUrl = propertyRepository.getMapLocation(latitude!!.toString(), longitude!!.toString()).toUrl()
+            val mapUrl = propertyRepository.getMapLocation(
+                    address.latitude.toString(),address.longitude.toString()
+            ).toUrl()
             if(mapUrl != null) {
                 fetchBitmapMap(mapUrl)
 
             } else {
                 listErrorInputs.add(ERROR_FETCHING_MAP)
-                emitResultAddPropertyToView()
+                emitErrorFromInputs()
             }
 
 
         } else {
             listErrorInputs.add(TOO_MANY_ADDRESS)
-            emitResultAddPropertyToView()
+            emitErrorFromInputs()
         }
     }
 
     override fun onBitmapDownloaded(bitmap: Bitmap) {
-        map = bitmap.saveToInternalStorage(context, propertyId, TypeImage.ICON_MAP).toString()
-        propertyRepository.uploadMapInNetwork(bitmap, propertyId)
+        address.mapIconUrl = bitmap.saveToInternalStorage(context, property.id + generateName(), TypeImage.ICON_MAP).toString()
+        propertyRepository.uploadMapInNetwork(bitmap, property.id)
                 .addOnSuccessListener { emitResultAddPropertyToView() }
                 .addOnFailureListener {
                     listErrorInputs.add(ERROR_FETCHING_MAP)
-                    emitResultAddPropertyToView()
+                    emitErrorFromInputs()
                 }
 
     }
 
-    private fun checkErrorsFromUserInput(): List<ErrorSourceAddProperty>{
-        val listErrors = mutableListOf<ErrorSourceAddProperty>()
-        val onMarketDate = onMarketSince.toDate()
-        val sellDate = sellOn?.toDate()
-
-        if(onMarketDate == null ||
-                !onMarketDate.isCorrectOnMarketDate()) listErrors.add(INCORRECT_ON_MARKET_DATE)
-        if(isSold) {
-            if (sellDate == null ||
-                    onMarketDate != null
-                    && !sellDate.isCorrectSoldDate(onMarketDate)) listErrors.add(INCORRECT_SOLD_DATE)
-            if (sellOn == null) listErrors.add(NO_SOLD_DATE)
-        }
-        if(!type.isExistingPropertyType()) listErrors.add(NO_TYPE_SELECTED)
-        if(price == null) listErrors.add(NO_PRICE)
-        if(surface == null) listErrors.add(NO_SURFACE)
-        if(rooms == null) listErrors.add(NO_ROOMS)
-        if(address.isEmpty()) listErrors.add(NO_ADDRESS)
-        if(agentId == null) listErrors.add(NO_AGENT)
-        pictures.forEach {
-            if(it.description.isBlank()){
-                listErrors.add(MISSING_DESCRIPTION)
-            }
-        }
-
-        return listErrors
-    }
 
     private fun fetchAddressLocation(address: String){
         disposable = propertyRepository.getLocationFromAddress(address.convertForApi())
@@ -434,7 +409,7 @@ BitmapDownloader.Listeners{
 
             override fun onError(e: Throwable) {
                 listErrorInputs.add(INCORECT_ADDRESS)
-                emitResultAddPropertyToView()
+                emitErrorFromInputs()
             }
 
             override fun onComplete() {}
@@ -444,9 +419,9 @@ BitmapDownloader.Listeners{
     private fun configureAddressComponent(geocodingApi: GeocodingApiResponse){
         val results = geocodingApi.results
         val result = results[0]
-        latitude = result.geometry.location.lat
-        longitude = result.geometry.location.lng
-        addressForDisplay = result.formattedAddress
+        address.latitude = result.geometry.location.lat
+        address.longitude = result.geometry.location.lng
+        address.addressForDisplay = result.formattedAddress
         var streetNumber = ""
         var streetName = ""
         result.addressComponents.forEach { component ->
@@ -454,16 +429,16 @@ BitmapDownloader.Listeners{
                 when(it){
                     "street_number" -> streetNumber = component.longName
                     "route" -> streetName = component.longName
-                    "locality" -> city = component.longName
-                    "administrative_area_level_1" -> state = component.shortName
-                    "country" -> country = component.longName
-                    "postal_code" -> postalCode = component.longName
+                    "locality" -> address.city = component.longName
+                    "administrative_area_level_1" -> address.state = component.shortName
+                    "country" -> address.country = component.longName
+                    "postal_code" -> address.postalCode = component.longName
                     "neighborhood" -> neighborhood = if(neighborhood.isEmpty()) component.longName else neighborhood
                 }
             }
         }
-        neighborhood = if(neighborhood.isEmpty()) city else neighborhood
-        street = "$streetNumber $streetName"
+        address.neighbourhood = if(neighborhood.isEmpty()) address.city else neighborhood
+        address.street = "$streetNumber $streetName"
     }
 
     private fun fetchBitmapMap(mapUrl: URL){
@@ -474,9 +449,6 @@ BitmapDownloader.Listeners{
         if(addPropertyJob?.isActive == true) addPropertyJob?.cancel()
         if(addPropertyDataJob?.isActive == true) addPropertyDataJob?.cancel()
 
-        val amenitiesForDB = mutableListOf<Amenity>()
-        var address: Address? = null
-        var propertyForDB: Property? = null
         val newPictures = mutableListOf<Picture>()
         val picturesToUpdate = mutableListOf<Picture>()
         val pictureToDelete = mutableListOf<Picture>()
@@ -486,7 +458,7 @@ BitmapDownloader.Listeners{
             val result: Lce<AddPropertyResult> = if(errorOnPropertyCreation.isEmpty()) {
                 when (actionType) {
                     NEW_PROPERTY -> saveDataRepository.tempProperty = null
-                    MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(null, propertyId)
+                    MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(null, property.id)
                 }
                 Lce.Content(AddPropertyResult.PropertyAddedToDBResult(null))
             } else {
@@ -499,27 +471,18 @@ BitmapDownloader.Listeners{
         fun createPropertyAndDataInDB(){
             addPropertyDataJob = launch {
                 propertyRepository.createPropertyAndData(
-                        propertyForDB!!, newPictures, pictureToDelete, picturesToUpdate, amenitiesForDB, address!!, actionType, previousAmenities
+                        property, newPictures, pictureToDelete, picturesToUpdate, amenities, address, actionType, previousAmenities
                 )
                         .addOnSuccessListener { emitResult() }
                         .addOnFailureListener{
                             errorOnPropertyCreation.add(UPLOAD_DATA)
                             emitResult()
                         }
-
             }
 
         }
 
-        fun createObjectForDB(){
-            val currency = currencyRepository.currency.value!!
-            val hasPicture = pictures.isNotEmpty()
-            propertyForDB = Property(
-                    propertyId, Converters.toTypeProperty(type), price!!.toEuro(currency),
-                    surface!!.toSqMeter(currency), rooms!!, bedrooms, bathrooms, description,
-                    onMarketSince.toDate()!!, isSold, sellOn?.toDate(), agentId!!, hasPicture, todaysDate
-            )
-
+        fun orderPictures(){
             if(actionType == MODIFY_PROPERTY && previousPictures.isNotEmpty()){
                 pictures.forEach { picture ->
                     val previousPicture = previousPictures.find{ it.id == picture.id}
@@ -536,26 +499,16 @@ BitmapDownloader.Listeners{
             } else {
                 newPictures.addAll(pictures)
             }
-
-            amenities.forEach {
-                amenitiesForDB.add(Amenity(idGenerated, propertyId, it))
-            }
-
-            address = Address(
-                    propertyId, street, city, postalCode, country, state,
-                    longitude!!, latitude!!, neighborhood, map, addressForDisplay
-            )
         }
 
+        orderPictures()
+        createPropertyAndDataInDB()
 
-        if(listErrorInputs.isEmpty()){
-            createObjectForDB()
-            createPropertyAndDataInDB()
-        } else {
-            val result: Lce<AddPropertyResult> = Lce.Error(AddPropertyResult.PropertyAddedToDBResult(listErrorInputs))
-            resultToViewState(result)
-        }
+    }
 
+    private fun emitErrorFromInputs(){
+        val result: Lce<AddPropertyResult> = Lce.Error(AddPropertyResult.PropertyAddedToDBResult(listErrorInputs))
+        resultToViewState(result)
     }
 
     //--------------------
@@ -580,60 +533,6 @@ BitmapDownloader.Listeners{
 
     }
 
-    //--------------------
-    // FETCH EXISING PROPERTY
-    //--------------------
-
-    private fun fetchExistingPropertyFromDB(){
-        resultToViewState(Lce.Loading())
-        if(searchAgentsJob?.isActive == true) searchAgentsJob?.cancel()
-
-        var agent: Agent? = null
-
-        fun emitResult(){
-            val result: Lce<AddPropertyResult>
-            result = if(propertyFetched == null){
-                val errors = listOf(ERROR_FETCHING_PROPERTY)
-                Lce.Error(AddPropertyResult.PropertyFromDBResult(
-                        "", null, null, null, null, null,
-                        null, "", "", "", null,
-                        null, null, null, errors
-                ))
-            } else {
-                val property = propertyFetched!!.property
-                val address = propertyFetched!!.address[0]
-                Lce.Content(AddPropertyResult.PropertyFromDBResult(
-                        property.type.typeName, property.price, property.surface, property.rooms,
-                        property.bedrooms, property. bathrooms, property.description, address.addressForDisplay,
-                        address.neighbourhood, property.onMarketSince.toStringForDisplay(), property.sold,
-                        property.sellDate?.toStringForDisplay(), propertyFetched!!.amenities.map { it.type },
-                        agent,  null
-                ))
-            }
-            resultToViewEffect(result)
-        }
-
-        fun fetchAgent(){
-            agentId = propertyFetched!!.property.agent
-            searchAgentsJob = launch {
-                agent = agentRepository.getAgent(propertyFetched!!.property.agent)[0]
-                emitResult()
-            }
-        }
-
-        fetchAgent()
-        fetchPictureExistingPictureFromDB()
-
-
-    }
-
-    private fun fetchPictureExistingPictureFromDB(){
-        resultToViewState(Lce.Loading())
-        propertyFetched?.let{ _ ->
-            pictures = previousPictures.sortedBy { it.orderNumber }.toMutableList()
-            emitResultPictureModification()
-        }
-    }
 
     //--------------------
     // SAVE FOR LATER
@@ -695,7 +594,6 @@ BitmapDownloader.Listeners{
                 MODIFY_PROPERTY -> fetchExistingPropertyFromDB()
                 NEW_PROPERTY -> {
                     val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.NewPropertyResult)
-                    displayData("$result")
                     resultToViewState(result)
                 }
             }
@@ -715,5 +613,53 @@ BitmapDownloader.Listeners{
 
     }
 
+    //--------------------
+    // FETCH EXISING PROPERTY
+    //--------------------
+
+    private fun fetchExistingPropertyFromDB(){
+        resultToViewState(Lce.Loading())
+        if(searchAgentsJob?.isActive == true) searchAgentsJob?.cancel()
+
+        var agent: Agent? = null
+
+        fun emitResult(){
+            val result: Lce<AddPropertyResult>
+            result = Lce.Content(AddPropertyResult.PropertyFromDBResult(
+                    property.type.typeName, property.price, property.surface, property.rooms,
+                    property.bedrooms, property. bathrooms, property.description, address.addressForDisplay,
+                    address.neighbourhood, property.onMarketSince.toStringForDisplay(), property.sold,
+                    property.sellDate?.toStringForDisplay(), previousAmenities.map { it.type },
+                    agent,  null
+            ))
+
+            resultToViewEffect(result)
+        }
+
+        fun fetchAgent(){
+            searchAgentsJob = launch {
+                agent = agentRepository.getAgent(agentId!!)[0]
+                emitResult()
+            }
+        }
+
+        val propertyFromRepository = propertyRepository.propertyPicked!!
+        property = propertyFromRepository.property
+        address = propertyFromRepository.address[0]
+        propertyId = property.id
+        agentId = property.agent
+        previousAmenities = propertyFromRepository.amenities
+        previousPictures = propertyFromRepository.pictures
+        fetchAgent()
+        fetchPictureExistingPictureFromDB()
+
+    }
+
+    private fun fetchPictureExistingPictureFromDB(){
+        resultToViewState(Lce.Loading())
+        pictures = previousPictures.sortedBy { it.orderNumber }.toMutableList()
+        emitResultPictureModification()
+
+    }
 
 }

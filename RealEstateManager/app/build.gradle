@@ -22,10 +22,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField('String', "GoogleMapApiKey", googleMapApiKey)
             buildConfigField('String', "MapBoxToken", mapBoxToken)
+            buildConfigField('String', "AppName", appName)
         }
         debug {
             buildConfigField('String', "GoogleMapApiKey", googleMapApiKey)
             buildConfigField('String', "MapBoxToken", mapBoxToken)
+            buildConfigField('String', "AppName", appName)
 
         }
     }

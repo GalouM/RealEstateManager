@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
+import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.utils.extensions.saveToInternalStorage
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -16,6 +17,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.jar.Manifest
 
 /**
  * Created by galou on 2019-09-05
@@ -51,7 +53,7 @@ fun addPictureToGallery(context: Context, photoPath: String){
 @Throws(IOException::class)
 fun createImageFileInExtStorage(): File{
     val name = generateName() + idGenerated
-    val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+    val directory = Environment.getExternalStoragePublicDirectory(BuildConfig.AppName)
     directory.mkdirs()
     return File.createTempFile("JPEG_${TypeImage.PROPERTY}_$name",".jpeg", directory)
 
@@ -109,8 +111,7 @@ fun generateName(): String{
 }
 
 fun filePathToInternalStorage(context: Context, name: String, type: TypeImage): File{
-    val wrapper = ContextWrapper(context)
-    val directory = wrapper.getDir(type.folder, Context.MODE_PRIVATE)
+    val directory = context.getExternalFilesDir(type.folder)
     return File(directory, "JPEG_${type}_$name.jpeg")
 }
 

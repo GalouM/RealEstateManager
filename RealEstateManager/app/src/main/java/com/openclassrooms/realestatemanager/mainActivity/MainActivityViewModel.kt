@@ -308,7 +308,6 @@ class MainActivityViewModel(
         if(createPropertiesAndDataJob?.isActive == true) createPropertiesAndDataJob?.cancel()
         createPropertiesAndDataJob = launch {
             agentRepository.createAllNewAgents(newAgents)
-            val agents = agentRepository.getAllAgents()
             propertyRepository.createDownloadedDataLocally(newProperty, newAddresses, newPictures, newAmenities)
 
             val result: Lce<MainActivityResult> = Lce.Content(

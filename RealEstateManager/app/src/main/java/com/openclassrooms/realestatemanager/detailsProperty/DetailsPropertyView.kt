@@ -205,6 +205,7 @@ class DetailsPropertyView : BaseFragmentREM(), REMView<DetailsPropertyViewState>
         if(pictures.isEmpty()){
             sliderPictures.visibility = View.GONE
         } else {
+            sliderPictures.visibility = View.VISIBLE
             val adapter = SliderPhotoAdapter(
                     activity!!.applicationContext, pictures.sortedBy { it.orderNumber }, Glide.with(this)
             )

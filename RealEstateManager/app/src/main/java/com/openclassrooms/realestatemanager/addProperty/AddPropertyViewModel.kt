@@ -246,8 +246,22 @@ BitmapDownloader.Listeners{
     private fun setActionType(actionType: ActionType){
         if(!initalIntentHandled) {
             this.actionType = actionType
+            setDataProperty()
             fetchSavedProperty()
             initalIntentHandled = true
+        }
+    }
+
+    private fun setDataProperty(){
+        if(actionType == MODIFY_PROPERTY){
+            val propertyFromRepository = propertyRepository.propertyPicked!!
+            property = propertyFromRepository.property
+            address = propertyFromRepository.address[0]
+            propertyId = property.id
+            agentId = property.agent
+            previousAmenities = propertyFromRepository.amenities
+            previousPictures = propertyFromRepository.pictures
+
         }
     }
 
@@ -262,7 +276,7 @@ BitmapDownloader.Listeners{
 
     private fun addPictureToProperty(pictureUrl: String, thumbnailUrl: String?){
         pictures.add(Picture(
-                idGenerated, pictureUrl, thumbnailUrl,  null, property.id, "", pictures.size -1)
+                idGenerated, pictureUrl, thumbnailUrl,  null, propertyId, "", pictures.size -1)
         )
         emitResultPictureModification()
     }
@@ -560,6 +574,8 @@ BitmapDownloader.Listeners{
             MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(tempProperty, propertyId)
         }
 
+        displayData("saved ${saveDataRepository.getSavedModifyProperty(propertyId)}")
+
         val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.PropertyAddedToDraftResult)
         resultToViewState(result)
 
@@ -588,6 +604,10 @@ BitmapDownloader.Listeners{
             ))
         resultToViewEffect(result)
         }
+
+        displayData("id ${propertyId}")
+
+        displayData("get ${savedProperty}")
 
         if(savedProperty == null){
             when(actionType){
@@ -643,13 +663,6 @@ BitmapDownloader.Listeners{
             }
         }
 
-        val propertyFromRepository = propertyRepository.propertyPicked!!
-        property = propertyFromRepository.property
-        address = propertyFromRepository.address[0]
-        propertyId = property.id
-        agentId = property.agent
-        previousAmenities = propertyFromRepository.amenities
-        previousPictures = propertyFromRepository.pictures
         fetchAgent()
         fetchPictureExistingPictureFromDB()
 

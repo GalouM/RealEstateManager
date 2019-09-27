@@ -166,8 +166,6 @@ class SearchPropertyViewModel(
             result = Lce.Error(SearchPropertyResult.SearchResult(listErrors))
             resultToViewState(result)
         } else {
-            if (searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
-
             resetQueryToDefaultValues()
             setQueryInput()
             fetchQueryPropertiesFromDB()
@@ -175,6 +173,8 @@ class SearchPropertyViewModel(
     }
 
     private fun fetchQueryPropertiesFromDB(){
+        if (searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
+
         if (amenitiesQuery.isEmpty()) {
             searchPropertyJob = launch {
                 val propertiesQuery = propertyRepository.getPropertiesQuery(
@@ -191,9 +191,18 @@ class SearchPropertyViewModel(
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery, neighborhoodQuery,
                         isSoldQuery, hasPictureQuery, dateQuery, amenitiesQuery
                 )
-                if(propertyFromDB.isNotEmpty()) {
-                    val propertiesQuery = propertyFromDB.filter { it.amenities.size == amenitiesQuery.size }
-                    emitResultPropertyFetched(propertiesQuery)
+                if(amenitiesQuery.size > 1) {
+                    val idPropertyToKeep = propertyFromDB
+                            .groupingBy { it.property.id }
+                            .eachCount()
+                            .filterValues { it == amenitiesQuery.size }.keys
+                    val propertyToDisplay = mutableListOf<PropertyWithAllData>()
+                    idPropertyToKeep.forEach { id ->
+                        propertyFromDB.find { it.property.id == id }?.let{ propertyToDisplay.add(it) }
+                    }
+                    emitResultPropertyFetched(propertyToDisplay)
+                } else {
+                    emitResultPropertyFetched(propertyFromDB)
                 }
             }
         }
@@ -201,6 +210,7 @@ class SearchPropertyViewModel(
     }
 
     private fun emitResultPropertyFetched(properties: List<PropertyWithAllData>){
+        displayData("emit resul")
         val result: Lce<SearchPropertyResult> = if (properties.isEmpty()) {
             val listErrors = listOf(ErrorSourceSearch.NO_PROPERTY_FOUND)
             Lce.Error(SearchPropertyResult.SearchResult(listErrors))

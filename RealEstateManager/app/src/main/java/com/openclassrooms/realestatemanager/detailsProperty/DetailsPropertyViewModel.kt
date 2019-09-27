@@ -8,6 +8,7 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -82,18 +83,11 @@ class DetailsPropertyViewModel(
 
         val propertyId = propertyRepository.propertyPicked!!.property.id
 
-        fun emitResult(property: PropertyWithAllData){
-            val result: Lce<DetailsPropertyResult> = Lce.Content(DetailsPropertyResult.FetchDetailsResult(
-                    property.property, property.address[0], property.amenities, property.pictures
-            ))
-            resultToViewState(result)
-        }
-
         fun fetchProperty(){
             searchPropertyJob = launch {
                 val property = propertyRepository.getProperty(propertyId)[0]
                 propertyRepository.propertyPicked = property
-                emitResult(property)
+                emitResultDisplayProperty(property)
             }
         }
 

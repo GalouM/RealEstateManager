@@ -54,8 +54,8 @@ abstract class PropertyDao(private val database: REMDatabase) {
     @Query("SELECT * FROM $PROPERTY_TABLE_NAME " +
             "INNER JOIN $AMENITY_TABLE_NAME ON $AMENITY_TABLE_NAME.property = $PROPERTY_TABLE_NAME.property_id " +
             "INNER JOIN $ADDRESS_TABLE_NAME ON $ADDRESS_TABLE_NAME.address_id = $PROPERTY_TABLE_NAME.property_id WHERE " +
-            "(amenities.type_amenity IN (:listAmenities)) " +
-            "AND (address.neighbourhood LIKE :neighborhood) " +
+            "($AMENITY_TABLE_NAME.type_amenity IN (:listAmenities)) " +
+            "AND ($ADDRESS_TABLE_NAME.neighbourhood LIKE :neighborhood) " +
             "AND ($PROPERTY_TABLE_NAME.price BETWEEN :minPrice AND :maxPrice)" +
             "AND ($PROPERTY_TABLE_NAME.surface BETWEEN :minSurface AND :maxSurface) " +
             "AND ($PROPERTY_TABLE_NAME.rooms >= :minNbRoom) " +

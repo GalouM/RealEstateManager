@@ -58,7 +58,7 @@ class MarkerREMOptions() : BaseMarkerOptions<MarkerREM, MarkerREMOptions>(), Par
 
     fun getPosition(): LatLng
     {
-        return position;
+        return position
     }
 
     /**

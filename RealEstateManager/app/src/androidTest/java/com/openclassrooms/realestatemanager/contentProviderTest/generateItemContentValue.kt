@@ -1,17 +1,10 @@
 package com.openclassrooms.realestatemanager.contentProviderTest
 
 import android.content.ContentValues
-import android.util.Log
-import com.openclassrooms.realestatemanager.data.database.Converters
-import com.openclassrooms.realestatemanager.data.entity.Address
-import com.openclassrooms.realestatemanager.data.entity.Amenity
-import com.openclassrooms.realestatemanager.data.entity.Picture
-import com.openclassrooms.realestatemanager.data.entity.Property
 import com.openclassrooms.realestatemanager.utils.TypeAmenity
 import com.openclassrooms.realestatemanager.utils.TypeProperty
 import com.openclassrooms.realestatemanager.utils.idGenerated
 import com.openclassrooms.realestatemanager.utils.todaysDate
-import java.util.*
 
 /**
  * Created by galou on 2019-09-24

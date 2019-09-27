@@ -1,7 +1,6 @@
 package com.openclassrooms.realestatemanager.contentProviderTest
 
 import android.content.ContentResolver
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry

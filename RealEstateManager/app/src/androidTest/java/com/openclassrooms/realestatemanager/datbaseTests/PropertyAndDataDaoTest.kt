@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.datbaseTests
 
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry

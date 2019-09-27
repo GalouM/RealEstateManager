@@ -11,6 +11,7 @@ import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.*
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.extensions.keepPropertiesWithAllAmenityRequested
 import com.openclassrooms.realestatemanager.utils.extensions.toDate
 import com.openclassrooms.realestatemanager.utils.extensions.toEuro
 import com.openclassrooms.realestatemanager.utils.extensions.toSqMeter
@@ -175,9 +176,11 @@ class SearchPropertyViewModel(
     private fun fetchQueryPropertiesFromDB(){
         if (searchPropertyJob?.isActive == true) searchPropertyJob?.cancel()
 
+        var propertiesQuery = listOf<PropertyWithAllData>()
+
         if (amenitiesQuery.isEmpty()) {
             searchPropertyJob = launch {
-                val propertiesQuery = propertyRepository.getPropertiesQuery(
+                propertiesQuery = propertyRepository.getPropertiesQuery(
                         minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery,
                         neighborhoodQuery, isSoldQuery, hasPictureQuery, dateQuery
@@ -186,31 +189,22 @@ class SearchPropertyViewModel(
             }
         } else {
             searchPropertyJob = launch {
-                val propertyFromDB = propertyRepository.getPropertiesQuery(
+                propertiesQuery = propertyRepository.getPropertiesQuery(
                         minPriceQuery, maxPriceQuery, minSurfaceQuery, maxSurfaceQuery,
                         nbRoomQuery, nbBedroomQuery, nbBathroomQuery, agentsQuery, typeQuery, neighborhoodQuery,
                         isSoldQuery, hasPictureQuery, dateQuery, amenitiesQuery
                 )
-                if(amenitiesQuery.size > 1) {
-                    val idPropertyToKeep = propertyFromDB
-                            .groupingBy { it.property.id }
-                            .eachCount()
-                            .filterValues { it == amenitiesQuery.size }.keys
-                    val propertyToDisplay = mutableListOf<PropertyWithAllData>()
-                    idPropertyToKeep.forEach { id ->
-                        propertyFromDB.find { it.property.id == id }?.let{ propertyToDisplay.add(it) }
-                    }
-                    emitResultPropertyFetched(propertyToDisplay)
-                } else {
-                    emitResultPropertyFetched(propertyFromDB)
+                if(propertiesQuery.isNotEmpty() && amenitiesQuery.size > 1) {
+                    propertiesQuery = propertiesQuery.keepPropertiesWithAllAmenityRequested(amenitiesQuery.size)
                 }
+                emitResultPropertyFetched(propertiesQuery)
             }
         }
+
 
     }
 
     private fun emitResultPropertyFetched(properties: List<PropertyWithAllData>){
-        displayData("emit resul")
         val result: Lce<SearchPropertyResult> = if (properties.isEmpty()) {
             val listErrors = listOf(ErrorSourceSearch.NO_PROPERTY_FOUND)
             Lce.Error(SearchPropertyResult.SearchResult(listErrors))

@@ -4,11 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import com.openclassrooms.realestatemanager.utils.TypeImage
-import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.filePathToInternalStorage
 import java.io.FileOutputStream
 import java.io.IOException
-import java.nio.file.Files
 
 /**
  * Created by galou on 2019-08-26

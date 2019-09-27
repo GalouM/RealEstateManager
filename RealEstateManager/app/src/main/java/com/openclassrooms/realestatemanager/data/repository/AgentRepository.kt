@@ -1,9 +1,7 @@
 package com.openclassrooms.realestatemanager.data.repository
 
-import android.content.Context
 import androidx.core.net.toUri
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
@@ -64,24 +62,6 @@ class AgentRepository (private val agentDao: AgentDao) {
         } else {
             agentCollection.get()
         }
-
-    }
-
-    fun getAgentPictureFromStorage(agents: List<Agent>, context: Context): Task<List<Task<*>>>{
-        val listDownload = mutableListOf<Task<*>>()
-        agents.forEach {agent ->
-            val pathReference = getReferenceAgentPicture(agent.id)
-            val tempFile = filePathToInternalStorage(context, generateName(), TypeImage.AGENT)
-            val download = pathReference.getFile(tempFile)
-                    .addOnSuccessListener {
-                        agent.urlProfilePicture = tempFile.absolutePath
-                    }
-            listDownload.add(download)
-
-        }
-
-
-        return Tasks.whenAllComplete(listDownload)
 
     }
 

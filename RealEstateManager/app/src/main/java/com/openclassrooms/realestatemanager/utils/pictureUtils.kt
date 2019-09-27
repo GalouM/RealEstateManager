@@ -2,7 +2,6 @@ package com.openclassrooms.realestatemanager.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
@@ -17,7 +16,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.jar.Manifest
 
 /**
  * Created by galou on 2019-09-05

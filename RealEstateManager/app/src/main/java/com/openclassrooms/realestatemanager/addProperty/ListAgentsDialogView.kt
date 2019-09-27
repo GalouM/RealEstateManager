@@ -15,9 +15,6 @@ import com.openclassrooms.realestatemanager.data.entity.Agent
 import com.openclassrooms.realestatemanager.utils.ItemClickSupport
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
 /**
  * A simple [Fragment] subclass.
  *

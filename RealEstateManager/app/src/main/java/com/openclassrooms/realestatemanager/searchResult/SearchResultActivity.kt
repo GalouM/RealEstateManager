@@ -1,13 +1,17 @@
 package com.openclassrooms.realestatemanager.searchResult
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyActivity
 import com.openclassrooms.realestatemanager.baseCurrency.BaseCurrencyIntent
+import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.listProperties.ActionTypeList
 import com.openclassrooms.realestatemanager.listProperties.ListPropertyView
+import com.openclassrooms.realestatemanager.utils.RC_CODE_DETAIL_PROPERTY
+import com.openclassrooms.realestatemanager.utils.displayData
 
 class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
 
@@ -17,6 +21,15 @@ class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
         configureViewModel()
         configureToolbar(R.drawable.close_icon)
         configureAndShowView()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        displayData("$requestCode")
+
+        when (requestCode) {
+            RC_CODE_DETAIL_PROPERTY -> updatePropertiesShown()
+        }
     }
 
     //--------------------
@@ -44,5 +57,14 @@ class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
 
     override fun createNewView(): ListPropertyView {
         return ListPropertyView.newInstance(ActionTypeList.SEARCH_RESULT.actionName)
+    }
+
+    fun openDetailsProperty(){
+        val intent = Intent(this, DetailActivity::class.java)
+        startActivityForResult(intent, RC_CODE_DETAIL_PROPERTY)
+    }
+
+    private fun updatePropertiesShown(){
+        view?.refreshListProperties()
     }
 }

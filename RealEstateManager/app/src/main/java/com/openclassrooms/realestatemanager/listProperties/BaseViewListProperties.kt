@@ -11,8 +11,10 @@ import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
 import com.openclassrooms.realestatemanager.mviBase.REMView
+import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.RC_CODE_DETAIL_PROPERTY
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
@@ -75,11 +77,9 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
     }
 
     private fun renderOpenPropertyDetails(){
-        if(activity is MainActivity){
-            (activity as MainActivity).openDetailsProperty()
-        } else {
-            val intent = Intent(activity!!, DetailActivity::class.java)
-            startActivity(intent)
+        when(activity) {
+            is MainActivity -> (activity as MainActivity).openDetailsProperty()
+            is SearchResultActivity -> (activity as SearchResultActivity).openDetailsProperty()
         }
     }
 

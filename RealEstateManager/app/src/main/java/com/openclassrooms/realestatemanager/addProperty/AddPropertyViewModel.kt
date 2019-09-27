@@ -605,10 +605,6 @@ BitmapDownloader.Listeners{
         resultToViewEffect(result)
         }
 
-        displayData("id ${propertyId}")
-
-        displayData("get ${savedProperty}")
-
         if(savedProperty == null){
             when(actionType){
                 MODIFY_PROPERTY -> fetchExistingPropertyFromDB()

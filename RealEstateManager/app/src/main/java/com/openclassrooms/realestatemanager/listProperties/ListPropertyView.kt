@@ -19,9 +19,11 @@ import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
+import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.ItemClickSupport
+import com.openclassrooms.realestatemanager.utils.displayData
 import java.lang.ref.WeakReference
 
 /**
@@ -29,7 +31,7 @@ import java.lang.ref.WeakReference
  *
  */
 class ListPropertyView : BaseViewListProperties(),
-         MainActivity.OnListPropertiesChangeListener {
+         MainActivity.OnListPropertiesChangeListener{
 
     @BindView(R.id.list_property_view_rv) lateinit var recyclerView: RecyclerView
     @BindView(R.id.list_property_view_refresh) lateinit var refreshLayout: SwipeRefreshLayout
@@ -137,7 +139,7 @@ class ListPropertyView : BaseViewListProperties(),
         frameLayout.foreground.alpha = 0
     }
 
-    private fun refreshListProperties(){
+    fun refreshListProperties(){
         updatePropertiesDisplay()
     }
 

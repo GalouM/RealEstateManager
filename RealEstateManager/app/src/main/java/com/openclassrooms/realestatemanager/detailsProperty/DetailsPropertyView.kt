@@ -81,7 +81,7 @@ class DetailsPropertyView : BaseFragmentREM(), REMView<DetailsPropertyViewState>
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == RC_CODE_ADD_PROPERTY) onPropertyModified(resultCode)
+        if(requestCode == RC_CODE_MODIFY_PROPERTY) onPropertyModified(resultCode)
     }
 
     private fun onPropertyModified(resultCode: Int){
@@ -110,9 +110,7 @@ class DetailsPropertyView : BaseFragmentREM(), REMView<DetailsPropertyViewState>
     //--------------------
 
     fun toolBarModifyClickListener(){
-        val intent = Intent(activity, AddPropertyActivity::class.java)
-        intent.putExtra(ACTION_TYPE_ADD_PROPERTY, ActionType.MODIFY_PROPERTY.actionName)
-        startActivityForResult(intent, RC_CODE_ADD_PROPERTY)
+        startActivityForResult(modifyPropertyIntent(activity!!), RC_CODE_MODIFY_PROPERTY)
     }
 
     //--------------------

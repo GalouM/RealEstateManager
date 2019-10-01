@@ -1,12 +1,10 @@
 package com.openclassrooms.realestatemanager.listProperties
 
-import android.content.Intent
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
-import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.injection.Injection
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.mviBase.BaseFragmentREM
@@ -14,7 +12,7 @@ import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.RC_CODE_DETAIL_PROPERTY
+import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
@@ -28,6 +26,7 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
     protected abstract fun renderListProperties(properties: List<PropertyWithAllData>)
     protected abstract fun renderIsLoading(loading: Boolean)
     protected abstract fun renderChangeCurrency(currency: Currency)
+    protected abstract fun renderDisplaySelection(itemSelected: Int)
 
     //--------------------
     // VIEW MODEL CONNECTION
@@ -61,8 +60,10 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
 
     override fun render(state: PropertyListViewState?) {
         if (state == null) return
+
+        displayData("state ${state.itemSelected}")
         if (state.openDetails) {
-            renderOpenPropertyDetails()
+            renderOpenPropertyDetails(state.itemSelected)
             return
         }
 
@@ -76,7 +77,8 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
 
     }
 
-    private fun renderOpenPropertyDetails(){
+    private fun renderOpenPropertyDetails(itemPosition: Int?){
+        itemPosition?.let { renderDisplaySelection(it) }
         when(activity) {
             is MainActivity -> (activity as MainActivity).openDetailsProperty()
             is SearchResultActivity -> (activity as SearchResultActivity).openDetailsProperty()
@@ -97,8 +99,8 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
         })
     }
 
-    protected fun setPropertyPicked(property: PropertyWithAllData){
-        viewModel.actionFromIntent(PropertyListIntent.OpenPropertyDetailIntent(property))
+    protected fun setPropertyPicked(property: PropertyWithAllData, itemPosition: Int?){
+        viewModel.actionFromIntent(PropertyListIntent.OpenPropertyDetailIntent(property, itemPosition))
 
     }
 

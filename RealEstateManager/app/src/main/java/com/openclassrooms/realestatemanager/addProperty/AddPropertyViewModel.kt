@@ -574,8 +574,6 @@ BitmapDownloader.Listeners{
             MODIFY_PROPERTY -> saveDataRepository.saveModifiedProperty(tempProperty, propertyId)
         }
 
-        displayData("saved ${saveDataRepository.getSavedModifyProperty(propertyId)}")
-
         val result: Lce<AddPropertyResult> = Lce.Content(AddPropertyResult.PropertyAddedToDraftResult)
         resultToViewState(result)
 

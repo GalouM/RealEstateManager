@@ -218,6 +218,7 @@ class SearchPropertyView : BaseFragmentREM(), REMView<SeachPropertyViewState>, L
     }
 
     override fun render(state: SeachPropertyViewState?) {
+        displayData("search state $state")
         if (state == null) return
         state.agents?.let{renderAgentsList(it)}
 

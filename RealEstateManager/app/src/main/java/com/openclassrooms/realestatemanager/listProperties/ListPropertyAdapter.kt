@@ -8,6 +8,7 @@ import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 
 /**
  * Created by galou on 2019-08-12
@@ -55,6 +56,7 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
 
     fun updateSelection(itemSelected: Int?){
         viewHolders.forEach {
+            displayData("update selection")
             it.displaySelection(itemSelected)
         }
     }

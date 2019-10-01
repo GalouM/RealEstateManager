@@ -138,6 +138,8 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
 
     }
 
+    override fun renderDisplaySelection(itemSelected: Int) { }
+
     //--------------------
     // MAP ACTIONS
     //--------------------
@@ -226,7 +228,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
 
     override fun onInfoWindowClick(marker: Marker): Boolean {
         val markerREM = marker as MarkerREM
-        setPropertyPicked(propertiesNearBy.find{it.property.id == markerREM.idRem}!!)
+        setPropertyPicked(propertiesNearBy.find{it.property.id == markerREM.idRem}!!, null)
         return false
     }
 
@@ -236,6 +238,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
         }
 
     }
+
 
     //--------------------
     // LIFE STATE MAP

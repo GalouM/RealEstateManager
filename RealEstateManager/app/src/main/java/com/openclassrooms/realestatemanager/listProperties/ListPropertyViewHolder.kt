@@ -13,6 +13,7 @@ import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.loadImage
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
@@ -78,6 +79,7 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         if(positionSelected != null) {
             if (this.adapterPosition == positionSelected) {
                 isSelected = true
+                displayData("sleected: $isSelected")
                 configureCardToSelectedState()
             } else {
                 isSelected = false

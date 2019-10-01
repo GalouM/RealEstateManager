@@ -11,7 +11,6 @@ import com.openclassrooms.realestatemanager.detailsProperty.DetailActivity
 import com.openclassrooms.realestatemanager.listProperties.ActionTypeList
 import com.openclassrooms.realestatemanager.listProperties.ListPropertyView
 import com.openclassrooms.realestatemanager.utils.RC_CODE_DETAIL_PROPERTY
-import com.openclassrooms.realestatemanager.utils.displayData
 
 class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
 
@@ -25,7 +24,6 @@ class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        displayData("$requestCode")
 
         when (requestCode) {
             RC_CODE_DETAIL_PROPERTY -> updatePropertiesShown()
@@ -51,6 +49,7 @@ class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
                 viewModel.actionFromIntent(BaseCurrencyIntent.ChangeCurrencyIntent)
                 return true
             }
+            android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }

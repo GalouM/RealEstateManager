@@ -8,6 +8,7 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.Currency
+import com.openclassrooms.realestatemanager.utils.displayData
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -36,7 +37,7 @@ class ListPropertyViewModel(
     override fun actionFromIntent(intent: PropertyListIntent){
         when(intent){
             is PropertyListIntent.DisplayPropertiesIntent -> fetchPropertiesFromDB()
-            is PropertyListIntent.OpenPropertyDetailIntent -> setPropertySelected(intent.property)
+            is PropertyListIntent.OpenPropertyDetailIntent -> setPropertySelected(intent.property, intent.itemPosition)
             is PropertyListIntent.SetActionTypeIntent -> setActionType(intent.actionType)
         }
 
@@ -58,7 +59,8 @@ class ListPropertyViewModel(
                         currentViewState.copy(
                                 errorSource = null,
                                 isLoading = false,
-                                openDetails = true
+                                openDetails = true,
+                                itemSelected = result.packet.itemSelected
                         )
                     }
                 }
@@ -90,10 +92,11 @@ class ListPropertyViewModel(
         this.actionType = actionType
     }
 
-    private fun setPropertySelected(property: PropertyWithAllData){
+    private fun setPropertySelected(property: PropertyWithAllData, itemPosition: Int?){
+        displayData("item position vm $itemPosition")
         propertyRepository.propertyPicked = property
         propertyRepository.propertyPicked?.let {
-            val result: Lce<PropertyListResult> = Lce.Content(PropertyListResult.OpenPropertyDetailResult)
+            val result: Lce<PropertyListResult> = Lce.Content(PropertyListResult.OpenPropertyDetailResult(itemPosition))
             resultToViewState(result)
         }
 

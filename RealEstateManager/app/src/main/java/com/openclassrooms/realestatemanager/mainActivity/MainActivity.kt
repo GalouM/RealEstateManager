@@ -119,12 +119,17 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
                         showSnackBarMessage(getString(R.string.property_added))
                         updatePropertiesShown()
                     }
-                    RESULT_SAVED_TO_DRAFT -> {
-                        when(isInternetAvailable(this)){
-                            true -> showSnackBarMessage(getString(R.string.modif_draft))
-                            false -> showSnackBarMessage(getString(R.string.saved_as_draft))
-                        }
+                    RESULT_SAVED_TO_DRAFT -> showSavedAsDraft()
+                }
+            }
+
+            RC_CODE_MODIFY_PROPERTY -> {
+                when(resultCode){
+                    RESULT_SAVED_TO_DB -> {
+                        showSnackBarMessage(getString(R.string.property_modified))
+                        updatePropertiesShown()
                     }
+                    RESULT_SAVED_TO_DRAFT -> showSavedAsDraft()
                 }
             }
             RC_CODE_DETAIL_PROPERTY -> updatePropertiesShown()
@@ -169,7 +174,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         when(item?.itemId){
             R.id.menu_toolbar_currency -> changeCurrency()
             R.id.menu_main_activity_search -> openSearchActivity()
-            R.id.menu_details_property_modify -> detailsView?.toolBarModifyClickListener()
+            R.id.menu_details_property_modify -> openModifyProperty()
             R.id.menu_main_activity_refresh -> checkNetworkConnection()
         }
         return super.onOptionsItemSelected(item)
@@ -182,6 +187,10 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     private fun openSearchActivity(){
         val intent = Intent(this, SearchActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun openModifyProperty(){
+        startActivityForResult(modifyPropertyIntent(this), RC_CODE_MODIFY_PROPERTY)
     }
 
     //------View Pager and tablayout---------
@@ -400,6 +409,7 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     //--------------------
 
     private fun updatePropertiesShown(){
+        displayData("callback main")
         callbackListPropertiesRefresh?.get()?.onListPropertiesChange()
         callbackMapPropertiesRefresh?.get()?.onListPropertiesChange()
     }
@@ -435,6 +445,13 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
         builder.show()
 
 
+    }
+
+    private fun showSavedAsDraft(){
+        when(isInternetAvailable(this)){
+            true -> showSnackBarMessage(getString(R.string.modif_draft))
+            false -> showSnackBarMessage(getString(R.string.saved_as_draft))
+        }
     }
 }
 

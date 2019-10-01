@@ -19,7 +19,6 @@ import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.mainActivity.MainActivity
-import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.ItemClickSupport
@@ -38,6 +37,8 @@ class ListPropertyView : BaseViewListProperties(),
     @BindView(R.id.list_property_view_frameLayout) lateinit var frameLayout: FrameLayout
 
     private var adapter: ListPropertyAdapter? = null
+
+    private var isDoubleScreenMode = false
 
     companion object {
 
@@ -58,6 +59,7 @@ class ListPropertyView : BaseViewListProperties(),
         configureActionType()
         currencyObserver()
         setupRefreshPropertiesListener()
+        checkScreenMode()
 
         return view
     }
@@ -74,11 +76,8 @@ class ListPropertyView : BaseViewListProperties(),
 
     override fun renderListProperties(properties: List<PropertyWithAllData>){
         adapter!!.update(properties)
-        if(activity is MainActivity){
-            if(!(activity as MainActivity).isDoubleScreenMode){
-                adapter!!.updateSelection(null)
-
-            }
+        if(isDoubleScreenMode){
+            adapter!!.updateSelection(null)
         }
     }
 
@@ -96,11 +95,7 @@ class ListPropertyView : BaseViewListProperties(),
     //--------------------
 
     private fun configureRecyclerView(){
-        var isDoubleScreen = false
-        if(activity is MainActivity){
-            isDoubleScreen = (activity as MainActivity).isDoubleScreenMode
-        }
-        adapter = ListPropertyAdapter(listOf<PropertyWithAllData>(), currentCurrency, Glide.with(this), isDoubleScreen)
+        adapter = ListPropertyAdapter(listOf<PropertyWithAllData>(), currentCurrency, Glide.with(this), isDoubleScreenMode)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
         configureClickRecyclerView()
@@ -109,7 +104,7 @@ class ListPropertyView : BaseViewListProperties(),
     private fun configureClickRecyclerView(){
         ItemClickSupport.addTo(recyclerView, R.layout.list_agent_dialog_item)
                 .setOnItemClickListener{ _, position, _ ->
-                    setPropertyPicked(adapter!!.getProperty(position))
+                    setPropertyPicked(adapter!!.getProperty(position), position)
                     adapter!!.updateSelection(position)
                 }
     }
@@ -143,4 +138,14 @@ class ListPropertyView : BaseViewListProperties(),
         updatePropertiesDisplay()
     }
 
+    private fun checkScreenMode(){
+        if(activity is MainActivity){
+            isDoubleScreenMode = (activity as MainActivity).isDoubleScreenMode
+        }
+    }
+
+    override fun renderDisplaySelection(itemSelected: Int) {
+        displayData("render selectecion $itemSelected")
+        adapter!!.updateSelection(itemSelected)
+    }
 }

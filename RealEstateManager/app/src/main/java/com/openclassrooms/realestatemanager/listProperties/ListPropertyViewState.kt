@@ -12,16 +12,17 @@ data class PropertyListViewState(
         val errorSource: ErrorSourceListProperty? = null,
         val isLoading: Boolean = false,
         val listProperties: List<PropertyWithAllData>? = null,
-        val openDetails: Boolean = false
+        val openDetails: Boolean = false,
+        val itemSelected: Int? = null
 ) : REMViewState
 
 sealed class PropertyListResult : REMResult{
     data class DisplayPropertiesResult(val properties: List<PropertyWithAllData>?) : PropertyListResult()
-    object OpenPropertyDetailResult : PropertyListResult()
+    data class OpenPropertyDetailResult(val itemSelected: Int?) : PropertyListResult()
 }
 
 sealed class PropertyListIntent : REMIntent{
     object DisplayPropertiesIntent : PropertyListIntent()
-    data class OpenPropertyDetailIntent(val property: PropertyWithAllData) : PropertyListIntent()
+    data class OpenPropertyDetailIntent(val property: PropertyWithAllData, val itemPosition: Int?) : PropertyListIntent()
     data class SetActionTypeIntent(val actionType: ActionTypeList) : PropertyListIntent()
 }

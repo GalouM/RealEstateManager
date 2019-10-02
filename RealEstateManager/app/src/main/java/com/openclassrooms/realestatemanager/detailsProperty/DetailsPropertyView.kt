@@ -19,8 +19,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.addProperty.ActionType
-import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
 import com.openclassrooms.realestatemanager.data.entity.Address
 import com.openclassrooms.realestatemanager.data.entity.Amenity
 import com.openclassrooms.realestatemanager.data.entity.Picture

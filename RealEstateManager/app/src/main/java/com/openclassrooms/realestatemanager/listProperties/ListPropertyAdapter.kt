@@ -8,7 +8,6 @@ import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.displayData
 
 /**
  * Created by galou on 2019-08-12
@@ -21,6 +20,7 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
 
     private lateinit var context: Context
     private val viewHolders = mutableListOf<ListPropertyViewHolder>()
+    var itemSelected: Int? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListPropertyViewHolder {
         context = parent.context
@@ -37,7 +37,8 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
     }
 
     override fun onBindViewHolder(holder: ListPropertyViewHolder, position: Int) {
-        holder.updateWithProperty(properties[position], glide, currency, context, isDoubleScreen)
+        val isSelected = position == itemSelected
+        holder.updateWithProperty(properties[position], glide, currency, context, isDoubleScreen, isSelected)
     }
 
     fun update(properties: List<PropertyWithAllData>){
@@ -55,9 +56,7 @@ class ListPropertyAdapter(var properties: List<PropertyWithAllData>,
     }
 
     fun updateSelection(itemSelected: Int?){
-        viewHolders.forEach {
-            displayData("update selection")
-            it.displaySelection(itemSelected)
-        }
+        this.itemSelected = itemSelected
+        viewHolders.forEach { it.updateSelection(itemSelected) }
     }
 }

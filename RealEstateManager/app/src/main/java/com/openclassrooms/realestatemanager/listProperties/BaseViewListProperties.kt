@@ -12,7 +12,6 @@ import com.openclassrooms.realestatemanager.mviBase.REMView
 import com.openclassrooms.realestatemanager.searchResult.SearchResultActivity
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.showSnackBar
 
 /**
@@ -23,10 +22,9 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
     protected lateinit var viewModel: ListPropertyViewModel
     protected var currentCurrency: Currency? = null
 
-    protected abstract fun renderListProperties(properties: List<PropertyWithAllData>)
+    protected abstract fun renderListProperties(properties: List<PropertyWithAllData>, itemSelected: Int?)
     protected abstract fun renderIsLoading(loading: Boolean)
     protected abstract fun renderChangeCurrency(currency: Currency)
-    protected abstract fun renderDisplaySelection(itemSelected: Int)
 
     //--------------------
     // VIEW MODEL CONNECTION
@@ -53,7 +51,7 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
 
     }
 
-    protected fun updatePropertiesDisplay(){
+    fun updatePropertiesDisplay(){
         viewModel.actionFromIntent(PropertyListIntent.DisplayPropertiesIntent)
     }
 
@@ -61,14 +59,13 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
     override fun render(state: PropertyListViewState?) {
         if (state == null) return
 
-        displayData("state ${state.itemSelected}")
         if (state.openDetails) {
             renderOpenPropertyDetails(state.itemSelected)
             return
         }
 
         if(state.listProperties != null  && !state.isLoading){
-            renderListProperties(state.listProperties)
+            renderListProperties(state.listProperties, state.itemSelected)
         }
 
         state.errorSource?.let { renderErrorFetchingProperty(it) }
@@ -78,7 +75,6 @@ abstract class BaseViewListProperties : BaseFragmentREM(), REMView<PropertyListV
     }
 
     private fun renderOpenPropertyDetails(itemPosition: Int?){
-        itemPosition?.let { renderDisplaySelection(it) }
         when(activity) {
             is MainActivity -> (activity as MainActivity).openDetailsProperty()
             is SearchResultActivity -> (activity as SearchResultActivity).openDetailsProperty()

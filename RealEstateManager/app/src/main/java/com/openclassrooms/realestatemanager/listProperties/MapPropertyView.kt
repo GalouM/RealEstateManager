@@ -116,7 +116,7 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
     //--------------------
     // VIEW MODEL CONNECTION
     //--------------------
-    override fun renderListProperties(properties: List<PropertyWithAllData>){
+    override fun renderListProperties(properties: List<PropertyWithAllData>, itemSelected: Int?){
         propertiesNearBy.clear()
         properties.forEach { property ->
             val position = LatLng(property.address[0].latitude, property.address[0].longitude)
@@ -137,8 +137,6 @@ MainActivity.OnTabSelectedListener, EasyPermissions.PermissionCallbacks{
         mapBoxMap?.let { displayPropertiesAround(currency) }
 
     }
-
-    override fun renderDisplaySelection(itemSelected: Int) { }
 
     //--------------------
     // MAP ACTIONS

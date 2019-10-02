@@ -64,6 +64,6 @@ class SearchResultActivity : BaseCurrencyActivity<ListPropertyView>(){
     }
 
     private fun updatePropertiesShown(){
-        view?.refreshListProperties()
+        view?.updatePropertiesDisplay()
     }
 }

@@ -22,7 +22,6 @@ import com.openclassrooms.realestatemanager.mainActivity.MainActivity
 import com.openclassrooms.realestatemanager.utils.ACTION_TYPE_LIST_PROPERTY
 import com.openclassrooms.realestatemanager.utils.Currency
 import com.openclassrooms.realestatemanager.utils.ItemClickSupport
-import com.openclassrooms.realestatemanager.utils.displayData
 import java.lang.ref.WeakReference
 
 /**
@@ -64,6 +63,11 @@ class ListPropertyView : BaseViewListProperties(),
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(!isDoubleScreenMode) adapter?.updateSelection(null)
+    }
+
     private fun setupRefreshPropertiesListener(){
         if(activity is MainActivity){
             (activity as MainActivity).callbackListPropertiesRefresh = WeakReference(this)
@@ -74,11 +78,9 @@ class ListPropertyView : BaseViewListProperties(),
     // VIEW MODEL CONNECTION
     //--------------------
 
-    override fun renderListProperties(properties: List<PropertyWithAllData>){
+    override fun renderListProperties(properties: List<PropertyWithAllData>, itemSelected: Int?){
         adapter!!.update(properties)
-        if(isDoubleScreenMode){
-            adapter!!.updateSelection(null)
-        }
+        if(isDoubleScreenMode) itemSelected?.let { adapter!!.updateSelection(it) }
     }
 
     override fun renderIsLoading(loading: Boolean){
@@ -118,7 +120,7 @@ class ListPropertyView : BaseViewListProperties(),
     }
 
     override fun onListPropertiesChange() {
-        refreshListProperties()
+        updatePropertiesDisplay()
     }
 
     //--------------------
@@ -126,7 +128,7 @@ class ListPropertyView : BaseViewListProperties(),
     //--------------------
 
     private fun configureRefreshLayout(){
-        refreshLayout.setOnRefreshListener(this::refreshListProperties)
+        refreshLayout.setOnRefreshListener(this::updatePropertiesDisplay)
     }
 
     private fun configureForeground(){
@@ -134,18 +136,9 @@ class ListPropertyView : BaseViewListProperties(),
         frameLayout.foreground.alpha = 0
     }
 
-    fun refreshListProperties(){
-        updatePropertiesDisplay()
-    }
-
     private fun checkScreenMode(){
         if(activity is MainActivity){
             isDoubleScreenMode = (activity as MainActivity).isDoubleScreenMode
         }
-    }
-
-    override fun renderDisplaySelection(itemSelected: Int) {
-        displayData("render selectecion $itemSelected")
-        adapter!!.updateSelection(itemSelected)
     }
 }

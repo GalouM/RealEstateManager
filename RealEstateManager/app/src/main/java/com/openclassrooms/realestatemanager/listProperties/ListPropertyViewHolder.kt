@@ -13,7 +13,6 @@ import com.bumptech.glide.RequestManager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.displayData
 import com.openclassrooms.realestatemanager.utils.extensions.loadImage
 import com.openclassrooms.realestatemanager.utils.extensions.toDollar
 import com.openclassrooms.realestatemanager.utils.extensions.toDollarDisplay
@@ -47,8 +46,9 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun updateWithProperty(
             property: PropertyWithAllData, glide: RequestManager,
-            currency: Currency?, context: Context, isDoubleScreen: Boolean
+            currency: Currency?, context: Context, isDoubleScreen: Boolean, isSelected: Boolean
     ){
+        this.isSelected = isSelected
         this.context = context
         isSold = property.property.sold
 
@@ -73,13 +73,14 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             configureCardToNormalState()
         }
 
+        if(isSelected) configureCardToSelectedState()
+
     }
 
-    fun displaySelection(positionSelected: Int?){
+    fun updateSelection(positionSelected: Int?){
         if(positionSelected != null) {
             if (this.adapterPosition == positionSelected) {
                 isSelected = true
-                displayData("sleected: $isSelected")
                 configureCardToSelectedState()
             } else {
                 isSelected = false
@@ -107,4 +108,6 @@ class ListPropertyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         background.setCardBackgroundColor(getColor(context, R.color.colorAccent))
         price.setTextColor(getColor(context, R.color.colorTextAccent))
     }
+
+
 }

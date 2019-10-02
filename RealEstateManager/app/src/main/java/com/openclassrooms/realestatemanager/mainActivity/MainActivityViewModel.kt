@@ -238,7 +238,7 @@ class MainActivityViewModel(
         val storageOperation = mutableListOf<Task<*>>()
         newAgents.forEach { agent ->
             agent.urlProfilePicture?.let {
-                val tempFile = filePathToInternalStorage(context, generateName(), TypeImage.AGENT)
+                val tempFile = filePathToInternalStorage(context, agent.id, TypeImage.AGENT)
                 val picAgentDownload = agentRepository.getReferenceAgentPicture(agent.id).getFile(tempFile)
                         .addOnCompleteListener { storageTask ->
                             agent.urlProfilePicture = if(storageTask.isSuccessful){

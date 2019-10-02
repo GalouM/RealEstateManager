@@ -409,7 +409,6 @@ class MainActivity : AppCompatActivity(), REMView<MainActivityViewState>,
     //--------------------
 
     private fun updatePropertiesShown(){
-        displayData("callback main")
         callbackListPropertiesRefresh?.get()?.onListPropertiesChange()
         callbackMapPropertiesRefresh?.get()?.onListPropertiesChange()
     }

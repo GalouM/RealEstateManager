@@ -8,7 +8,6 @@ import com.openclassrooms.realestatemanager.mviBase.BaseViewModel
 import com.openclassrooms.realestatemanager.mviBase.Lce
 import com.openclassrooms.realestatemanager.mviBase.REMViewModel
 import com.openclassrooms.realestatemanager.utils.Currency
-import com.openclassrooms.realestatemanager.utils.displayData
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -93,7 +92,6 @@ class ListPropertyViewModel(
     }
 
     private fun setPropertySelected(property: PropertyWithAllData, itemPosition: Int?){
-        displayData("item position vm $itemPosition")
         propertyRepository.propertyPicked = property
         propertyRepository.propertyPicked?.let {
             val result: Lce<PropertyListResult> = Lce.Content(PropertyListResult.OpenPropertyDetailResult(itemPosition))

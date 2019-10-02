@@ -8,7 +8,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.openclassrooms.realestatemanager.data.database.dao.AgentDao
 import com.openclassrooms.realestatemanager.data.entity.Agent
-import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.AGENT_COLLECTION
+import com.openclassrooms.realestatemanager.utils.STORAGE_PATH_AGENT_PICTURE
 import java.util.*
 
 /**

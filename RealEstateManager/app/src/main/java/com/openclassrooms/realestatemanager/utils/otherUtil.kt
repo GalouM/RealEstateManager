@@ -1,13 +1,10 @@
 package com.openclassrooms.realestatemanager.utils
 
-import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.openclassrooms.realestatemanager.addProperty.ActionType
 import com.openclassrooms.realestatemanager.addProperty.AddPropertyActivity
-import com.openclassrooms.realestatemanager.data.entity.PropertyWithAllData
 import java.util.*
 
 /**

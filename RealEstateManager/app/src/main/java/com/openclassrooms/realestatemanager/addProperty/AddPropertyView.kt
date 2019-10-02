@@ -506,16 +506,20 @@ SnackBarListener{
                                           amenities: List<TypeAmenity>, agentFirstName: String,
                                           agentLastName: String
     ){
-        val priceToDisplay = when(currentCurrency!!){
-            EURO -> price?.toString()
-            DOLLAR -> price?.toDollar().toString()
-        }
-        val surfaceToDisplay = when(currentCurrency!!){
-            EURO -> surface?.toString()
-            DOLLAR -> surface?.toSqFt().toString()
-        }
-        priceToDisplay?.let{ priceText.setText(it) }
-        surfaceToDisplay?.let{ surfaceText.setText(it) }
+        val priceToDisplay = if(price != null) {
+            when (currentCurrency!!) {
+                EURO -> price.toString()
+                DOLLAR -> price.toDollar().toString()
+            }
+        } else ""
+        val surfaceToDisplay = if(surface != null) {
+            when (currentCurrency!!) {
+                EURO -> surface.toString()
+                DOLLAR -> surface.toSqFt().toString()
+            }
+        } else ""
+        priceText.setText(priceToDisplay)
+        surfaceText.setText(surfaceToDisplay)
         rooms?.let{ roomText.setText(it.toString()) }
         bedrooms?.let { bedroomText.setText(it.toString()) }
         bathrooms?.let { bathroomText.setText(it.toString()) }

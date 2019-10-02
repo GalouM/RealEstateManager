@@ -9,6 +9,15 @@ You can
 * save a draft of a property
 * search properties with specific attributes
 
+phone display:
+<img src="./screenshots/rem_main_list_phone.jpg" width="30%" height="30%">&ensp;<img src="./screenshots/rem_main_map_phone.jpg" width="30%" height="30%">
+<img src="./screenshots/rem_details.jpg" width="30%" height="30%">
+
+
+Add/Modify Property:
+<img src="./screenshots/rem_addProperty.gif" width="30%" height="30%">
+
+
 ## Library
 * [Android Support Library](https://developer.android.com/topic/libraries/support-library/)
 * [Glide](https://github.com/bumptech/glide/)

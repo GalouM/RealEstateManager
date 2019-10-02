@@ -9,30 +9,30 @@ You can
 * save a draft of a property
 * search properties with specific attributes
 
-###phone display:
+### phone display:
 
 <img src="./screenshots/rem_main_list_phone.jpg" width="30%" height="30%">&ensp;<img src="./screenshots/rem_main_map_phone.jpg" width="30%" height="30%">
 <img src="./screenshots/rem_details.jpg" width="30%" height="30%">
 
 
-###tablet display:
+### tablet display:
 
 <img src="./screenshots/rem_main_list_tab.jpg" width="30%" height="30%">
 
 
-###Add/Modify Property:
+### Add/Modify Property:
 
 <img src="./screenshots/rem_modifyProperty.jpg" width="30%" height="30%">&ensp;<img src="./screenshots/rem_addProperty_draft.gif" width="30%" height="30%">
 
-###Search Property:
+### Search Property:
 
 <img src="./screenshots/rem_search.gif" width="30%" height="30%">
 
-###Change Currency:
+### Change Currency:
 
 <img src="./screenshots/rem_currency.gif" width="30%" height="30%">
 
-###Add Agent:
+### Add Agent:
 
 <img src="./screenshots/rem_addAgent.jpg" width="30%" height="30%">
 
